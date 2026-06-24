@@ -70,6 +70,18 @@ FantasyCalc
   Uses the live FantasyCalc dynasty values API.
 ```
 
+## Dynasty ranking saves
+
+The Dynasty rankings page auto-saves board order to Supabase one second after
+you drag and drop a player or tier. Run the SQL in this migration before using
+auto-save:
+
+```txt
+supabase/migrations/0002_dynasty_board_snapshots.sql
+```
+
 ## Next milestone
 
-The next practical step is to connect Supabase authentication and then save custom ranking changes to the database.
+The next practical step is to run the Dynasty board migration in Supabase, test
+auto-save, and then decide whether to keep building rankings tools or return to
+authentication.

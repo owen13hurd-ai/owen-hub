@@ -108,6 +108,7 @@ export function getDynastyTiers(rankings: DynastyRanking[]): DynastyTier[] {
 
     return {
       ...tier,
+      id: `${tier.scope.toLowerCase()}-tier-${nextCount}`,
       label: `Tier ${nextCount}`,
     };
   });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -10,8 +10,11 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 
+import { saveDynastyBoard } from "@/app/dashboard/dynasty/actions";
 import type {
+  DynastyBoardRow,
   DynastyRanking,
+  DynastyRowsByScope,
   DynastyTier,
   MarketSourceSummary,
   Position,
@@ -20,25 +23,13 @@ import type {
 
 const positions: Position[] = ["ALL", "QB", "RB", "WR", "TE"];
 
-type RankingRow = {
-  id: string;
-  playerId: string;
-  type: "player";
-};
-
-type TierRow = {
-  id: string;
-  tierId: string;
-  type: "tier";
-};
-
-type TableRow = RankingRow | TierRow;
-
 type AssignedTier = {
   label: string;
   pickValue: number | null;
   pickValueLabel: string;
 };
+
+type SaveState = "saved" | "pending" | "saving" | "error";
 
 type DragState = {
   rowId: string;
@@ -127,7 +118,7 @@ function buildRowsForScope({
   scope: Position;
   tiers: DynastyTier[];
 }) {
-  const rows: TableRow[] = [];
+  const rows: DynastyBoardRow[] = [];
   const scopedRankings =
     scope === "ALL"
       ? rankings
@@ -160,7 +151,75 @@ function buildRowsForScope({
   return rows;
 }
 
-function reorderRows(rows: TableRow[], draggedId: string, targetId: string) {
+function buildDefaultRowsByScope({
+  rankings,
+  tiers,
+}: {
+  rankings: DynastyRanking[];
+  tiers: DynastyTier[];
+}): DynastyRowsByScope {
+  return {
+    ALL: buildRowsForScope({
+      rankings,
+      scope: "ALL",
+      tiers,
+    }),
+    QB: buildRowsForScope({
+      rankings,
+      scope: "QB",
+      tiers,
+    }),
+    RB: buildRowsForScope({
+      rankings,
+      scope: "RB",
+      tiers,
+    }),
+    WR: buildRowsForScope({
+      rankings,
+      scope: "WR",
+      tiers,
+    }),
+    TE: buildRowsForScope({
+      rankings,
+      scope: "TE",
+      tiers,
+    }),
+  };
+}
+
+function getInitialRowsByScope({
+  defaultRowsByScope,
+  savedRowsByScope,
+}: {
+  defaultRowsByScope: DynastyRowsByScope;
+  savedRowsByScope: DynastyRowsByScope | null;
+}) {
+  if (!savedRowsByScope) {
+    return defaultRowsByScope;
+  }
+
+  const nextRowsByScope = { ...defaultRowsByScope };
+
+  positions.forEach((scope) => {
+    const defaultRows = defaultRowsByScope[scope];
+    const savedRows = savedRowsByScope[scope];
+    const defaultRowIds = new Set(defaultRows.map((row) => row.id));
+    const savedRowIds = new Set(savedRows.map((row) => row.id));
+
+    nextRowsByScope[scope] = [
+      ...savedRows.filter((row) => defaultRowIds.has(row.id)),
+      ...defaultRows.filter((row) => !savedRowIds.has(row.id)),
+    ];
+  });
+
+  return nextRowsByScope;
+}
+
+function reorderRows(
+  rows: DynastyBoardRow[],
+  draggedId: string,
+  targetId: string,
+) {
   const draggedIndex = rows.findIndex((row) => row.id === draggedId);
   const targetIndex = rows.findIndex((row) => row.id === targetId);
 
@@ -178,12 +237,21 @@ function reorderRows(rows: TableRow[], draggedId: string, targetId: string) {
 export function DynastyRankingsClient({
   initialRankings,
   initialTiers,
+  initialRowsByScope,
   sources,
 }: {
   initialRankings: DynastyRanking[];
   initialTiers: DynastyTier[];
+  initialRowsByScope: DynastyRowsByScope | null;
   sources: MarketSourceSummary;
 }) {
+  const defaultRowsByScope = useMemo(() => {
+    return buildDefaultRowsByScope({
+      rankings: initialRankings,
+      tiers: initialTiers,
+    });
+  }, [initialRankings, initialTiers]);
+
   const rankingsById = useMemo(() => {
     return new Map(initialRankings.map((ranking) => [ranking.id, ranking]));
   }, [initialRankings]);
@@ -192,42 +260,87 @@ export function DynastyRankingsClient({
     return new Map(initialTiers.map((tier) => [tier.id, tier]));
   }, [initialTiers]);
 
-  const [rowsByScope, setRowsByScope] = useState<Record<Position, TableRow[]>>(
-    () => ({
-      ALL: buildRowsForScope({
-        rankings: initialRankings,
-        scope: "ALL",
-        tiers: initialTiers,
+  const [rowsByScope, setRowsByScope] = useState<DynastyRowsByScope>(
+    () =>
+      getInitialRowsByScope({
+        defaultRowsByScope,
+        savedRowsByScope: initialRowsByScope,
       }),
-      QB: buildRowsForScope({
-        rankings: initialRankings,
-        scope: "QB",
-        tiers: initialTiers,
-      }),
-      RB: buildRowsForScope({
-        rankings: initialRankings,
-        scope: "RB",
-        tiers: initialTiers,
-      }),
-      WR: buildRowsForScope({
-        rankings: initialRankings,
-        scope: "WR",
-        tiers: initialTiers,
-      }),
-      TE: buildRowsForScope({
-        rankings: initialRankings,
-        scope: "TE",
-        tiers: initialTiers,
-      }),
-    }),
   );
   const [position, setPosition] = useState<Position>("ALL");
   const [query, setQuery] = useState("");
   const [dragState, setDragState] = useState<DragState>(null);
+  const [saveState, setSaveState] = useState<SaveState>(
+    initialRowsByScope ? "saved" : "pending",
+  );
+  const [saveMessage, setSaveMessage] = useState(
+    initialRowsByScope
+      ? "Loaded saved board"
+      : "Starter board has not been saved yet",
+  );
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const rowsByScopeRef = useRef(rowsByScope);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    rowsByScopeRef.current = rowsByScope;
+  }, [rowsByScope]);
+
+  const saveRowsNow = useCallback(async (rowsToSave = rowsByScopeRef.current) => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+
+    setSaveState("saving");
+    setSaveMessage("Saving changes...");
+
+    const result = await saveDynastyBoard(rowsToSave);
+
+    if (result.ok) {
+      setSaveState("saved");
+      setSaveMessage("Saved");
+      setLastSavedAt(
+        new Date().toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        }),
+      );
+      return;
+    }
+
+    setSaveState("error");
+    setSaveMessage(result.message);
+  }, []);
+
+  const queueAutosave = useCallback(
+    (nextRowsByScope: DynastyRowsByScope) => {
+      rowsByScopeRef.current = nextRowsByScope;
+      setSaveState("pending");
+      setSaveMessage("Unsaved changes");
+
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+
+      saveTimerRef.current = setTimeout(() => {
+        void saveRowsNow(nextRowsByScope);
+      }, 1000);
+    },
+    [saveRowsNow],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
 
   const overallPlayerRows = useMemo(() => {
     return rowsByScope.ALL.filter(
-      (row): row is RankingRow => row.type === "player",
+      (row) => row.type === "player",
     );
   }, [rowsByScope.ALL]);
 
@@ -289,14 +402,19 @@ export function DynastyRankingsClient({
       return;
     }
 
-    setRowsByScope((currentRowsByScope) => ({
-      ...currentRowsByScope,
-      [position]: reorderRows(
-        currentRowsByScope[position],
-        dragState.rowId,
-        targetId,
-      ),
-    }));
+    setRowsByScope((currentRowsByScope) => {
+      const nextRowsByScope = {
+        ...currentRowsByScope,
+        [position]: reorderRows(
+          currentRowsByScope[position],
+          dragState.rowId,
+          targetId,
+        ),
+      };
+
+      queueAutosave(nextRowsByScope);
+      return nextRowsByScope;
+    });
   }
 
   return (
@@ -330,7 +448,7 @@ export function DynastyRankingsClient({
         </div>
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <p className="text-sm text-ink/55">Market sources</p>
-          <p className="mt-1 text-2xl font-bold text-ink">3</p>
+          <p className="mt-1 text-2xl font-bold text-ink">2</p>
         </div>
       </section>
 
@@ -368,23 +486,59 @@ export function DynastyRankingsClient({
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {positions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setPosition(item)}
-                className={clsx(
-                  "h-9 rounded-md px-3 text-sm font-semibold transition",
-                  position === item
-                    ? "bg-ink text-white"
-                    : "bg-mist text-ink/70 hover:bg-skyglass hover:text-ink",
-                )}
-              >
-                {item}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap gap-2">
+              {positions.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setPosition(item)}
+                  className={clsx(
+                    "h-9 rounded-md px-3 text-sm font-semibold transition",
+                    position === item
+                      ? "bg-ink text-white"
+                      : "bg-mist text-ink/70 hover:bg-skyglass hover:text-ink",
+                  )}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void saveRowsNow()}
+              className="h-9 rounded-md border border-ink/10 bg-white px-3 text-sm font-semibold text-ink transition hover:bg-skyglass"
+            >
+              Save now
+            </button>
           </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
+          <span
+            className={clsx(
+              "inline-flex rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-[0.08em] ring-1",
+              saveState === "saved" &&
+                "bg-emerald-50 text-emerald-700 ring-emerald-200",
+              saveState === "pending" &&
+                "bg-amber-50 text-amber-800 ring-amber-200",
+              saveState === "saving" && "bg-skyglass text-ink ring-ink/10",
+              saveState === "error" && "bg-rose-50 text-rose-700 ring-rose-200",
+            )}
+          >
+            {saveState === "pending"
+              ? "Auto-save queued"
+              : saveState === "saving"
+                ? "Saving"
+                : saveState === "error"
+                  ? "Save failed"
+                  : "Saved"}
+          </span>
+          <span className="text-ink/55">
+            {saveMessage}
+            {lastSavedAt ? ` at ${lastSavedAt}` : ""}
+          </span>
         </div>
 
         <div className="mt-5 overflow-hidden rounded-lg border border-ink/10">

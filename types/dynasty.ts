@@ -1,5 +1,21 @@
 export type Position = "ALL" | "QB" | "RB" | "WR" | "TE";
 
+export type DynastyBoardPlayerRow = {
+  id: string;
+  playerId: string;
+  type: "player";
+};
+
+export type DynastyBoardTierRow = {
+  id: string;
+  tierId: string;
+  type: "tier";
+};
+
+export type DynastyBoardRow = DynastyBoardPlayerRow | DynastyBoardTierRow;
+
+export type DynastyRowsByScope = Record<Position, DynastyBoardRow[]>;
+
 export type DynastyRanking = {
   id: string;
   rookiePick: string;

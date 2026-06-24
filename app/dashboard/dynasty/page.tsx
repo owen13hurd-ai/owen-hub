@@ -1,4 +1,5 @@
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
+import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
 import { getDynastyRankings, getDynastyTiers } from "@/lib/dynasty/rankings";
 import { enrichRankingsWithMarketSources } from "@/lib/dynasty/sources/marketSources";
 
@@ -7,6 +8,7 @@ export default async function DynastyHubPage() {
   const { rankings, sources } =
     await enrichRankingsWithMarketSources(importedRankings);
   const tiers = getDynastyTiers(rankings);
+  const savedRowsByScope = await getSavedDynastyBoard();
 
   return (
     <div className="space-y-8">
@@ -28,6 +30,7 @@ export default async function DynastyHubPage() {
       <DynastyRankingsClient
         initialRankings={rankings}
         initialTiers={tiers}
+        initialRowsByScope={savedRowsByScope}
         sources={sources}
       />
     </div>
