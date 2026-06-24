@@ -13,7 +13,11 @@ export async function signInWithEmail(formData: FormData) {
   }
 
   const requestHeaders = await headers();
-  const origin = requestHeaders.get("origin") ?? "http://localhost:3000";
+  const host = requestHeaders.get("host") ?? "127.0.0.1:3000";
+  const protocol = host.includes("localhost") || host.includes("127.0.0.1")
+    ? "http"
+    : "https";
+  const origin = `${protocol}://${host}`;
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithOtp({
