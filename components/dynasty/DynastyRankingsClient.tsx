@@ -29,6 +29,13 @@ type AssignedTier = {
   pickValueLabel: string;
 };
 
+type MarketSignal = {
+  detail: string;
+  edge: number | null;
+  label: "Hard Buy" | "Soft Buy" | "Hold" | "Soft Sell" | "Hard Sell";
+  sourceCount: number;
+};
+
 type SaveState = "saved" | "pending" | "saving" | "error";
 
 type DragState = {
@@ -63,6 +70,77 @@ function getSignalClass(signal: string) {
   }
 
   return "bg-skyglass text-ink ring-ink/10";
+}
+
+function getMarketSignal({
+  currentRank,
+  ranking,
+}: {
+  currentRank: number;
+  ranking: DynastyRanking;
+}): MarketSignal {
+  const marketRanks = [ranking.ktcRank, ranking.fantasyCalcRank].filter(
+    (rank): rank is number => typeof rank === "number",
+  );
+
+  if (marketRanks.length === 0) {
+    return {
+      detail: "No live market rank yet",
+      edge: null,
+      label: "Hold",
+      sourceCount: 0,
+    };
+  }
+
+  const marketAverage =
+    marketRanks.reduce((total, rank) => total + rank, 0) / marketRanks.length;
+  const edge = Math.round(marketAverage - currentRank);
+  const sourceText = `${marketRanks.length} source${
+    marketRanks.length === 1 ? "" : "s"
+  }`;
+
+  if (edge >= 24) {
+    return {
+      detail: `You are ${edge} spots higher than market across ${sourceText}`,
+      edge,
+      label: "Hard Buy",
+      sourceCount: marketRanks.length,
+    };
+  }
+
+  if (edge >= 12) {
+    return {
+      detail: `You are ${edge} spots higher than market across ${sourceText}`,
+      edge,
+      label: "Soft Buy",
+      sourceCount: marketRanks.length,
+    };
+  }
+
+  if (edge <= -24) {
+    return {
+      detail: `Market is ${Math.abs(edge)} spots higher than you across ${sourceText}`,
+      edge,
+      label: "Hard Sell",
+      sourceCount: marketRanks.length,
+    };
+  }
+
+  if (edge <= -12) {
+    return {
+      detail: `Market is ${Math.abs(edge)} spots higher than you across ${sourceText}`,
+      edge,
+      label: "Soft Sell",
+      sourceCount: marketRanks.length,
+    };
+  }
+
+  return {
+    detail: `Close to market across ${sourceText}`,
+    edge,
+    label: "Hold",
+    sourceCount: marketRanks.length,
+  };
 }
 
 function getDeltaIcon(delta: number | null) {
@@ -350,6 +428,41 @@ export function DynastyRankingsClient({
     );
   }, [overallPlayerRows]);
 
+  const marketSignalByPlayerId = useMemo(() => {
+    const signals = new Map<string, MarketSignal>();
+
+    initialRankings.forEach((ranking) => {
+      signals.set(
+        ranking.id,
+        getMarketSignal({
+          currentRank: overallRankByPlayerId.get(ranking.id) ?? ranking.overallRank,
+          ranking,
+        }),
+      );
+    });
+
+    return signals;
+  }, [initialRankings, overallRankByPlayerId]);
+
+  const signalCounts = useMemo(() => {
+    const counts = {
+      hardBuys: 0,
+      hardSells: 0,
+    };
+
+    marketSignalByPlayerId.forEach((signal) => {
+      if (signal.label === "Hard Buy") {
+        counts.hardBuys += 1;
+      }
+
+      if (signal.label === "Hard Sell") {
+        counts.hardSells += 1;
+      }
+    });
+
+    return counts;
+  }, [marketSignalByPlayerId]);
+
   const assignedTierByPlayerId = useMemo(() => {
     const assignments = new Map<string, AssignedTier>();
     let activeTier: AssignedTier | null = null;
@@ -429,21 +542,13 @@ export function DynastyRankingsClient({
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <p className="text-sm text-ink/55">Hard buys</p>
           <p className="mt-1 text-2xl font-bold text-emerald-700">
-            {
-              initialRankings.filter((ranking) =>
-                ranking.buySellHold.toLowerCase().includes("hard buy"),
-              ).length
-            }
+            {signalCounts.hardBuys}
           </p>
         </div>
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <p className="text-sm text-ink/55">Hard sells</p>
           <p className="mt-1 text-2xl font-bold text-rose-700">
-            {
-              initialRankings.filter((ranking) =>
-                ranking.buySellHold.toLowerCase().includes("hard sell"),
-              ).length
-            }
+            {signalCounts.hardSells}
           </p>
         </div>
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
@@ -619,6 +724,7 @@ export function DynastyRankingsClient({
                   }
 
                   const assignedTier = assignedTierByPlayerId.get(ranking.id);
+                  const marketSignal = marketSignalByPlayerId.get(ranking.id);
 
                   return (
                     <tr
@@ -682,14 +788,19 @@ export function DynastyRankingsClient({
                         </span>
                       </td>
                       <td className="px-3 py-3">
-                        <span
-                          className={clsx(
-                            "inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
-                            getSignalClass(ranking.buySellHold),
-                          )}
-                        >
-                          {ranking.buySellHold}
-                        </span>
+                        <div className="space-y-1">
+                          <span
+                            className={clsx(
+                              "inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                              getSignalClass(marketSignal?.label ?? "Hold"),
+                            )}
+                          >
+                            {marketSignal?.label ?? "Hold"}
+                          </span>
+                          <p className="max-w-32 text-xs leading-4 text-ink/45">
+                            {marketSignal?.detail ?? "No market signal"}
+                          </p>
+                        </div>
                       </td>
                       <td className="px-3 py-3 font-semibold text-ink">
                         {assignedTier?.pickValueLabel ?? ranking.importedTier}
