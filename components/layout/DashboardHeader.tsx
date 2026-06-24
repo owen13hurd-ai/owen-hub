@@ -2,13 +2,13 @@ import { Search } from "lucide-react";
 
 import { signOut } from "@/app/auth/login/actions";
 import { Button } from "@/components/ui/Button";
-import { hasSupabaseConfig } from "@/lib/supabase/config";
+import { hasSupabaseConfig, shouldRequireAuth } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export async function DashboardHeader() {
   let email: string | undefined;
 
-  if (hasSupabaseConfig()) {
+  if (hasSupabaseConfig() && shouldRequireAuth()) {
     const supabase = await createClient();
     const {
       data: { user },

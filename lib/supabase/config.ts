@@ -6,3 +6,6 @@ export function hasSupabaseConfig() {
   );
 }
 
+export function shouldRequireAuth() {
+  return process.env.NEXT_PUBLIC_REQUIRE_AUTH === "true";
+}

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { DashboardShell } from "@/components/layout/DashboardShell";
-import { hasSupabaseConfig } from "@/lib/supabase/config";
+import { hasSupabaseConfig, shouldRequireAuth } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
@@ -9,7 +9,7 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  if (hasSupabaseConfig()) {
+  if (hasSupabaseConfig() && shouldRequireAuth()) {
     const supabase = await createClient();
     const {
       data: { user },
