@@ -1,0 +1,400 @@
+,,Value Tier,Ps,#,Player,Age,Team,OVR,,KTC,vKTC,Market Rank,,Buy/Sell/Hold,,Relative Base Value
+1.01,,4 1sts,QB,QB1,Josh Allen,29.1,BUF,1,,3,+2,QB,2,Hold,,13.5
+1.02,,4 1sts,QB,QB2,Lamar Jackson,28.5,BAL,2,,4,+2,QB,3,Hold,,13.5
+1.03,,3+ 1sts,QB,QB3,Jayden Daniels,24.5,WAS,3,,2,-1,QB,1,Hold,,11.5
+1.04,,3+ 1sts,QB,QB4,Jalen Hurts,26.9,PHI,4,,12,+8,QB,5,🚀 Hard Buy,,11.5
+1.05,,3+ 1sts,QB,QB5,Joe Burrow,28.6,CIN,5,,8,+3,QB,4,Hold,,11.5
+1.06,,3+ 1sts,WR,WR1,Ja'Marr Chase,25.3,CIN,6,,1,-5,WR,1,⚠️ Soft Sell,,11.5
+1.07,,3+ 1sts,WR,WR2,Malik Nabers,21.9,NYG,7,,6,-1,WR,3,Hold,,11.5
+1.08,,3+ 1sts,TE,TE1,Brock Bowers,22.6,LVR,8,,10,+2,TE,1,Hold,,11.5
+1.09,,3+ 1sts,WR,WR3,Puka Nacua,24.1,LAR,9,,16,+7,WR,7,🔥 Soft Buy,,11.5
+1.10,,3+ 1sts,WR,WR4,Justin Jefferson,26,MIN,10,,5,-5,WR,2,⚠️ Soft Sell,,11.5
+1.11,,2.75 1sts,WR,WR5,CeeDee Lamb,26.2,DAL,11,,11,0,WR,4,Hold,,8.25
+1.12,,2.75 1sts,WR,WR6,Amon-Ra St. Brown,25.7,DET,12,,15,+3,WR,6,Hold,,8.25
+2.01,,2.75 1sts,TE,TE2,Trey McBride,25.6,ARI,13,,21,+8,TE,2,🔥 Soft Buy,,8.25
+2.02,,2.75 1sts,WR,WR7,Brian Thomas Jr.,22.7,JAC,14,,14,0,WR,5,Hold,,8.25
+2.03,,2.75 1sts,QB,QB6,Drake Maye,22.8,NEP,15,,17,+2,QB,6,Hold,,8.25
+2.04,,2.75 1sts,QB,QB7,Caleb Williams,23.6,CHI,16,,25,+9,QB,10,🔥 Soft Buy,,8.25
+2.05,,2.75 1sts,RB,RB1,Bijan Robinson,23.4,ATL,17,,7,-10,RB,1,🛑 Hard Sell,,8.25
+2.06,,2.75 1sts,RB,RB2,Jahmyr Gibbs,23.3,DET,18,,9,-9,RB,2,🛑 Hard Sell,,8.25
+2.07,,2.5 1sts,QB,QB8,Justin Herbert,27.3,LAC,19,,22,+3,QB,8,Hold,,7.5
+2.08,,2.5 1sts,QB,QB9,Patrick Mahomes,29.8,KCC,20,,19,-1,QB,7,Hold,,7.5
+2.09,,2.5 1sts,WR,WR8,Nico Collins,26.3,HOU,21,,20,-1,WR,9,Hold,,7.5
+2.10,,2.5 1sts,RB,RB3,Ashton Jeanty,21.6,LVR,22,,13,-9,RB,3,⚠️ Soft Sell,,7.5
+2.11,,2.5 1sts,WR,WR9,Drake London,23.9,ATL,23,,18,-5,WR,8,Hold,,7.5
+2.12,,2.25 1sts,WR,WR10,Marvin Harrison Jr.,22.9,ARI,24,,26,+2,WR,11,Hold,,6.75
+3.01,,2.25 1sts,WR,WR11,Ladd McConkey,23.7,LAC,25,,24,-1,WR,10,Hold,,6.75
+3.02,,2.25 1sts,QB,QB10,Jordan Love,26.7,GBP,26,,33,+7,QB,12,🔥 Soft Buy,,6.75
+3.03,,2.25 1sts,WR,WR12,Jaxon Smith-Njigba,23.4,SEA,27,,28,+1,WR,12,Hold,,6.75
+3.04,,2.25 1sts,QB,QB11,C.J. Stroud,23.7,HOU,28,,27,-1,QB,11,Hold,,6.75
+3.05,,2.25 1sts,WR,WR13,Travis Hunter,22.1,JAC,29,,36,+7,WR,14,🔥 Soft Buy,,6.75
+3.06,,2.25 1sts,RB,RB4,Omarion Hampton,22.3,LAC,30,,31,+1,RB,5,Hold,,6.75
+3.07,,2.25 1sts,WR,WR14,A.J. Brown,28,PHI,31,,38,+7,WR,15,🔥 Soft Buy,,6.75
+3.08,,2.25 1sts,RB,RB5,Saquon Barkley,28.4,PHI,32,,29,-3,RB,4,Hold,,6.75
+3.09,,2.25 1sts,QB,QB12,Bo Nix,25.3,DEN,33,,23,-10,QB,9,⚠️ Soft Sell,,6.75
+3.10,,2 1sts,WR,WR15,Tetairoa McMillan,22.2,CAR,34,,43,+9,WR,17,🔥 Soft Buy,,6
+3.11,,2 1sts,WR,WR16,Rashee Rice,25.2,KCC,35,,45,+10,WR,18,🔥 Soft Buy,,6
+3.12,,2 1sts,RB,RB6,Breece Hall,24.1,NYJ,36,,50,+14,RB,10,🚀 Hard Buy,,6
+4.01,,2 1sts,WR,WR17,Garrett Wilson,24.9,NYJ,37,,35,-2,WR,13,Hold,,6
+4.02,,2 1sts,RB,RB7,De'Von Achane,23.7,MIA,38,,32,-6,RB,6,⚠️ Soft Sell,,6
+4.03,,1.75 1st,QB,QB13,Kyler Murray,27.9,ARI,39,,46,+7,QB,15,🔥 Soft Buy,,5.25
+4.04,,1.75 1st,RB,RB8,Bucky Irving,22.9,TBB,40,,34,-6,RB,7,⚠️ Soft Sell,,5.25
+4.05,,1.75 1st,QB,QB14,Trevor Lawrence,25.7,JAC,41,,51,+10,QB,18,🔥 Soft Buy,,5.25
+4.06,,1.5 1st,WR,WR18,Tee Higgins,26.4,CIN,42,,42,0,WR,16,Hold,,4.5
+4.07,,1.5 1st,QB,QB15,Brock Purdy,25.5,SFO,43,,39,-4,QB,13,Hold,,4.5
+4.08,,1.5 1st,RB,RB9,TreVeyon Henderson,22.7,NEP,44,,44,0,RB,8,Hold,,4.5
+4.09,,1.5 1st,QB,QB16,Baker Mayfield,30.2,TBB,45,,48,+3,QB,17,Hold,,4.5
+4.10,,1.5 1st,QB,QB17,J.J. McCarthy,22.4,MIN,46,,40,-6,QB,14,⚠️ Soft Sell,,4.5
+4.11,,1.5 1st,QB,QB18,Cam Ward,23.1,TEN,47,,47,0,QB,16,Hold,,4.5
+4.12,,1.5 1st,RB,RB10,Jonathan Taylor,26.4,IND,48,,49,+1,RB,9,Hold,,4.5
+5.01,,1.25 1st,WR,WR19,Rome Odunze,23.1,CHI,49,,57,+8,WR,20,Hold,,3.75
+5.02,,1.25 1st,QB,QB19,Dak Prescott,31.9,DAL,50,,78,+28,QB,22,🚀 Hard Buy,,3.75
+5.03,,1.25 1st,RB,RB11,Quinshon Judkins,21.7,CLE,51,,52,+1,RB,11,Hold,,3.75
+5.04,,1.25 1st,TE,TE3,Sam LaPorta,24.5,DET,52,,53,+1,TE,3,Hold,,3.75
+5.05,,1.25 1st,WR,WR20,Chris Olave,25,NOS,53,,87,+34,WR,30,🚀 Hard Buy,,3.75
+5.06,,1.25 1st,WR,WR21,DeVonta Smith,26.6,PHI,54,,56,+2,WR,19,Hold,,3.75
+5.07,,1.25 1st,TE,TE4,Colston Loveland,21.2,CHI,55,,79,+24,TE,5,🚀 Hard Buy,,3.75
+5.08,,1.25 1st,WR,WR22,Emeka Egbuka,22.7,TBB,56,,58,+2,WR,21,Hold,,3.75
+5.09,,1.25 1st,RB,RB12,Kenneth Walker III,24.7,SEA,57,,64,+7,RB,15,Hold,,3.75
+5.10,,1.25 1st,QB,QB20,Bryce Young,23.9,CAR,58,,61,+3,QB,20,Hold,,3.75
+5.11,,1.25 1st,RB,RB13,Josh Jacobs,27.4,GBP,59,,63,+4,RB,14,Hold,,3.75
+5.12,,1.25 1st,QB,QB21,Michael Penix Jr.,25.2,ATL,60,,55,-5,QB,19,Hold,,3.75
+6.01,,1.25 1st,RB,RB14,Kyren Williams,24.8,LAR,61,,59,-2,RB,12,Hold,,3.75
+6.02,,1.25 1st,RB,RB15,James Cook,25.8,BUF,62,,66,+4,RB,17,Hold,,3.75
+6.03,,1st,WR,WR23,D.J. Moore,28.2,CHI,63,,85,+22,WR,28,🚀 Hard Buy,,3
+6.04,,1st,TE,TE5,Tyler Warren,23.1,IND,64,,70,+6,TE,4,Hold,,3
+6.05,,1st,WR,WR24,Xavier Worthy,22.2,KCC,65,,77,+12,WR,25,🔥 Soft Buy,,3
+6.06,,1st,WR,WR25,Jordan Addison,23.4,MIN,66,,73,+7,WR,23,Hold,,3
+6.07,,1st,RB,RB16,RJ Harvey,24.4,DEN,67,,75,+8,RB,19,Hold,,3
+6.08,,1st,RB,RB17,Christian McCaffrey,29.1,SFO,68,,67,-1,RB,18,Hold,,3
+6.09,,1st,QB,QB22,Jared Goff,30.7,DET,69,,71,+2,QB,21,Hold,,3
+6.10,,1st,WR,WR26,Jaylen Waddle,26.6,MIA,70,,84,+14,WR,27,🔥 Soft Buy,,3
+6.11,,1st,TE,TE6,George Kittle,31.7,SFO,71,,81,+10,TE,6,🔥 Soft Buy,,3
+6.12,,1st,QB,QB23,Tua Tagovailoa,27.3,MIA,72,,96,+24,QB,25,🚀 Hard Buy,,3
+7.01,,1st,WR,WR27,Brandon Aiyuk,27.3,SFO,73,,104,+31,WR,40,🚀 Hard Buy,,3
+7.02,,1st,TE,TE7,T.J. Hockenson,28,MIN,74,,93,+19,TE,7,🔥 Soft Buy,,3
+7.03,,1st,RB,RB18,Chase Brown,25.3,CIN,75,,60,-15,RB,13,⚠️ Soft Sell,,3
+7.04,,1st,RB,RB19,Kaleb Johnson,21.9,PIT,76,,65,-11,RB,16,⚠️ Soft Sell,,3
+7.05,,.75 1st,QB,QB24,Justin Fields,26.3,NYJ,77,,95,+18,QB,24,🔥 Soft Buy,,2.5
+7.06,,.75 1st,RB,RB20,Derrick Henry,31.5,BAL,78,,76,-2,RB,20,Hold,,2.5
+7.07,,.75 1st,WR,WR28,DK Metcalf,27.5,PIT,79,,80,+1,WR,26,Hold,,2.5
+7.08,,.75 1st,WR,WR29,Davante Adams,32.5,LAR,80,,106,+26,WR,42,🔥 Soft Buy,,2.5
+7.09,,.75 1st,RB,RB21,Chuba Hubbard,26,CAR,81,,91,+10,RB,21,🔥 Soft Buy,,2.5
+7.10,,.75 1st,QB,QB25,Jaxson Dart,22.1,NYG,82,,90,+8,QB,23,Hold,,2.5
+7.11,,.75 1st,QB,QB26,Anthony Richardson,23.1,IND,83,,143,+60,QB,29,🚀 Hard Buy,,2.5
+7.12,,.75 1st,WR,WR30,Jameson Williams,24.3,DET,84,,72,-12,WR,22,⚠️ Soft Sell,,2.5
+8.01,,.75 1st,WR,WR31,Luther Burden,21.6,CHI,85,,94,+9,WR,34,Hold,,2.5
+8.02,,.75 1st,WR,WR32,Mike Evans,31.9,TBB,86,,97,+11,WR,35,🔥 Soft Buy,,2.5
+8.03,,.75 1st,WR,WR33,Zay Flowers,24.8,BAL,87,,74,-13,WR,24,⚠️ Soft Sell,,2.5
+8.04,,.75 1st,WR,WR34,Terry McLaurin,29.8,WAS,88,,88,0,WR,31,Hold,,2.5
+8.05,,.75 1st,WR,WR35,George Pickens,24.3,DAL,89,,86,-3,WR,29,Hold,,2.5
+8.06,,.75 1st,RB,RB22,Alvin Kamara,29.9,NOS,90,,102,+12,RB,22,Hold,,2.5
+8.07,,2nd +,WR,WR36,Tyreek Hill,31.3,MIA,91,,103,+12,WR,39,Hold,,1.25
+8.08,,2nd +,WR,WR37,Jayden Higgins,22.5,HOU,92,,98,+6,WR,36,Hold,,1.25
+8.09,,2nd +,WR,WR38,Matthew Golden,21.9,GBP,93,,89,-4,WR,32,Hold,,1.25
+8.10,,2nd +,WR,WR39,Jayden Reed,25.2,GBP,94,,107,+13,WR,43,Hold,,1.25
+8.11,,2nd +,WR,WR40,Tre Harris,23.3,LAC,95,,108,+13,WR,44,Hold,,1.25
+8.12,,2nd +,TE,TE8,David Njoku,29,CLE,96,,126,+30,TE,11,🚀 Hard Buy,,1.25
+9.01,,2nd +,WR,WR41,Jerry Jeudy,26.2,CLE,97,,99,+2,WR,37,Hold,,1.25
+9.02,,2nd +,WR,WR42,Josh Downs,23.9,IND,98,,100,+2,WR,38,Hold,,1.25
+9.03,,2nd +,WR,WR43,Ricky Pearsall,24.8,SFO,99,,92,-7,WR,33,Hold,,1.25
+9.04,,2nd +,WR,WR44,Chris Godwin,29.3,TBB,100,,105,+5,WR,41,Hold,,1.25
+9.05,,2nd +,WR,WR45,Khalil Shakir,25.4,BUF,101,,111,+10,WR,45,Hold,,1.25
+9.06,,2nd +,QB,QB27,Geno Smith,34.7,LVR,102,,129,+27,QB,27,🔥 Soft Buy,,1.25
+9.07,,2nd +,QB,QB28,Sam Darnold,28.1,SEA,103,,110,+7,QB,26,Hold,,1.25
+9.08,,2nd +,RB,RB23,Joe Mixon,28.9,HOU,104,,113,+9,RB,24,Hold,,1.25
+9.09,,2nd +,RB,RB24,David Montgomery,28.1,DET,105,,109,+4,RB,23,Hold,,1.25
+9.10,,2nd +,TE,TE9,Mark Andrews,29.8,BAL,106,,138,+32,TE,12,🚀 Hard Buy,,1.25
+9.11,,2nd +,RB,RB25,Cam Skattebo,23.4,NYG,107,,114,+7,RB,25,Hold,,1.25
+9.12,,2nd,TE,TE10,Tucker Kraft,24.6,GBP,108,,118,+10,TE,9,Hold,,1
+10.01,,2nd,WR,WR46,Courtland Sutton,29.7,DEN,109,,116,+7,WR,47,Hold,,1
+10.02,,2nd,WR,WR47,Jauan Jennings,28,SFO,110,,135,+25,WR,52,🔥 Soft Buy,,1
+10.03,,2nd,RB,RB26,Aaron Jones,30.6,MIN,111,,148,+37,RB,36,🚀 Hard Buy,,1
+10.04,,2nd,RB,RB27,D'Andre Swift,26.5,CHI,112,,127,+15,RB,29,🔥 Soft Buy,,1
+10.05,,2nd,WR,WR48,Jack Bech,22.5,LVR,113,,133,+20,WR,51,🔥 Soft Buy,,1
+10.06,,2nd,WR,WR49,Keon Coleman,22.1,BUF,114,,115,+1,WR,46,Hold,,1
+10.07,,2nd,RB,RB28,Bhayshul Tuten,22.4,JAC,115,,141,+26,RB,34,🔥 Soft Buy,,1
+10.08,,2nd,WR,WR50,Michael Pittman,27.7,IND,116,,128,+12,WR,49,Hold,,1
+10.09,,2nd,TE,TE11,Kyle Pitts,24.7,ATL,117,,140,+23,TE,13,🔥 Soft Buy,,1
+10.10,,2nd,WR,WR51,Stefon Diggs,31.6,NEP,118,,160,+42,WR,58,🚀 Hard Buy,,1
+10.11,,2nd,RB,RB29,Zach Charbonnet,24.5,SEA,119,,120,+1,RB,26,Hold,,1
+10.12,,2nd,RB,RB30,Tyrone Tracy,25.6,NYG,120,,134,+14,RB,32,Hold,,1
+11.01,,2nd,RB,RB31,Brian Robinson,26.3,WAS,121,,131,+10,RB,30,Hold,,1
+11.02,,2nd,TE,TE12,Dalton Kincaid,25.7,BUF,122,,122,0,TE,10,Hold,,1
+11.03,,2nd,TE,TE13,Isaiah Likely,25.2,BAL,123,,117,-6,TE,8,Hold,,1
+11.04,,2nd,RB,RB32,James Conner,30.2,ARI,124,,132,+8,RB,31,Hold,,1
+11.05,,2nd -,RB,RB33,Tony Pollard,28.2,TEN,125,,147,+22,RB,35,🔥 Soft Buy,,0.75
+11.06,,2nd -,WR,WR52,Jakobi Meyers,28.6,LVR,126,,130,+4,WR,50,Hold,,0.75
+11.07,,2nd -,TE,TE14,Jonnu Smith,29.8,MIA,127,,191,+64,TE,24,🚀 Hard Buy,,0.75
+11.08,,2nd -,QB,QB29,Jalen Milroe,22.6,SEA,128,,145,+17,QB,30,🔥 Soft Buy,,0.75
+11.09,,2nd -,WR,WR53,Calvin Ridley,30.5,TEN,129,,149,+20,WR,54,🔥 Soft Buy,,0.75
+11.10,,2nd -,QB,QB30,Matthew Stafford,37.4,LAR,130,,139,+9,QB,28,Hold,,0.75
+11.11,,2nd -,RB,RB34,Travis Etienne,26.4,JAC,131,,137,+6,RB,33,Hold,,0.75
+11.12,,2nd -,WR,WR54,Deebo Samuel,29.4,WAS,132,,154,+22,WR,56,🔥 Soft Buy,,0.75
+12.01,,2nd -,WR,WR55,Jalen McMillan,23.6,TBB,133,,151,+18,WR,55,🔥 Soft Buy,,0.75
+12.02,,2nd -,RB,RB35,Isiah Pacheco,26.3,KCC,134,,123,-11,RB,27,Hold,,0.75
+12.03,,2nd -,RB,RB36,Jaylen Warren,26.7,PIT,135,,153,+18,RB,38,🔥 Soft Buy,,0.75
+12.04,,2nd -,WR,WR56,Jaylin Noel,22.8,HOU,136,,146,+10,WR,53,Hold,,0.75
+12.05,,2nd -,WR,WR57,Xavier Legette,24.4,CAR,137,,165,+28,WR,61,🔥 Soft Buy,,0.75
+12.06,,2nd -,RB,RB37,Tyjae Spears,24,TEN,138,,158,+20,RB,39,🔥 Soft Buy,,0.75
+12.07,,2nd -,RB,RB38,Najee Harris,27.3,LAC,139,,167,+28,RB,42,🔥 Soft Buy,,0.75
+12.08,,3rd +,TE,TE15,Evan Engram,30.8,DEN,140,,157,+17,TE,15,🔥 Soft Buy,,0.6
+12.09,,3rd +,TE,TE16,Brenton Strange,24.5,JAC,141,,177,+36,TE,19,🚀 Hard Buy,,0.6
+12.10,,3rd +,TE,TE17,Jake Ferguson,26.4,DAL,142,,173,+31,TE,18,🚀 Hard Buy,,0.6
+12.11,,3rd +,WR,WR58,Kyle Williams,22.6,NEP,143,,125,-18,WR,48,⚠️ Soft Sell,,0.6
+12.12,,3rd +,WR,WR59,Cooper Kupp,32,SEA,144,,168,+24,WR,62,🔥 Soft Buy,,0.6
+13.01,,3rd +,RB,RB39,Braelon Allen,21.4,NYJ,145,,175,+30,RB,44,🚀 Hard Buy,,0.6
+13.02,,3rd +,TE,TE18,Mason Taylor,21.2,NYJ,146,,152,+6,TE,14,Hold,,0.6
+13.03,,3rd +,TE,TE19,Travis Kelce,35.7,KCC,147,,171,+24,TE,17,🔥 Soft Buy,,0.6
+13.04,,3rd +,RB,RB40,Rhamondre Stevenson,27.4,NEP,148,,195,+47,RB,52,🚀 Hard Buy,,0.6
+13.05,,3rd +,RB,RB41,Dylan Sampson,20.8,CLE,149,,176,+27,RB,45,🔥 Soft Buy,,0.6
+13.06,,3rd +,TE,TE20,Pat Freiermuth,26.7,PIT,150,,216,+66,TE,27,🚀 Hard Buy,,0.6
+13.07,,3rd +,RB,RB42,Jordan Mason,26.1,MIN,151,,150,-1,RB,37,Hold,,0.6
+13.08,,3rd +,RB,RB43,Tank Bigsby,23.8,JAC,152,,166,+14,RB,41,Hold,,0.6
+13.09,,3rd +,TE,TE21,Cade Otton,26.2,TBB,153,,190,+37,TE,23,🚀 Hard Buy,,0.6
+13.10,,3rd +,RB,RB44,Jaydon Blue,21.5,DAL,154,,161,+7,RB,40,Hold,,0.6
+13.11,,3rd +,QB,QB31,Tyler Shough,25.8,NOS,155,,156,+1,QB,31,Hold,,0.6
+13.12,,3rd +,WR,WR60,Rashid Shaheed,26.8,NOS,156,,162,+6,WR,59,Hold,,0.6
+14.01,,3rd +,TE,TE22,Terrance Ferguson,22.3,LAR,157,,169,+12,TE,16,Hold,,0.6
+14.02,,3rd +,RB,RB45,Trey Benson,22.9,ARI,158,,124,-34,RB,28,🛑 Hard Sell,,0.6
+14.03,,3rd +,QB,QB32,Shedeur Sanders,23.4,CLE,159,,193,+34,QB,33,🚀 Hard Buy,,0.6
+14.04,,3rd,RB,RB46,Rachaad White,26.5,TBB,160,,188,+28,RB,50,🔥 Soft Buy,,0.5
+14.05,,3rd,WR,WR61,Cedric Tillman,25.2,CLE,161,,170,+9,WR,63,Hold,,0.5
+14.06,,3rd,WR,WR62,Darnell Mooney,27.7,ATL,162,,159,-3,WR,57,Hold,,0.5
+14.07,,3rd,RB,RB47,Javonte Williams,25.2,DAL,163,,179,+16,RB,46,🔥 Soft Buy,,0.5
+14.08,,3rd,TE,TE23,Harold Fannin,21,CLE,164,,185,+21,TE,20,🔥 Soft Buy,,0.5
+14.09,,3rd,TE,TE24,Theo Johnson,24.3,NYG,165,,236,+71,TE,29,🚀 Hard Buy,,0.5
+14.10,,3rd,WR,WR63,Marvin Mims,23.3,DEN,166,,172,+6,WR,64,Hold,,0.5
+14.11,,3rd,WR,WR64,Rashod Bateman,25.6,BAL,167,,164,-3,WR,60,Hold,,0.5
+14.12,,3rd,TE,TE25,Dallas Goedert,30.5,PHI,168,,197,+29,TE,25,🔥 Soft Buy,,0.5
+15.01,,3rd,RB,RB48,Isaac Guerendo,25,SFO,169,,180,+11,RB,47,Hold,,0.5
+15.02,,3rd,WR,WR65,Jalen Royals,22.4,KCC,170,,192,+22,WR,68,🔥 Soft Buy,,0.5
+15.03,,3rd,RB,RB49,Devin Neal,21.9,NOS,171,,200,+29,RB,55,🔥 Soft Buy,,0.5
+15.04,,3rd,RB,RB50,Blake Corum,24.6,LAR,172,,215,+43,RB,60,🚀 Hard Buy,,0.5
+15.05,,3rd,WR,WR66,Jalen Coker,23.7,CAR,173,,189,+16,WR,67,🔥 Soft Buy,,0.5
+15.06,,3rd,RB,RB51,Jaylen Wright,22.2,MIA,174,,174,0,RB,43,Hold,,0.5
+15.07,,3rd,WR,WR67,Tank Dell,25.7,HOU,175,,206,+31,WR,72,🚀 Hard Buy,,0.5
+15.08,,3rd,WR,WR68,Romeo Doubs,25.2,GBP,176,,204,+28,WR,71,🔥 Soft Buy,,0.5
+15.09,,3rd,RB,RB52,Trevor Etienne,21,CAR,177,,201,+24,RB,56,🔥 Soft Buy,,0.5
+15.10,,3rd,RB,RB53,Ray Davis,25.6,BUF,178,,182,+4,RB,49,Hold,,0.5
+15.11,,3rd,RB,RB54,Jonathon Brooks,21.9,CAR,179,,205,+26,RB,57,🔥 Soft Buy,,0.5
+15.12,,3rd,TE,TE26,Ben Sinnott,23,WAS,180,,187,+7,TE,22,Hold,,0.5
+16.01,,3rd,TE,TE27,Elijah Arroyo,22.2,SEA,181,,186,+5,TE,21,Hold,,0.5
+16.02,,3rd,WR,WR69,Marquise Brown,28.1,KCC,182,,210,+28,WR,73,🔥 Soft Buy,,0.5
+16.03,,3rd,WR,WR70,Quentin Johnston,23.8,LAC,183,,203,+20,WR,70,🔥 Soft Buy,,0.5
+16.04,,3rd,TE,TE28,Ja'Tavion Sanders,22.3,CAR,184,,211,+27,TE,26,🔥 Soft Buy,,0.5
+16.05,,3rd,WR,WR71,Adonai Mitchell,22.7,IND,185,,184,-1,WR,66,Hold,,0.5
+16.06,,3rd,WR,WR72,Christian Watson,26.1,GBP,186,,223,+37,WR,78,🚀 Hard Buy,,0.5
+16.07,,3rd -,QB,QB33,Russell Wilson,36.6,NYG,187,,227,+40,QB,34,🚀 Hard Buy,,0.4
+16.08,,3rd -,QB,QB34,Daniel Jones,28.1,IND,188,,178,-10,QB,32,Hold,,0.4
+16.09,,3rd -,RB,RB55,Ollie Gordon,21.4,MIA,189,,226,+37,RB,63,🚀 Hard Buy,,0.4
+16.10,,3rd -,RB,RB56,J.K. Dobbins,26.5,DEN,190,,181,-9,RB,48,Hold,,0.4
+16.11,,3rd -,WR,WR73,Christian Kirk,28.6,HOU,191,,222,+31,WR,77,🚀 Hard Buy,,0.4
+16.12,,3rd -,WR,WR74,Wan'Dale Robinson,24.5,NYG,192,,202,+10,WR,69,Hold,,0.4
+17.01,,3rd -,RB,RB57,Rico Dowdle,27,CAR,193,,234,+41,RB,64,🚀 Hard Buy,,0.4
+17.02,,3rd -,WR,WR75,Elic Ayomanor,22.1,TEN,194,,214,+20,WR,75,🔥 Soft Buy,,0.4
+17.03,,3rd -,RB,RB58,MarShawn Lloyd,24.5,GBP,195,,208,+13,RB,58,Hold,,0.4
+17.04,,3rd -,WR,WR76,Dontayvion Wicks,24,GBP,196,,231,+35,WR,81,🚀 Hard Buy,,0.4
+17.05,,3rd -,RB,RB59,DJ Giddens,21.8,IND,197,,198,+1,RB,53,Hold,,0.4
+17.06,,3rd -,RB,RB60,Tyler Allgeier,25.2,ATL,198,,194,-4,RB,51,Hold,,0.4
+17.07,,3rd -,WR,WR77,Alec Pierce,25.2,IND,199,,228,+29,WR,80,🔥 Soft Buy,,0.4
+17.08,,3rd -,WR,WR78,Demario Douglas,24.6,NEP,200,,212,+12,WR,74,Hold,,0.4
+17.09,,3rd -,QB,QB35,Will Howard,23.8,PIT,201,,232,+31,QB,36,🚀 Hard Buy,,0.4
+17.10,,3rd -,RB,RB61,Jordan James,21.2,SFO,202,,217,+15,RB,61,🔥 Soft Buy,,0.4
+17.11,,3rd -,WR,WR79,Troy Franklin,22.4,DEN,203,,233,+30,WR,82,🚀 Hard Buy,,0.4
+17.12,,3rd -,QB,QB36,Joe Milton,25.3,DAL,204,,230,+26,QB,35,🔥 Soft Buy,,0.4
+18.01,,3rd -,TE,TE29,Cole Kmet,26.3,CHI,205,,229,+24,TE,28,🔥 Soft Buy,,0.4
+18.02,,3rd -,RB,RB62,Audric Estime,21.8,DEN,206,,257,+51,RB,70,🚀 Hard Buy,,0.4
+18.03,,3rd -,TE,TE30,Luke Musgrave,24.8,GBP,207,,248,+41,TE,33,🚀 Hard Buy,,0.4
+18.04,,3rd -,RB,RB63,Kendre Miller,23,NOS,208,,241,+33,RB,66,🚀 Hard Buy,,0.4
+18.05,,3rd -,WR,WR80,Joshua Palmer,25.8,BUF,209,,238,+29,WR,83,🔥 Soft Buy,,0.4
+18.06,,3rd -,TE,TE31,Chigoziem Okonkwo,25.8,TEN,210,,240,+30,TE,30,🚀 Hard Buy,,0.4
+18.07,,3rd -,WR,WR81,Amari Cooper,31,FA,211,,309,+98,WR,108,🚀 Hard Buy,,0.4
+18.08,,3rd -,WR,WR82,Ja'Lynn Polk,23.2,NEP,212,,289,+77,WR,100,🚀 Hard Buy,,0.4
+18.09,,3rd -,TE,TE32,Mike Gesicki,29.7,CIN,213,,252,+39,TE,35,🚀 Hard Buy,,0.4
+18.10,,3rd -,TE,TE33,Dalton Schultz,29,HOU,214,,255,+41,TE,36,🚀 Hard Buy,,0.4
+18.11,,3rd -,RB,RB64,Keaton Mitchell,23.4,BAL,215,,244,+29,RB,67,🔥 Soft Buy,,0.4
+18.12,,3rd -,TE,TE34,Michael Mayer,24,LVR,216,,247,+31,TE,32,🚀 Hard Buy,,0.4
+19.01,,3rd -,RB,RB65,Roschon Johnson,24.4,CHI,217,,209,-8,RB,59,Hold,,0.4
+19.02,,3rd -,WR,WR83,Michael Wilson,25.4,ARI,218,,246,+28,WR,85,🔥 Soft Buy,,0.4
+19.03,,3rd -,QB,QB37,Dillon Gabriel,24.5,CLE,219,,259,+40,QB,38,🚀 Hard Buy,,0.4
+19.04,,3rd -,TE,TE35,Noah Gray,26.2,KCC,220,,256,+36,TE,37,🚀 Hard Buy,,0.4
+19.05,,3rd -,WR,WR84,Roman Wilson,24,PIT,221,,219,-2,WR,76,Hold,,0.4
+19.06,,3rd -,QB,QB38,Kirk Cousins,36.9,ATL,222,,290,+68,QB,41,🚀 Hard Buy,,0.4
+19.07,,3rd -,WR,WR85,Pat Bryant,22.6,DEN,223,,183,-40,WR,65,🛑 Hard Sell,,0.4
+19.08,,3rd -,RB,RB66,Jerome Ford,25.8,CLE,224,,258,+34,RB,71,🚀 Hard Buy,,0.4
+19.09,,3rd -,RB,RB67,Tahj Brooks,23.1,CIN,225,,237,+12,RB,65,Hold,,0.4
+19.10,,3rd -,WR,WR86,Jordan Whittington,24.8,LAR,226,,260,+34,WR,87,🚀 Hard Buy,,0.4
+19.11,,4th +,WR,WR87,Andrei Iosivas,25.7,CIN,227,,265,+38,WR,91,🚀 Hard Buy,,0.3
+19.12,,4th +,RB,RB68,Austin Ekeler,30.1,WAS,228,,270,+42,RB,74,🚀 Hard Buy,,0.3
+20.01,,4th +,RB,RB69,Jarquez Hunter,22.5,LAR,229,,199,-30,RB,54,🛑 Hard Sell,,0.3
+20.02,,4th +,WR,WR88,Kayshon Boutte,23.2,NEP,230,,261,+31,WR,88,🚀 Hard Buy,,0.3
+20.03,,4th +,WR,WR89,Isaac TeSlaa,23.4,DET,231,,224,-7,WR,79,Hold,,0.3
+20.04,,4th +,RB,RB70,Jaleel McLaughlin,24.8,DEN,232,,295,+63,RB,78,🚀 Hard Buy,,0.3
+20.05,,4th +,QB,QB39,Quinn Ewers,22.1,MIA,233,,281,+48,QB,39,🚀 Hard Buy,,0.3
+20.06,,4th +,WR,WR90,Elijah Moore,25.3,BUF,234,,262,+28,WR,89,🔥 Soft Buy,,0.3
+20.07,,4th +,,,Derek Carr,,,235,,,-235,N/A,,🛑 Hard Sell,,0.3
+20.08,,4th +,RB,RB71,Damien Martinez,21.4,SEA,236,,275,+39,RB,76,🚀 Hard Buy,,0.3
+20.09,,4th +,WR,WR91,Tory Horton,22.6,SEA,237,,239,+2,WR,84,Hold,,0.3
+20.10,,4th +,WR,WR92,Keenan Allen,33.2,FA,238,,326,+88,WR,115,🚀 Hard Buy,,0.3
+20.11,,4th +,TE,TE36,Hunter Henry,30.6,NEP,239,,250,+11,TE,34,Hold,,0.3
+20.12,,4th +,WR,WR93,Luke McCaffrey,24.2,WAS,240,,277,+37,WR,94,🚀 Hard Buy,,0.3
+21.01,,4th +,RB,RB72,Isaiah Davis,23.4,NYJ,241,,283,+42,RB,77,🚀 Hard Buy,,0.3
+21.02,,4th +,WR,WR94,Tai Felton,22.3,MIN,242,,294,+52,WR,102,🚀 Hard Buy,,0.3
+21.03,,4th +,RB,RB73,Sean Tucker,23.7,TBB,243,,274,+31,RB,75,🚀 Hard Buy,,0.3
+21.04,,4th +,WR,WR95,Malik Washington,24.5,MIA,244,,287,+43,WR,98,🚀 Hard Buy,,0.3
+21.05,,4th +,RB,RB74,Nick Chubb,29.5,HOU,245,,269,+24,RB,73,🔥 Soft Buy,,0.3
+21.06,,4th +,WR,WR96,Savion Williams,23.6,GBP,246,,263,+17,WR,90,🔥 Soft Buy,,0.3
+21.07,,4th,WR,WR97,Tre Tucker,24.3,LVR,247,,268,+21,WR,93,🔥 Soft Buy,,0.2
+21.08,,4th,WR,WR98,Parker Washington,23.3,JAC,248,,313,+65,WR,109,🚀 Hard Buy,,0.2
+21.09,,4th,TE,TE37,Zach Ertz,34.6,WAS,249,,273,+24,TE,38,🔥 Soft Buy,,0.2
+21.10,,4th,WR,WR99,Jalen Tolbert,26.3,DAL,250,,314,+64,WR,110,🚀 Hard Buy,,0.2
+21.11,,4th,WR,WR100,Tutu Atwell,25.7,LAR,251,,300,+49,WR,103,🚀 Hard Buy,,0.2
+21.12,,4th,WR,WR101,Dyami Brown,25.7,JAC,252,,282,+30,WR,96,🚀 Hard Buy,,0.2
+22.01,,4th,RB,RB75,Will Shipley,22.8,PHI,253,,251,-2,RB,69,Hold,,0.2
+22.02,,4th,TE,TE38,Dawson Knox,28.6,BUF,254,,310,+56,TE,42,🚀 Hard Buy,,0.2
+22.03,,4th,QB,QB40,Jameis Winston,31.5,NYG,255,,312,+57,QB,43,🚀 Hard Buy,,0.2
+22.04,,4th,WR,WR102,Darius Slayton,28.5,NYG,256,,292,+36,WR,101,🚀 Hard Buy,,0.2
+22.05,,4th,RB,RB76,Kareem Hunt,29.9,KCC,257,,308,+51,RB,81,🚀 Hard Buy,,0.2
+22.06,,4th,QB,QB41,Sam Howell,24.8,MIN,258,,320,+62,QB,44,🚀 Hard Buy,,0.2
+22.07,,4th,WR,WR103,Jalin Hyatt,23.8,NYG,259,,288,+29,WR,99,🔥 Soft Buy,,0.2
+22.08,,4th,TE,TE39,Juwan Johnson,28.8,NOS,260,,303,+43,TE,41,🚀 Hard Buy,,0.2
+22.09,,4th,RB,RB77,Zack Moss,27.5,CIN,261,,322,+61,RB,82,🚀 Hard Buy,,0.2
+22.10,,4th,WR,WR104,Gabriel Davis,26.2,FA,262,,391,+129,WR,131,🚀 Hard Buy,,0.2
+22.11,,4th,RB,RB78,Kyle Monangai,23.1,CHI,263,,245,-18,RB,68,⚠️ Soft Sell,,0.2
+22.12,,4th,WR,WR105,Jermaine Burton,24,CIN,264,,302,+38,WR,105,🚀 Hard Buy,,0.2
+23.01,,4th -,QB,QB42,Spencer Rattler,24.8,NOS,265,,286,+21,QB,40,🔥 Soft Buy,,0.1
+23.02,,4th -,WR,WR106,Javon Baker,23.4,NEP,266,,317,+51,WR,113,🚀 Hard Buy,,0.1
+23.03,,4th -,RB,RB79,Woody Marks,24.5,HOU,267,,264,-3,RB,72,Hold,,0.1
+23.04,,4th -,TE,TE40,Luke Schoonmaker,26.8,DAL,268,,319,+51,TE,44,🚀 Hard Buy,,0.1
+23.05,,4th -,WR,WR107,Tez Johnson,23.1,TBB,269,,304,+35,WR,106,🚀 Hard Buy,,0.1
+23.06,,4th -,TE,TE41,Cade Stover,25,HOU,270,,335,+65,TE,46,🚀 Hard Buy,,0.1
+23.07,,4th -,TE,TE42,Noah Fant,27.6,SEA,271,,296,+25,TE,40,🔥 Soft Buy,,0.1
+23.08,,4th -,RB,RB80,Elijah Mitchell,27.2,KCC,272,,306,+34,RB,80,🚀 Hard Buy,,0.1
+23.09,,4th -,WR,WR108,DeAndre Hopkins,33.1,BAL,273,,301,+28,WR,104,🔥 Soft Buy,,0.1
+23.10,,4th -,WR,WR109,Adam Thielen,34.8,CAR,274,,284,+10,WR,97,Hold,,0.1
+23.11,,4th -,WR,WR110,Jahan Dotson,25.3,PHI,275,,329,+54,WR,117,🚀 Hard Buy,,0.1
+23.12,,4th -,WR,WR111,Malachi Corley,23.3,NYJ,276,,324,+48,WR,114,🚀 Hard Buy,,0.1
+24.01,,4th -,QB,QB43,Aaron Rodgers,41.6,PIT,277,,254,-23,QB,37,⚠️ Soft Sell,,0.1
+24.02,,4th -,WR,WR112,Xavier Restrepo,23.2,TEN,278,,249,-29,WR,86,⚠️ Soft Sell,,0.1
+24.03,,4th -,TE,TE43,Gunnar Helm,22.8,TEN,279,,285,+6,TE,39,Hold,,0.1
+24.04,,4th -,QB,QB44,Kenny Pickett,27.1,CLE,280,,323,+43,QB,45,🚀 Hard Buy,,0.1
+24.05,,4th -,WR,WR113,Devaughn Vele,27.6,DEN,281,,305,+24,WR,107,🔥 Soft Buy,,0.1
+24.06,,4th -,TE,TE44,Erick All,24.8,CIN,282,,318,+36,TE,43,🚀 Hard Buy,,0.1
+24.07,,4th -,WR,WR114,Tyler Lockett,32.8,TEN,283,,340,+57,WR,121,🚀 Hard Buy,,0.1
+24.08,,4th -,WR,WR115,Jalen Nailor,26.3,MIN,284,,315,+31,WR,111,🚀 Hard Buy,,0.1
+24.09,,4th -,QB,QB45,Will Levis,26,TEN,285,,352,+67,QB,48,🚀 Hard Buy,,0.1
+24.10,,4th -,WR,WR116,Jaylin Lane,23.2,WAS,286,,279,-7,WR,95,Hold,,0.1
+24.11,,4th -,QB,QB46,Malik Willis,26.1,GBP,287,,311,+24,QB,42,🔥 Soft Buy,,0.1
+24.12,,4th -,RB,RB81,Justice Hill,27.6,BAL,288,,298,+10,RB,79,Hold,,0.1
+25.01,,4th -,WR,WR117,Curtis Samuel,28.9,BUF,289,,332,+43,WR,119,🚀 Hard Buy,,0.1
+25.02,,4th -,RB,RB82,Devin Singletary,27.8,NYG,290,,339,+49,RB,85,🚀 Hard Buy,,0.1
+25.03,,4th -,WR,WR118,John Metchie,25,HOU,291,,358,+67,WR,128,🚀 Hard Buy,,0.1
+25.04,,4th -,WR,WR119,Trey Palmer,24.2,TBB,292,,327,+35,WR,116,🚀 Hard Buy,,0.1
+25.05,,4th -,WR,WR120,Jonathan Mingo,24.2,DAL,293,,347,+54,WR,122,🚀 Hard Buy,,0.1
+25.06,,4th -,WR,WR121,Diontae Johnson,29,CLE,294,,333,+39,WR,120,🚀 Hard Buy,,0.1
+25.07,,4th -,QB,QB47,Joe Flacco,40.4,CLE,295,,330,+35,QB,46,🚀 Hard Buy,,0.1
+25.08,,4th -,RB,RB83,Kimani Vidal,23.8,LAC,296,,346,+50,RB,89,🚀 Hard Buy,,0.1
+25.09,,5th or less,TE,TE45,AJ Barner,23.2,SEA,297,,353,+56,TE,48,🚀 Hard Buy,,0.05
+25.10,,5th or less,WR,WR122,Rondale Moore,25.1,MIN,298,,354,+56,WR,125,🚀 Hard Buy,,0.05
+25.11,,5th or less,RB,RB84,Antonio Gibson,27,NEP,299,,370,+71,RB,91,🚀 Hard Buy,,0.05
+25.12,,5th or less,RB,RB85,Kenneth Gainwell,26.3,PIT,300,,341,+41,RB,86,🚀 Hard Buy,,0.05
+26.01,,5th or less,RB,RB86,Ty Johnson,27.8,BUF,301,,336,+35,RB,84,🚀 Hard Buy,,0.05
+26.02,,5th or less,TE,TE46,Taysom Hill,34.8,NOS,302,,387,+85,TE,50,🚀 Hard Buy,,0.05
+26.03,,5th or less,WR,WR123,Treylon Burks,25.3,TEN,303,,355,+52,WR,126,🚀 Hard Buy,,0.05
+26.04,,5th or less,WR,WR124,Calvin Austin III,26.3,PIT,304,,267,-37,WR,92,🛑 Hard Sell,,0.05
+26.05,,5th or less,RB,RB87,Khalil Herbert,27.2,IND,305,,343,+38,RB,88,🚀 Hard Buy,,0.05
+26.06,,5th or less,QB,QB48,Mac Jones,26.8,SFO,306,,344,+38,QB,47,🚀 Hard Buy,,0.05
+26.07,,5th or less,WR,WR125,Devontez Walker,24,BAL,307,,350,+43,WR,124,🚀 Hard Buy,,0.05
+26.08,,5th or less,TE,TE47,Darnell Washington,23.9,PIT,308,,334,+26,TE,45,🔥 Soft Buy,,0.05
+26.09,,5th or less,WR,WR126,Nick Westbrook-Ikhine,28.3,MIA,309,,331,+22,WR,118,🔥 Soft Buy,,0.05
+26.10,,5th or less,RB,RB88,Dameon Pierce,25.4,HOU,310,,363,+53,RB,90,🚀 Hard Buy,,0.05
+26.11,,5th or less,QB,QB49,Mason Rudolph,30,PIT,311,,384,+73,QB,50,🚀 Hard Buy,,0.05
+26.12,,5th or less,WR,WR127,Jacob Cowing,24.4,SFO,312,,316,+4,WR,112,Hold,,0.05
+27.01,,5th or less,TE,TE48,Oronde Gadsden,22,LAC,313,,242,-71,TE,31,🛑 Hard Sell,,0.05
+27.02,,5th or less,WR,WR128,Tahj Washington,24.1,MIA,314,,348,+34,WR,123,🚀 Hard Buy,,0.05
+27.03,,5th or less,RB,RB89,Miles Sanders,28.2,DAL,315,,328,+13,RB,83,Hold,,0.05
+27.04,,5th or less,RB,RB90,Emanuel Wilson,26.2,GBP,316,,342,+26,RB,87,🔥 Soft Buy,,0.05
+27.05,,5th or less,WR,WR129,Mike Williams,30.7,LAC,317,,356,+39,WR,127,🚀 Hard Buy,,0.05
+27.06,,5th or less,WR,WR130,Xavier Hutchinson,25.1,HOU,318,,365,+47,WR,130,🚀 Hard Buy,,0.05
+27.07,,5th or less,RB,RB91,Alexander Mattison,27,MIA,319,,374,+55,RB,92,🚀 Hard Buy,,0.05
+27.08,,5th or less,WR,WR131,Greg Dortch,27.1,ARI,320,,359,+39,WR,129,🚀 Hard Buy,,0.05
+27.09,,5th or less,TE,TE49,Tyler Conklin,29.9,LAC,321,,338,+17,TE,47,🔥 Soft Buy,,0.05
+27.10,,5th or less,TE,TE50,Daniel Bellinger,24.8,NYG,322,,366,+44,TE,49,🚀 Hard Buy,,0.05
+27.11,,5th or less,QB,QB50,Zach Wilson,25.9,MIA,323,,362,+39,QB,49,🚀 Hard Buy,,0.05
+27.12,,5th or less,RB,RB92,Brashard Smith,22.2,KCC,324,,218,-106,RB,62,🛑 Hard Sell,,0.05
+28.01,,5th or less,TE,TE51,Colby Parkinson,26.5,LAR,325,,372,+47,TE,49,🚀 Hard Buy,,0.05
+28.02,,5th or less,RB,RB93,Israel Abanikanda,22.7,SFO,326,,376,+50,RB,92,🚀 Hard Buy,,0.05
+28.03,,5th or less,TE,TE52,Greg Dulcich,25.3,NYG,327,,407,+80,TE,50,🚀 Hard Buy,,0.05
+28.04,,5th or less,TE,TE53,Tyler Higbee,32.5,LAR,328,,357,+29,TE,48,🔥 Soft Buy,,0.05
+28.05,,5th or less,WR,WR132,Brenden Rice,23.3,LAC,329,,402,+73,WR,131,🚀 Hard Buy,,0.05
+28.06,,5th or less,WR,WR133,Noah Brown,29.5,WAS,330,,381,+51,WR,130,🚀 Hard Buy,,0.05
+28.07,,5th or less,TE,TE54,Tommy Tremble,25.1,CAR,331,,377,+46,TE,49,🚀 Hard Buy,,0.05
+28.08,,5th or less,RB,RB94,AJ Dillon,27.2,PHI,332,,373,+41,RB,91,🚀 Hard Buy,,0.05
+28.09,,5th or less,TE,TE55,Will Dissly,29,LAC,333,,375,+42,TE,49,🚀 Hard Buy,,0.05
+28.10,,5th or less,TE,TE56,Grant Calcaterra,26.6,PHI,334,,400,+66,TE,50,🚀 Hard Buy,,0.05
+28.11,,5th or less,RB,RB95,Cam Akers,26,NOS,335,,383,+48,RB,92,🚀 Hard Buy,,0.05
+28.12,,5th or less,WR,WR134,Kendrick Bourne,29.9,NEP,336,,360,+24,WR,129,🔥 Soft Buy,,0.05
+29.01,,5th or less,TE,TE57,Jared Wiley,24.7,KCC,337,,367,+30,TE,49,🚀 Hard Buy,,0.05
+29.02,,5th or less,RB,RB96,Zamir White,25.8,LVR,338,,398,+60,RB,92,🚀 Hard Buy,,0.05
+29.03,,5th or less,WR,WR135,Bub Means,24.5,NOS,339,,380,+41,WR,130,🚀 Hard Buy,,0.05
+29.04,,5th or less,QB,QB51,Aidan O'Connell,26.8,LVR,340,,385,+45,QB,50,🚀 Hard Buy,,0.05
+29.05,,5th or less,WR,WR136,Brandin Cooks,31.8,NOS,341,,403,+62,WR,131,🚀 Hard Buy,,0.05
+29.06,,5th or less,TE,TE58,Elijah Higgins,24.7,ARI,342,,394,+52,TE,50,🚀 Hard Buy,,0.05
+29.07,,5th or less,QB,QB52,Drew Lock,28.6,SEA,343,,390,+47,QB,50,🚀 Hard Buy,,0.05
+29.08,,5th or less,WR,WR137,Isaiah Bond,-1,FA,344,,467,+123,WR,131,🚀 Hard Buy,,0.05
+29.09,,5th or less,WR,WR138,Jake Bobo,26.9,SEA,345,,395,+50,WR,131,🚀 Hard Buy,,0.05
+29.10,,5th or less,TE,TE59,Brevin Jordan,25,HOU,346,,392,+46,TE,50,🚀 Hard Buy,,0.05
+29.11,,5th or less,RB,RB97,Sincere McCormick,24.8,LVR,347,,401,+54,RB,92,🚀 Hard Buy,,0.05
+29.12,,5th or less,QB,QB53,Gardner Minshew,29.1,KCC,348,,399,+51,QB,50,🚀 Hard Buy,,0.05
+30.01,,5th or less,QB,QB54,Riley Leonard,22.8,IND,349,,345,-4,QB,47,Hold,,0.05
+30.02,,5th or less,QB,QB55,Hendon Hooker,27.5,DET,350,,388,+38,QB,50,🚀 Hard Buy,,0.05
+30.03,,5th or less,WR,WR139,Ray-Ray McCloud,28.7,ATL,351,,371,+20,WR,130,🔥 Soft Buy,,0.05
+30.04,,5th or less,RB,RB98,Chris Rodriguez,25.8,WAS,352,,393,+41,RB,92,🚀 Hard Buy,,0.05
+30.05,,5th or less,RB,RB99,Deuce Vaughn,23.7,DAL,353,,416,+63,RB,92,🚀 Hard Buy,,0.05
+30.06,,5th or less,RB,RB100,Frank Gore Jr.,23.3,BUF,354,,405,+51,RB,92,🚀 Hard Buy,,0.05
+30.07,,5th or less,WR,WR140,Bo Melton,26.1,GBP,355,,411,+56,WR,131,🚀 Hard Buy,,0.05
+30.08,,5th or less,RB,RB101,Rasheen Ali,24.4,BAL,356,,408,+52,RB,92,🚀 Hard Buy,,0.05
+30.09,,5th or less,WR,WR141,Xavier Gipson,24.3,NYJ,357,,389,+32,WR,130,🚀 Hard Buy,,0.05
+30.10,,5th or less,WR,WR142,JuJu Smith-Schuster,28.6,KCC,358,,409,+51,WR,131,🚀 Hard Buy,,0.05
+30.11,,5th or less,WR,WR143,KaVontae Turpin,28.9,DAL,359,,404,+45,WR,131,🚀 Hard Buy,,0.05
+30.12,,5th or less,WR,WR144,K.J. Osborn,28,WAS,360,,424,+64,WR,131,🚀 Hard Buy,,0.05
+31.01,,5th or less,RB,RB102,Jase McClellan,23,FA,361,,461,+100,RB,92,🚀 Hard Buy,,0.05
+31.02,,5th or less,QB,QB56,Kyle McCord,22.8,PHI,362,,412,+50,QB,50,🚀 Hard Buy,,0.05
+31.03,,5th or less,RB,RB103,Ty Chandler,27.1,MIN,363,,397,+34,RB,92,🚀 Hard Buy,,0.05
+31.04,,5th or less,TE,TE60,Davis Allen,24.4,LAR,364,,419,+55,TE,50,🚀 Hard Buy,,0.05
+31.05,,5th or less,WR,WR145,Johnny Wilson,24.2,PHI,365,,410,+45,WR,131,🚀 Hard Buy,,0.05
+31.06,,5th or less,RB,RB104,Raheem Mostert,33.2,LVR,366,,379,+13,RB,92,Hold,,0.05
+31.07,,5th or less,WR,WR146,A.T. Perry,25.7,DEN,367,,444,+77,WR,131,🚀 Hard Buy,,0.05
+31.08,,5th or less,WR,WR147,Mack Hollins,31.8,NEP,368,,437,+69,WR,131,🚀 Hard Buy,,0.05
+31.09,,5th or less,RB,RB105,Carson Steele,22.7,KCC,369,,423,+54,RB,92,🚀 Hard Buy,,0.05
+31.10,,5th or less,WR,WR148,Olamide Zaccheaus,27.9,CHI,370,,422,+52,WR,131,🚀 Hard Buy,,0.05
+31.11,,5th or less,RB,RB106,Tyler Goodson,24.6,IND,371,,382,+11,RB,92,Hold,,0.05
+31.12,,5th or less,WR,WR149,Demarcus Robinson,30.8,SFO,372,,413,+41,WR,131,🚀 Hard Buy,,0.05
+32.01,,5th or less,WR,WR150,Tyquan Thornton,24.9,KCC,373,,386,+13,WR,130,Hold,,0.05
+32.02,,5th or less,WR,WR151,Isaiah Hodgins,26.7,SFO,374,,442,+68,WR,131,🚀 Hard Buy,,0.05
+32.03,,5th or less,WR,WR152,Jamari Thrash,24.5,CLE,375,,426,+51,WR,131,🚀 Hard Buy,,0.05
+32.04,,5th or less,RB,RB107,Dylan Laube,25.5,LVR,376,,446,+70,RB,92,🚀 Hard Buy,,0.05
+32.05,,5th or less,RB,RB108,Emari Demercado,26.4,ARI,377,,432,+55,RB,92,🚀 Hard Buy,,0.05
+32.06,,5th or less,RB,RB109,Michael Carter,26.2,ARI,378,,434,+56,RB,92,🚀 Hard Buy,,0.05
+32.07,,5th or less,WR,WR153,Tyler Johnson,26.8,NYJ,379,,415,+36,WR,131,🚀 Hard Buy,,0.05
+32.08,,5th or less,WR,WR154,Tim Patrick,31.6,DET,380,,430,+50,WR,131,🚀 Hard Buy,,0.05
+32.09,,5th or less,WR,WR155,Terrace Marshall,25.1,PHI,381,,459,+78,WR,131,🚀 Hard Buy,,0.05
+32.10,,5th or less,WR,WR156,Mecole Hardman,27.3,GBP,382,,431,+49,WR,131,🚀 Hard Buy,,0.05
+32.11,,5th or less,RB,RB110,Sione Vaki,23.9,DET,383,,436,+53,RB,92,🚀 Hard Buy,,0.05
+32.12,,5th or less,TE,TE61,Jeremy Ruckert,24.9,NYJ,384,,449,+65,TE,50,🚀 Hard Buy,,0.05
+33.01,,5th or less,WR,WR157,Mason Tipton,24.8,NOS,385,,421,+36,WR,131,🚀 Hard Buy,,0.05
+33.02,,5th or less,WR,WR158,Van Jefferson,28.9,TEN,386,,441,+55,WR,131,🚀 Hard Buy,,0.05
+33.03,,5th or less,TE,TE62,Irv Smith,26.9,HOU,387,,443,+56,TE,50,🚀 Hard Buy,,0.05
+33.04,,5th or less,WR,WR159,David Bell,24.5,CLE,388,,428,+40,WR,131,🚀 Hard Buy,,0.05
+33.05,,5th or less,TE,TE63,Foster Moreau,28.2,NOS,389,,454,+65,TE,50,🚀 Hard Buy,,0.05
+33.06,,5th or less,RB,RB111,Tyler Badie,25.4,DEN,390,,457,+67,RB,92,🚀 Hard Buy,,0.05
+33.07,,5th or less,RB,RB112,Samaje Perine,29.8,CIN,391,,451,+60,RB,92,🚀 Hard Buy,,0.05
+33.08,,5th or less,WR,WR160,KJ Hamler,26,BUF,392,,438,+46,WR,131,🚀 Hard Buy,,0.05
+33.09,,5th or less,TE,TE64,Stone Smartt,26.7,NYJ,393,,463,+70,TE,50,🚀 Hard Buy,,0.05
+33.10,,5th or less,QB,QB57,Trey Lance,25.1,LAC,394,,448,+54,QB,50,🚀 Hard Buy,,0.05
+33.11,,5th or less,WR,WR161,Marquez Valdes-Scantling,30.7,SEA,395,,418,+23,WR,131,🔥 Soft Buy,,0.05
+33.12,,5th or less,WR,WR162,Allen Lazard,29.6,NYJ,396,,417,+21,WR,131,🔥 Soft Buy,,0.05
+34.01,,5th or less,WR,WR163,Derius Davis,24.8,LAC,397,,440,+43,WR,131,🚀 Hard Buy,,0.05
+34.02,,5th or less,RB,RB113,Clyde Edwards-Helaire,26.2,NOS,398,,462,+64,RB,92,🚀 Hard Buy,,0.05
+34.03,,5th or less,QB,QB58,Dorian Thompson-Robinson,25.6,PHI,399,,477,+78,QB,50,🚀 Hard Buy,,0.05
