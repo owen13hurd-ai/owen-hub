@@ -29,6 +29,8 @@ type SavedBuild = {
 type StatKey = "HP" | "Atk" | "Def" | "SpA" | "SpD" | "Spe";
 
 const stats: StatKey[] = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
+const maxChampionsInvestment = 32;
+const maxComparableEv = 252;
 
 const natureModifiers: Record<string, { down?: StatKey; up?: StatKey }> = {
   Adamant: { down: "SpA", up: "Atk" },
@@ -224,6 +226,16 @@ function getNatureMultiplier(nature: string, stat: StatKey) {
   return 1;
 }
 
+function clampChampionsInvestment(investment: number) {
+  return Math.min(Math.max(investment, 0), maxChampionsInvestment);
+}
+
+function toComparableEv(investment: number) {
+  const boundedInvestment = clampChampionsInvestment(investment);
+
+  return Math.round((boundedInvestment / maxChampionsInvestment) * maxComparableEv);
+}
+
 function calculateLevel50Stat({
   baseStats,
   ev,
@@ -243,13 +255,14 @@ function calculateLevel50Stat({
 
   const iv = 31;
   const level = 50;
+  const comparableEv = toComparableEv(ev);
 
   if (stat === "HP") {
-    return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+    return Math.floor(((2 * base + iv + Math.floor(comparableEv / 4)) * level) / 100) + level + 10;
   }
 
   const rawStat =
-    Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+    Math.floor(((2 * base + iv + Math.floor(comparableEv / 4)) * level) / 100) + 5;
 
   return Math.floor(rawStat * getNatureMultiplier(nature, stat));
 }
@@ -614,22 +627,22 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
                           <input
                             type="number"
                             min={0}
-                            max={252}
-                            step={4}
-                            value={slot.evs[stat]}
+                            max={maxChampionsInvestment}
+                            step={1}
+                            value={clampChampionsInvestment(slot.evs[stat])}
                             onChange={(event) => {
                               updateSlot(index, {
                                 ...slot,
                                 evs: {
                                   ...slot.evs,
-                                  [stat]: Number(event.target.value),
+                                  [stat]: clampChampionsInvestment(Number(event.target.value)),
                                 },
                               });
                             }}
                             className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-2 text-sm text-ink"
                           />
                           <span className="mt-0.5 block text-[11px] font-semibold text-ink/40">
-                            EV
+                            Investment
                           </span>
                         </label>
                       );

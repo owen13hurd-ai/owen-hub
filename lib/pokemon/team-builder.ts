@@ -49,6 +49,9 @@ export type PokemonBuilderData = {
   types: PokemonType[];
 };
 
+const maxChampionsInvestment = 32;
+const maxComparableEv = 252;
+
 type PastePokemonSet = {
   ability: string | null;
   evs: Partial<Record<PokemonStatKey, number>>;
@@ -235,6 +238,12 @@ function getNatureMultiplier(nature: string | null, stat: PokemonStatKey) {
   return 1;
 }
 
+function toComparableEv(investment: number) {
+  const boundedInvestment = Math.min(Math.max(investment, 0), maxChampionsInvestment);
+
+  return Math.round((boundedInvestment / maxChampionsInvestment) * maxComparableEv);
+}
+
 function calculateLevel50Stat({
   base,
   ev,
@@ -248,13 +257,14 @@ function calculateLevel50Stat({
 }) {
   const iv = 31;
   const level = 50;
+  const comparableEv = toComparableEv(ev);
 
   if (stat === "HP") {
-    return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+    return Math.floor(((2 * base + iv + Math.floor(comparableEv / 4)) * level) / 100) + level + 10;
   }
 
   const rawStat =
-    Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+    Math.floor(((2 * base + iv + Math.floor(comparableEv / 4)) * level) / 100) + 5;
 
   return Math.floor(rawStat * getNatureMultiplier(nature, stat));
 }

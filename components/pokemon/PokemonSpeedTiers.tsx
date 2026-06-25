@@ -44,6 +44,8 @@ const itemOptions = [
   { label: "Choice Scarf", multiplier: 1.5, value: "choice-scarf" },
   { label: "Mega Stone", multiplier: 1, value: "mega-stone" },
 ];
+const maxChampionsInvestment = 32;
+const maxComparableEv = 252;
 
 function getNatureMultiplier(nature: string, stat: StatKey) {
   const modifier = natureModifiers[nature];
@@ -57,6 +59,16 @@ function getNatureMultiplier(nature: string, stat: StatKey) {
   }
 
   return 1;
+}
+
+function clampChampionsInvestment(investment: number) {
+  return Math.min(Math.max(investment, 0), maxChampionsInvestment);
+}
+
+function toComparableEv(investment: number) {
+  const boundedInvestment = clampChampionsInvestment(investment);
+
+  return Math.round((boundedInvestment / maxChampionsInvestment) * maxComparableEv);
 }
 
 function calculateLevel50Speed({
@@ -76,8 +88,9 @@ function calculateLevel50Speed({
     return null;
   }
 
+  const comparableEv = toComparableEv(ev);
   const rawSpeed =
-    Math.floor(((2 * base + 31 + Math.floor(ev / 4)) * 50) / 100) + 5;
+    Math.floor(((2 * base + 31 + Math.floor(comparableEv / 4)) * 50) / 100) + 5;
   const natureSpeed = Math.floor(rawSpeed * getNatureMultiplier(nature, "Spe"));
 
   return Math.floor(natureSpeed * itemMultiplier);
@@ -91,7 +104,7 @@ export function PokemonSpeedTiers({ data }: { data: PokemonBuilderData }) {
       data.pokemon[0]?.name ??
       "",
   );
-  const [speedEvs, setSpeedEvs] = useState(252);
+  const [speedEvs, setSpeedEvs] = useState(maxChampionsInvestment);
   const selectedOption = data.pokemon.find(
     (pokemon) => pokemon.name === selectedPokemon,
   );
@@ -197,16 +210,16 @@ export function PokemonSpeedTiers({ data }: { data: PokemonBuilderData }) {
 
           <label className="block">
             <span className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.08em] text-ink/45">
-              <span>Speed EVs</span>
+              <span>Speed investment</span>
               <span className="text-ink">{speedEvs}</span>
             </span>
             <input
               type="range"
               min={0}
-              max={252}
-              step={4}
+              max={maxChampionsInvestment}
+              step={1}
               value={speedEvs}
-              onChange={(event) => setSpeedEvs(Number(event.target.value))}
+              onChange={(event) => setSpeedEvs(clampChampionsInvestment(Number(event.target.value)))}
               className="mt-2 w-full accent-ink"
             />
           </label>
@@ -227,7 +240,7 @@ export function PokemonSpeedTiers({ data }: { data: PokemonBuilderData }) {
             </div>
             <p className="mt-2 text-xs font-semibold text-ink/45">
               Base {selectedOption?.baseStats?.Spe ?? "-"} · {selectedNature} ·{" "}
-              {speedEvs} Spe · {item.label}
+              {speedEvs} Spe investment · {item.label}
             </p>
           </div>
         </aside>
@@ -257,7 +270,7 @@ export function PokemonSpeedTiers({ data }: { data: PokemonBuilderData }) {
                       />
                     </div>
                     <p className="mt-1 text-xs text-ink/45">
-                      {row.nature} · {row.evs} Spe
+                      {row.nature} · {row.evs} Spe investment
                     </p>
                   </div>
                 );
@@ -278,7 +291,7 @@ export function PokemonSpeedTiers({ data }: { data: PokemonBuilderData }) {
                     <span className="text-sm font-bold text-moss">{row.speed}</span>
                   </div>
                   <p className="mt-1 text-xs text-ink/45">
-                    {row.nature} · {row.evs} Spe · {row.count} teams
+                    {row.nature} · {row.evs} Spe investment · {row.count} teams
                   </p>
                 </div>
               ))}
