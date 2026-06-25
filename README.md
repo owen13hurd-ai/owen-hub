@@ -80,6 +80,18 @@ auto-save:
 supabase/migrations/0002_dynasty_board_snapshots.sql
 ```
 
+## Sleeper portfolio
+
+The Dynasty Portfolio page can pull public Sleeper league and roster data by
+username:
+
+```txt
+http://localhost:3000/dashboard/dynasty/portfolio
+```
+
+Enter a Sleeper username and season, then use the league checkbox dropdown to
+include or exclude leagues from the exposure totals.
+
 ## Next milestone
 
 The next practical step is to run the Dynasty board migration in Supabase, test

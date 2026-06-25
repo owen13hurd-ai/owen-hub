@@ -28,6 +28,8 @@ export function MobileNav() {
 
         {navigationItems.map((item) => {
           const Icon = item.icon;
+          const isActive =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <Link
@@ -35,7 +37,7 @@ export function MobileNav() {
               href={item.href}
               className={clsx(
                 "inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium",
-                pathname === item.href
+                isActive
                   ? "bg-skyglass text-ink"
                   : "text-ink/65 hover:bg-mist hover:text-ink",
               )}

@@ -32,7 +32,8 @@ export function Sidebar() {
         </Link>
 
         {navigationItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
 
           return (

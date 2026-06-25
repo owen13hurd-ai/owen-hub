@@ -1,5 +1,9 @@
+import Link from "next/link";
+import { BarChart3 } from "lucide-react";
+
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
+import { Button } from "@/components/ui/Button";
 import { getDynastyRankings, getDynastyTiers } from "@/lib/dynasty/rankings";
 import { enrichRankingsWithMarketSources } from "@/lib/dynasty/sources/marketSources";
 
@@ -25,6 +29,14 @@ export default async function DynastyHubPage() {
           creates the foundation for saved custom rankings, market comparisons,
           and trade tools.
         </p>
+        <div className="mt-5">
+          <Button asChild variant="secondary">
+            <Link href="/dashboard/dynasty/portfolio">
+              <BarChart3 className="h-4 w-4" aria-hidden="true" />
+              Portfolio exposure
+            </Link>
+          </Button>
+        </div>
       </section>
 
       <DynastyRankingsClient
