@@ -13,6 +13,7 @@ import clsx from "clsx";
 import { saveDynastyBoard } from "@/app/dashboard/dynasty/actions";
 import type {
   DynastyBoardRow,
+  DynastyOwnershipSummary,
   DynastyRanking,
   DynastyRowsByScope,
   DynastyTier,
@@ -316,11 +317,13 @@ export function DynastyRankingsClient({
   initialRankings,
   initialTiers,
   initialRowsByScope,
+  ownershipByPlayerId,
   sources,
 }: {
   initialRankings: DynastyRanking[];
   initialTiers: DynastyTier[];
   initialRowsByScope: DynastyRowsByScope | null;
+  ownershipByPlayerId: Record<string, DynastyOwnershipSummary> | null;
   sources: MarketSourceSummary;
 }) {
   const defaultRowsByScope = useMemo(() => {
@@ -648,7 +651,7 @@ export function DynastyRankingsClient({
 
         <div className="mt-5 overflow-hidden rounded-lg border border-ink/10">
           <div className="overflow-x-auto">
-            <table className="min-w-[960px] w-full border-collapse text-left text-sm">
+            <table className="min-w-[1040px] w-full border-collapse text-left text-sm">
               <thead className="bg-mist text-xs uppercase tracking-[0.08em] text-ink/55">
                 <tr>
                   <th className="w-10 px-3 py-3" aria-label="Drag handle" />
@@ -657,6 +660,7 @@ export function DynastyRankingsClient({
                   <th className="px-3 py-3">Pos</th>
                   <th className="px-3 py-3">Age</th>
                   <th className="px-3 py-3">Team</th>
+                  <th className="px-3 py-3">Own%</th>
                   <th className="px-3 py-3">KTC</th>
                   <th className="px-3 py-3">FantasyCalc</th>
                   <th className="px-3 py-3">Delta</th>
@@ -690,7 +694,7 @@ export function DynastyRankingsClient({
                           dragState?.rowId === row.id && "opacity-40",
                         )}
                       >
-                        <td colSpan={12} className="px-3 py-2">
+                        <td colSpan={13} className="px-3 py-2">
                           <div
                             className={clsx(
                               "flex items-center gap-3 rounded-md border px-3 py-2",
@@ -725,6 +729,7 @@ export function DynastyRankingsClient({
 
                   const assignedTier = assignedTierByPlayerId.get(ranking.id);
                   const marketSignal = marketSignalByPlayerId.get(ranking.id);
+                  const ownership = ownershipByPlayerId?.[ranking.id];
 
                   return (
                     <tr
@@ -766,6 +771,20 @@ export function DynastyRankingsClient({
                         {ranking.age ?? "-"}
                       </td>
                       <td className="px-3 py-3 text-ink/70">{ranking.team}</td>
+                      <td className="px-3 py-3">
+                        {ownership ? (
+                          <div>
+                            <p className="font-semibold text-ink">
+                              {ownership.percent}%
+                            </p>
+                            <p className="text-xs text-ink/45">
+                              {ownership.exposure}/{ownership.leagueCount}
+                            </p>
+                          </div>
+                        ) : (
+                          <span className="text-ink/35">-</span>
+                        )}
+                      </td>
                       <td className="px-3 py-3 text-ink/70">
                         {ranking.ktcRank ?? "-"}
                       </td>

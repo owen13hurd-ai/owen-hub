@@ -90,12 +90,12 @@ export async function getSleeperPortfolio({
     throw new Error("Enter a Sleeper username.");
   }
 
-  const user = await fetchSleeperJson<SleeperUser>(
+  const user = await fetchSleeperJson<SleeperUser | null>(
     `/user/${encodeURIComponent(trimmedUsername)}`,
     60 * 60,
   );
 
-  if (!user.user_id) {
+  if (!user?.user_id) {
     throw new Error("Sleeper user was not found.");
   }
 
@@ -159,4 +159,3 @@ export async function getSleeperPortfolio({
     username: trimmedUsername,
   };
 }
-

@@ -16,6 +16,12 @@ export type DynastyBoardRow = DynastyBoardPlayerRow | DynastyBoardTierRow;
 
 export type DynastyRowsByScope = Record<Position, DynastyBoardRow[]>;
 
+export type DynastyOwnershipSummary = {
+  exposure: number;
+  leagueCount: number;
+  percent: number;
+};
+
 export type DynastyRanking = {
   id: string;
   rookiePick: string;
