@@ -71,6 +71,15 @@ export type SleeperLeaguemateInsights = {
   tradeCount: number;
 };
 
+export type SleeperLeaguemateSearchOption = {
+  displayName: string;
+  leagueCount: number;
+  leagueNames: string[];
+  searchLabel: string;
+  teamNames: string[];
+  userId: string;
+};
+
 export type SleeperLeagueRosterRole = "starter" | "bench";
 
 export type SleeperLeagueRosterPlayer = SleeperRosterAsset & {
@@ -340,6 +349,33 @@ function incrementPlayerCount(counts: Map<string, number>, playerId: string) {
   counts.set(playerId, (counts.get(playerId) ?? 0) + 1);
 }
 
+function getLeagueUserSearchText(leagueUser: SleeperLeagueUser) {
+  const metadataValues = Object.values(leagueUser.metadata ?? {}).filter(
+    (value): value is string => typeof value === "string",
+  );
+
+  return normalizeSearchText(
+    [
+      leagueUser.display_name,
+      leagueUser.username,
+      leagueUser.metadata?.team_name,
+      ...metadataValues,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
+}
+
+function isLeagueUserMatch(leagueUser: SleeperLeagueUser, searchText: string) {
+  const haystack = getLeagueUserSearchText(leagueUser);
+  const searchTokens = searchText.split(" ").filter(Boolean);
+
+  return (
+    haystack.includes(searchText) ||
+    searchTokens.every((token) => haystack.includes(token))
+  );
+}
+
 function getProfileLabels({
   averageAge,
   playerCount,
@@ -469,6 +505,92 @@ export async function getSleeperPortfolio({
   };
 }
 
+export async function getSleeperLeaguemateSearchOptions({
+  season,
+  username,
+}: {
+  season: string;
+  username: string;
+}): Promise<SleeperLeaguemateSearchOption[]> {
+  const myPortfolio = await getSleeperPortfolio({ season, username });
+  const optionsByUserId = new Map<
+    string,
+    {
+      displayName: string;
+      leagueNames: Set<string>;
+      teamNames: Set<string>;
+      userId: string;
+    }
+  >();
+
+  await Promise.all(
+    myPortfolio.leagues.map(async (league) => {
+      const [leagueUsers, rosters] = await Promise.all([
+        fetchSleeperJson<SleeperLeagueUser[]>(
+          `/league/${league.id}/users`,
+          60 * 10,
+        ),
+        fetchSleeperJson<SleeperRoster[]>(`/league/${league.id}/rosters`, 60 * 10),
+      ]);
+      const rosterOwnerIds = new Set<string>();
+
+      rosters.forEach((roster) => {
+        if (roster.owner_id) {
+          rosterOwnerIds.add(roster.owner_id);
+        }
+
+        roster.co_owners?.forEach((coOwnerId) => {
+          rosterOwnerIds.add(coOwnerId);
+        });
+      });
+
+      leagueUsers.forEach((leagueUser) => {
+        if (!leagueUser.user_id || !rosterOwnerIds.has(leagueUser.user_id)) {
+          return;
+        }
+
+        const existingOption = optionsByUserId.get(leagueUser.user_id) ?? {
+          displayName:
+            leagueUser.display_name ??
+            leagueUser.username ??
+            leagueUser.metadata?.team_name ??
+            "Unknown manager",
+          leagueNames: new Set<string>(),
+          teamNames: new Set<string>(),
+          userId: leagueUser.user_id,
+        };
+
+        existingOption.leagueNames.add(league.name);
+
+        if (leagueUser.metadata?.team_name) {
+          existingOption.teamNames.add(leagueUser.metadata.team_name.trim());
+        }
+
+        optionsByUserId.set(leagueUser.user_id, existingOption);
+      });
+    }),
+  );
+
+  return Array.from(optionsByUserId.values())
+    .map((option) => {
+      const teamNames = Array.from(option.teamNames).filter(Boolean).sort();
+
+      return {
+        displayName: option.displayName,
+        leagueCount: option.leagueNames.size,
+        leagueNames: Array.from(option.leagueNames).sort(),
+        searchLabel: [option.displayName, teamNames[0]]
+          .filter(Boolean)
+          .join(" - "),
+        teamNames,
+        userId: option.userId,
+      };
+    })
+    .sort((a, b) => {
+      return b.leagueCount - a.leagueCount || a.displayName.localeCompare(b.displayName);
+    });
+}
+
 export async function getSleeperLeaguemateInsights({
   managerName,
   season,
@@ -507,17 +629,7 @@ export async function getSleeperLeaguemateInsights({
       ]);
 
       const matchingUsers = leagueUsers.filter((leagueUser) => {
-        const haystack = normalizeSearchText(
-          [
-            leagueUser.display_name,
-            leagueUser.username,
-            leagueUser.metadata?.team_name,
-          ]
-            .filter(Boolean)
-            .join(" "),
-        );
-
-        return haystack.includes(normalizedSearch);
+        return isLeagueUserMatch(leagueUser, normalizedSearch);
       });
 
       await Promise.all(

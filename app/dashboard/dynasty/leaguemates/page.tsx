@@ -2,7 +2,10 @@ import Link from "next/link";
 import { ArrowLeft, RefreshCcw, Search, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
-import { getSleeperLeaguemateInsights } from "@/lib/dynasty/sleeper";
+import {
+  getSleeperLeaguemateInsights,
+  getSleeperLeaguemateSearchOptions,
+} from "@/lib/dynasty/sleeper";
 import { personalSettings } from "@/lib/personal-settings";
 
 function formatPercent(count: number, total: number) {
@@ -21,6 +24,10 @@ export default async function LeaguemateInsightsPage({
   const params = await searchParams;
   const managerName = params?.manager?.trim() ?? "";
   const season = params?.season?.trim() || personalSettings.dynastySeason;
+  const searchOptions = await getSleeperLeaguemateSearchOptions({
+    season,
+    username: personalSettings.sleeperUsername,
+  }).catch(() => []);
   const insights = managerName
     ? await getSleeperLeaguemateInsights({
         managerName,
@@ -34,6 +41,9 @@ export default async function LeaguemateInsightsPage({
   const data = hasError ? null : insights;
   const topPlayers = data?.players.slice(0, 12) ?? [];
   const positions = ["QB", "RB", "WR", "TE"];
+  const suggestedManagers = searchOptions
+    .filter((option) => option.displayName !== personalSettings.sleeperUsername)
+    .slice(0, 18);
 
   return (
     <div className="space-y-8">
@@ -80,11 +90,19 @@ export default async function LeaguemateInsightsPage({
                   aria-hidden="true"
                 />
                 <input
+                  list="leaguemate-options"
                   name="manager"
                   defaultValue={managerName}
                   placeholder="Name, username, or team"
                   className="h-10 w-full rounded-md border border-ink/10 bg-mist pl-9 pr-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
                 />
+                <datalist id="leaguemate-options">
+                  {searchOptions.map((option) => (
+                    <option key={option.userId} value={option.displayName}>
+                      {option.searchLabel}
+                    </option>
+                  ))}
+                </datalist>
               </div>
             </label>
             <label className="block">
@@ -103,6 +121,30 @@ export default async function LeaguemateInsightsPage({
             </div>
           </form>
         </div>
+
+        {suggestedManagers.length > 0 ? (
+          <div className="mt-4 border-t border-ink/10 pt-4">
+            <p className="text-sm font-semibold text-ink">
+              Known leaguemates
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {suggestedManagers.map((option) => (
+                <Link
+                  key={option.userId}
+                  href={`/dashboard/dynasty/leaguemates?manager=${encodeURIComponent(
+                    option.displayName,
+                  )}&season=${encodeURIComponent(season)}`}
+                  className="rounded-full border border-ink/10 bg-mist px-3 py-1.5 text-xs font-bold text-ink transition hover:border-moss hover:bg-skyglass"
+                >
+                  {option.displayName}
+                  <span className="ml-1 text-ink/45">
+                    {option.leagueCount}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {hasError ? (
           <p className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
@@ -125,7 +167,20 @@ export default async function LeaguemateInsightsPage({
         </section>
       ) : null}
 
-      {data ? (
+      {managerName && data?.sharedLeagueCount === 0 ? (
+        <section className="rounded-lg border border-dashed border-ink/20 bg-white p-6">
+          <Users className="h-6 w-6 text-ink/45" aria-hidden="true" />
+          <h2 className="mt-3 text-lg font-bold text-ink">
+            No matching Sleeper manager found.
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
+            Sleeper usually exposes manager handles, not real names. Try one of
+            the known leaguemates above, or search by team name.
+          </p>
+        </section>
+      ) : null}
+
+      {data && data.sharedLeagueCount > 0 ? (
         <>
           <section className="grid gap-4 md:grid-cols-4">
             <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
