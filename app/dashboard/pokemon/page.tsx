@@ -138,103 +138,115 @@ export default async function PokemonHubPage({
         </div>
       </section>
 
-      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-        <div className="overflow-hidden rounded-lg border border-ink/10">
-          <div className="overflow-x-auto">
-            <table className="min-w-[1080px] w-full border-collapse text-left text-sm">
-              <thead className="bg-mist text-xs uppercase tracking-[0.08em] text-ink/55">
-                <tr>
-                  <th className="px-3 py-3">Team</th>
-                  <th className="px-3 py-3">Creator</th>
-                  <th className="px-3 py-3">Event</th>
-                  <th className="px-3 py-3">Rank</th>
-                  <th className="px-3 py-3">Pokémon</th>
-                  <th className="px-3 py-3">Replica</th>
-                  <th className="px-3 py-3">Links</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ink/10">
-                {visibleTeams.map((team) => (
-                  <tr key={team.id} className="bg-white align-top">
-                    <td className="px-3 py-3">
-                      <p className="font-semibold text-ink">{team.id}</p>
-                      <p className="mt-1 max-w-72 text-xs leading-5 text-ink/55">
-                        {team.description}
-                      </p>
-                    </td>
-                    <td className="px-3 py-3">
-                      <p className="font-semibold text-ink">
-                        {team.fullName || team.creator || "-"}
-                      </p>
-                      {team.creator ? (
-                        <p className="mt-1 text-xs text-ink/45">
-                          @{team.creator}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className="px-3 py-3 text-ink/70">
-                      <p>{team.event}</p>
-                      <p className="mt-1 text-xs text-ink/45">
-                        {team.dateShared}
-                      </p>
-                    </td>
-                    <td className="px-3 py-3 font-semibold text-ink">
-                      {team.rank}
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="grid max-w-xl grid-cols-2 gap-2">
-                        {team.pokemon.map((pokemon) => (
-                          <div
-                            key={`${team.id}-${pokemon}`}
-                            className="flex min-h-14 items-center gap-2 rounded-md bg-skyglass px-2 py-1"
-                          >
-                            <PokemonSprite
-                              name={pokemon}
-                              className="h-10 w-10 shrink-0"
-                            />
-                            <span className="text-xs font-bold leading-4 text-ink">
-                              {pokemon}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <p className="font-semibold text-ink">
-                        {team.replicaCode}
-                      </p>
-                      <p className="mt-1 text-xs text-ink/45">
-                        {team.replicaStatus}
-                      </p>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="flex flex-col gap-2">
-                        {team.pokepasteUrl ? (
-                          <Link
-                            href={team.pokepasteUrl}
-                            target="_blank"
-                            className="font-semibold text-moss hover:text-ink"
-                          >
-                            Pokepaste
-                          </Link>
-                        ) : null}
-                        {team.sourceUrl && team.sourceUrl !== "-" ? (
-                          <Link
-                            href={team.sourceUrl}
-                            target="_blank"
-                            className="font-semibold text-moss hover:text-ink"
-                          >
-                            Source
-                          </Link>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <section className="space-y-3">
+        {visibleTeams.map((team) => (
+          <article
+            key={team.id}
+            className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft"
+          >
+            <div className="grid gap-4 xl:grid-cols-[1fr_280px]">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-md bg-ink px-2 py-1 text-xs font-bold text-white">
+                    {team.id}
+                  </span>
+                  <span className="rounded-md bg-mist px-2 py-1 text-xs font-bold text-ink/65">
+                    {team.rank}
+                  </span>
+                  {team.replicaCode !== "None" ? (
+                    <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">
+                      Code {team.replicaCode}
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {team.pokemon.map((pokemon) => (
+                    <div
+                      key={`${team.id}-${pokemon}`}
+                      className="flex min-h-24 items-center gap-3 rounded-lg border border-ink/10 bg-skyglass px-3 py-2"
+                    >
+                      <PokemonSprite
+                        name={pokemon}
+                        className="h-16 w-16 shrink-0"
+                      />
+                      <span className="text-sm font-bold leading-5 text-ink">
+                        {pokemon}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <aside className="rounded-lg bg-mist p-3">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-moss">
+                  Team info
+                </p>
+                <h2 className="mt-2 text-base font-bold leading-6 text-ink">
+                  {team.description}
+                </h2>
+
+                <div className="mt-3 space-y-3 text-sm text-ink/65">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink/40">
+                      Creator / Event
+                    </p>
+                    <p className="mt-1 font-semibold text-ink">
+                      {team.fullName || team.creator || "-"}
+                    </p>
+                    <p className="mt-1 break-words">
+                      {team.creator ? `@${team.creator}` : ""}
+                      {team.creator && team.event !== "-" ? " · " : ""}
+                      {team.event !== "-" ? team.event : ""}
+                    </p>
+                    <p className="mt-1 text-xs text-ink/45">
+                      {team.dateShared}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink/40">
+                      Replica
+                    </p>
+                    <p className="mt-1 font-semibold text-ink">
+                      {team.replicaCode}
+                    </p>
+                    <p className="mt-1 text-xs text-ink/45">
+                      {team.replicaStatus}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {team.pokepasteUrl ? (
+                      <Link
+                        href={team.pokepasteUrl}
+                        target="_blank"
+                        className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
+                      >
+                        Pokepaste
+                      </Link>
+                    ) : null}
+                    {team.sourceUrl && team.sourceUrl !== "-" ? (
+                      <Link
+                        href={team.sourceUrl}
+                        target="_blank"
+                        className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
+                      >
+                        Source
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </article>
+        ))}
+
+        {visibleTeams.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-ink/20 bg-white p-6 text-sm text-ink/60">
+            No teams match that search.
           </div>
-        </div>
+        ) : null}
       </section>
     </div>
   );
