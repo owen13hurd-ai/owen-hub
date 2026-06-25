@@ -37,6 +37,20 @@ type MarketSignal = {
   sourceCount: number;
 };
 
+type HeatMapSignal = {
+  detail: string;
+  label:
+    | "Priority Buy"
+    | "Target"
+    | "Risk Watch"
+    | "Trim"
+    | "Overexposed"
+    | "Balanced"
+    | "Light"
+    | "No Shares"
+    | "No Data";
+};
+
 type SaveState = "saved" | "pending" | "saving" | "error";
 
 type DragState = {
@@ -71,6 +85,30 @@ function getSignalClass(signal: string) {
   }
 
   return "bg-skyglass text-ink ring-ink/10";
+}
+
+function getHeatMapClass(signal: HeatMapSignal["label"]) {
+  if (signal === "Priority Buy" || signal === "Target") {
+    return "bg-emerald-50 text-emerald-800 ring-emerald-200";
+  }
+
+  if (signal === "Risk Watch" || signal === "Trim") {
+    return "bg-rose-50 text-rose-800 ring-rose-200";
+  }
+
+  if (signal === "Overexposed") {
+    return "bg-amber-50 text-amber-900 ring-amber-200";
+  }
+
+  if (signal === "No Shares" || signal === "Light") {
+    return "bg-skyglass text-ink ring-ink/10";
+  }
+
+  if (signal === "No Data") {
+    return "bg-mist text-ink/55 ring-ink/10";
+  }
+
+  return "bg-white text-ink ring-ink/10";
 }
 
 function getMarketSignal({
@@ -141,6 +179,80 @@ function getMarketSignal({
     edge,
     label: "Hold",
     sourceCount: marketRanks.length,
+  };
+}
+
+function getHeatMapSignal({
+  marketSignal,
+  ownership,
+}: {
+  marketSignal: MarketSignal;
+  ownership: DynastyOwnershipSummary | undefined;
+}): HeatMapSignal {
+  if (!ownership || ownership.leagueCount === 0) {
+    return {
+      detail: "No Sleeper league data loaded",
+      label: "No Data",
+    };
+  }
+
+  const isBuy =
+    marketSignal.label === "Hard Buy" || marketSignal.label === "Soft Buy";
+  const isSell =
+    marketSignal.label === "Hard Sell" || marketSignal.label === "Soft Sell";
+
+  if (isBuy && ownership.exposure === 0) {
+    return {
+      detail: "Buy signal and no current shares",
+      label: "Priority Buy",
+    };
+  }
+
+  if (isBuy && ownership.percent <= 25) {
+    return {
+      detail: "Buy signal with light exposure",
+      label: "Target",
+    };
+  }
+
+  if (isSell && ownership.percent >= 50) {
+    return {
+      detail: "Sell signal with heavy exposure",
+      label: "Risk Watch",
+    };
+  }
+
+  if (isSell && ownership.percent >= 25) {
+    return {
+      detail: "Sell signal with meaningful exposure",
+      label: "Trim",
+    };
+  }
+
+  if (ownership.percent >= 75) {
+    return {
+      detail: "Very high portfolio exposure",
+      label: "Overexposed",
+    };
+  }
+
+  if (ownership.exposure === 0) {
+    return {
+      detail: "No current roster shares",
+      label: "No Shares",
+    };
+  }
+
+  if (ownership.percent <= 20) {
+    return {
+      detail: "Small portfolio position",
+      label: "Light",
+    };
+  }
+
+  return {
+    detail: "Exposure fits current signal",
+    label: "Balanced",
   };
 }
 
@@ -466,6 +578,58 @@ export function DynastyRankingsClient({
     return counts;
   }, [marketSignalByPlayerId]);
 
+  const heatMapByPlayerId = useMemo(() => {
+    const signals = new Map<string, HeatMapSignal>();
+
+    initialRankings.forEach((ranking) => {
+      const marketSignal = marketSignalByPlayerId.get(ranking.id);
+
+      signals.set(
+        ranking.id,
+        getHeatMapSignal({
+          marketSignal:
+            marketSignal ??
+            getMarketSignal({
+              currentRank: ranking.overallRank,
+              ranking,
+            }),
+          ownership: ownershipByPlayerId?.[ranking.id],
+        }),
+      );
+    });
+
+    return signals;
+  }, [initialRankings, marketSignalByPlayerId, ownershipByPlayerId]);
+
+  const heatMapCounts = useMemo(() => {
+    const counts = {
+      overexposed: 0,
+      priorityBuys: 0,
+      riskWatches: 0,
+      targets: 0,
+    };
+
+    heatMapByPlayerId.forEach((signal) => {
+      if (signal.label === "Priority Buy") {
+        counts.priorityBuys += 1;
+      }
+
+      if (signal.label === "Target") {
+        counts.targets += 1;
+      }
+
+      if (signal.label === "Risk Watch") {
+        counts.riskWatches += 1;
+      }
+
+      if (signal.label === "Overexposed") {
+        counts.overexposed += 1;
+      }
+    });
+
+    return counts;
+  }, [heatMapByPlayerId]);
+
   const assignedTierByPlayerId = useMemo(() => {
     const assignments = new Map<string, AssignedTier>();
     let activeTier: AssignedTier | null = null;
@@ -561,6 +725,58 @@ export function DynastyRankingsClient({
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
+              Portfolio heat map
+            </p>
+            <h2 className="mt-1 text-lg font-bold text-ink">
+              Exposure actions
+            </h2>
+          </div>
+          <p className="max-w-2xl text-sm leading-6 text-ink/55">
+            Combines Sleeper ownership with your buy/sell/hold logic to flag
+            players you may want to target, trim, or monitor.
+          </p>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-emerald-800">
+              Priority buys
+            </p>
+            <p className="mt-1 text-2xl font-bold text-emerald-900">
+              {heatMapCounts.priorityBuys}
+            </p>
+          </div>
+          <div className="rounded-md border border-emerald-200 bg-white p-3">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-emerald-800">
+              Targets
+            </p>
+            <p className="mt-1 text-2xl font-bold text-ink">
+              {heatMapCounts.targets}
+            </p>
+          </div>
+          <div className="rounded-md border border-rose-200 bg-rose-50 p-3">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-rose-800">
+              Risk watch
+            </p>
+            <p className="mt-1 text-2xl font-bold text-rose-900">
+              {heatMapCounts.riskWatches}
+            </p>
+          </div>
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-amber-900">
+              Overexposed
+            </p>
+            <p className="mt-1 text-2xl font-bold text-amber-950">
+              {heatMapCounts.overexposed}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
@@ -651,7 +867,7 @@ export function DynastyRankingsClient({
 
         <div className="mt-5 overflow-hidden rounded-lg border border-ink/10">
           <div className="overflow-x-auto">
-            <table className="min-w-[1040px] w-full border-collapse text-left text-sm">
+            <table className="min-w-[1140px] w-full border-collapse text-left text-sm">
               <thead className="bg-mist text-xs uppercase tracking-[0.08em] text-ink/55">
                 <tr>
                   <th className="w-10 px-3 py-3" aria-label="Drag handle" />
@@ -661,6 +877,7 @@ export function DynastyRankingsClient({
                   <th className="px-3 py-3">Age</th>
                   <th className="px-3 py-3">Team</th>
                   <th className="px-3 py-3">Own%</th>
+                  <th className="px-3 py-3">Heat</th>
                   <th className="px-3 py-3">KTC</th>
                   <th className="px-3 py-3">FantasyCalc</th>
                   <th className="px-3 py-3">Delta</th>
@@ -694,7 +911,7 @@ export function DynastyRankingsClient({
                           dragState?.rowId === row.id && "opacity-40",
                         )}
                       >
-                        <td colSpan={13} className="px-3 py-2">
+                        <td colSpan={14} className="px-3 py-2">
                           <div
                             className={clsx(
                               "flex items-center gap-3 rounded-md border px-3 py-2",
@@ -729,6 +946,7 @@ export function DynastyRankingsClient({
 
                   const assignedTier = assignedTierByPlayerId.get(ranking.id);
                   const marketSignal = marketSignalByPlayerId.get(ranking.id);
+                  const heatMapSignal = heatMapByPlayerId.get(ranking.id);
                   const ownership = ownershipByPlayerId?.[ranking.id];
 
                   return (
@@ -784,6 +1002,23 @@ export function DynastyRankingsClient({
                         ) : (
                           <span className="text-ink/35">-</span>
                         )}
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="space-y-1">
+                          <span
+                            className={clsx(
+                              "inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                              getHeatMapClass(
+                                heatMapSignal?.label ?? "No Data",
+                              ),
+                            )}
+                          >
+                            {heatMapSignal?.label ?? "No Data"}
+                          </span>
+                          <p className="max-w-32 text-xs leading-4 text-ink/45">
+                            {heatMapSignal?.detail ?? "No exposure signal"}
+                          </p>
+                        </div>
                       </td>
                       <td className="px-3 py-3 text-ink/70">
                         {ranking.ktcRank ?? "-"}
