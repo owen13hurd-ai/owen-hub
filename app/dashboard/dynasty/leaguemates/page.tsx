@@ -16,6 +16,32 @@ function formatPercent(count: number, total: number) {
   return `${Math.round((count / total) * 100)}%`;
 }
 
+function LeagueMatchCard({
+  match,
+}: {
+  match: {
+    displayName: string;
+    isSharedLeague: boolean;
+    leagueId: string;
+    leagueName: string;
+    rosterId: number;
+    teamName: string | null;
+  };
+}) {
+  return (
+    <div className="rounded-md border border-ink/10 bg-mist p-3">
+      <p className="font-semibold text-ink">{match.displayName}</p>
+      <p className="mt-1 text-sm text-ink/60">{match.leagueName}</p>
+      <p className="mt-1 text-xs font-semibold text-ink/45">
+        {match.isSharedLeague ? "Shared league" : "Other league"}
+      </p>
+      {match.teamName ? (
+        <p className="mt-1 text-xs text-ink/45">Team: {match.teamName}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export default async function LeaguemateInsightsPage({
   searchParams,
 }: {
@@ -46,6 +72,8 @@ export default async function LeaguemateInsightsPage({
   const suggestedManagers = searchOptions
     .filter((option) => option.displayName !== personalSettings.sleeperUsername)
     .slice(0, 18);
+  const visibleMatches = data?.matches.slice(0, 10) ?? [];
+  const hiddenMatches = data?.matches.slice(10) ?? [];
 
   return (
     <div className="space-y-8">
@@ -263,32 +291,37 @@ export default async function LeaguemateInsightsPage({
             </div>
 
             <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
-                League matches
-              </p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
+                  League matches
+                </p>
+                <span className="text-xs font-semibold text-ink/45">
+                  {data.matches.length}
+                </span>
+              </div>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {data.matches.map((match) => (
-                  <div
+                {visibleMatches.map((match) => (
+                  <LeagueMatchCard
                     key={`${match.leagueId}-${match.rosterId}`}
-                    className="rounded-md border border-ink/10 bg-mist p-3"
-                  >
-                    <p className="font-semibold text-ink">
-                      {match.displayName}
-                    </p>
-                    <p className="mt-1 text-sm text-ink/60">
-                      {match.leagueName}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold text-ink/45">
-                      {match.isSharedLeague ? "Shared league" : "Other league"}
-                    </p>
-                    {match.teamName ? (
-                      <p className="mt-1 text-xs text-ink/45">
-                        Team: {match.teamName}
-                      </p>
-                    ) : null}
-                  </div>
+                    match={match}
+                  />
                 ))}
               </div>
+              {hiddenMatches.length > 0 ? (
+                <details className="mt-3">
+                  <summary className="cursor-pointer rounded-md border border-ink/10 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-skyglass">
+                    Show {hiddenMatches.length} more leagues
+                  </summary>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {hiddenMatches.map((match) => (
+                      <LeagueMatchCard
+                        key={`${match.leagueId}-${match.rosterId}`}
+                        match={match}
+                      />
+                    ))}
+                  </div>
+                </details>
+              ) : null}
             </div>
           </section>
 
