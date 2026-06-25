@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Shuffle, X } from "lucide-react";
+import { Bookmark, Search, Shuffle, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PokemonSprite } from "@/components/pokemon/PokemonSprite";
@@ -48,16 +48,37 @@ function getRandomTeam(teams: VgcPasteTeam[], currentTeamId?: string) {
   return nextTeams[randomIndex] ?? null;
 }
 
+const wantToTryStorageKey = "owen-hub-want-to-try-teams";
+
+function getWantToTryIdsFromStorage() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const savedValue = window.localStorage.getItem(wantToTryStorageKey);
+    const parsedIds = savedValue ? (JSON.parse(savedValue) as string[]) : [];
+
+    return Array.isArray(parsedIds) ? parsedIds : [];
+  } catch {
+    return [];
+  }
+}
+
 function TeamCard({
+  isWantToTry,
   isSpotlight = false,
   selectedPokemon,
   team,
   togglePokemon,
+  toggleWantToTry,
 }: {
+  isWantToTry: boolean;
   isSpotlight?: boolean;
   selectedPokemon: string[];
   team: VgcPasteTeam;
   togglePokemon: (pokemon: string) => void;
+  toggleWantToTry: (teamId: string) => void;
 }) {
   return (
     <article
@@ -79,6 +100,21 @@ function TeamCard({
                 Code {team.replicaCode}
               </span>
             ) : null}
+            <button
+              type="button"
+              onClick={() => toggleWantToTry(team.id)}
+              className={`inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs font-bold transition ${
+                isWantToTry
+                  ? "bg-amber-100 text-amber-900"
+                  : "bg-mist text-ink/55 hover:bg-amber-50 hover:text-amber-900"
+              }`}
+            >
+              <Bookmark
+                className={`h-3.5 w-3.5 ${isWantToTry ? "fill-amber-700" : ""}`}
+                aria-hidden="true"
+              />
+              Want to try
+            </button>
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -175,6 +211,9 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
   const [isRandomTeamOpen, setIsRandomTeamOpen] = useState(false);
   const [isThrowingTeam, setIsThrowingTeam] = useState(false);
   const [selectedPokemon, setSelectedPokemon] = useState<string[]>([]);
+  const [wantToTryIds, setWantToTryIds] = useState<string[]>(
+    getWantToTryIdsFromStorage,
+  );
 
   const pokemonOptions = useMemo(() => {
     return buildPokemonOptions(data.teams);
@@ -219,6 +258,11 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
       return matchesText && hasSelectedPokemon;
     });
   }, [data.teams, query, selectedPokemon]);
+  const wantToTryTeams = useMemo(() => {
+    const wantedIds = new Set(wantToTryIds);
+
+    return data.teams.filter((team) => wantedIds.has(team.id));
+  }, [data.teams, wantToTryIds]);
 
   function togglePokemon(pokemon: string) {
     setSelectedPokemon((currentPokemon) => {
@@ -234,6 +278,18 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
     setQuery("");
     setPokemonQuery("");
     setSelectedPokemon([]);
+  }
+
+  function toggleWantToTry(teamId: string) {
+    setWantToTryIds((currentIds) => {
+      const nextIds = currentIds.includes(teamId)
+        ? currentIds.filter((id) => id !== teamId)
+        : [...currentIds, teamId];
+
+      window.localStorage.setItem(wantToTryStorageKey, JSON.stringify(nextIds));
+
+      return nextIds;
+    });
   }
 
   function showRandomTeam() {
@@ -307,6 +363,40 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
             {data.lastCheckedAt}
           </p>
         </div>
+      </section>
+
+      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
+              Want to try
+            </p>
+            <h2 className="mt-1 text-lg font-bold text-ink">
+              Flagged M-B teams
+            </h2>
+          </div>
+          <span className="rounded-md bg-mist px-3 py-2 text-sm font-bold text-ink/60">
+            {wantToTryTeams.length}
+          </span>
+        </div>
+        {wantToTryTeams.length > 0 ? (
+          <div className="mt-4 space-y-3">
+            {wantToTryTeams.map((team) => (
+              <TeamCard
+                key={`want-${team.id}`}
+                isWantToTry={wantToTryIds.includes(team.id)}
+                selectedPokemon={selectedPokemon}
+                team={team}
+                togglePokemon={togglePokemon}
+                toggleWantToTry={toggleWantToTry}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 rounded-md border border-dashed border-ink/20 bg-mist px-3 py-4 text-sm text-ink/55">
+            Flag teams below to save them here.
+          </p>
+        )}
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
@@ -456,9 +546,11 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
         {visibleTeams.map((team) => (
           <TeamCard
             key={team.id}
+            isWantToTry={wantToTryIds.includes(team.id)}
             selectedPokemon={selectedPokemon}
             team={team}
             togglePokemon={togglePokemon}
+            toggleWantToTry={toggleWantToTry}
           />
         ))}
 
@@ -502,9 +594,11 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
               {randomTeam ? (
                 <TeamCard
                   isSpotlight
+                  isWantToTry={wantToTryIds.includes(randomTeam.id)}
                   selectedPokemon={selectedPokemon}
                   team={randomTeam}
                   togglePokemon={togglePokemon}
+                  toggleWantToTry={toggleWantToTry}
                 />
               ) : (
                 <div className="rounded-lg border border-dashed border-white/40 bg-white p-6 text-sm text-ink/60">

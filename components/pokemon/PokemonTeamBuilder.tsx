@@ -19,6 +19,13 @@ type TeamSlot = {
   pokemonName: string;
 };
 
+type SavedBuild = {
+  id: string;
+  name: string;
+  savedAt: string;
+  team: TeamSlot[];
+};
+
 type StatKey = "HP" | "Atk" | "Def" | "SpA" | "SpD" | "Spe";
 
 const stats: StatKey[] = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
@@ -140,6 +147,22 @@ const defaultEvs: Record<StatKey, number> = {
   SpD: 0,
   Spe: 0,
 };
+const savedBuildsStorageKey = "owen-hub-pokemon-builds";
+
+function getSavedBuildsFromStorage() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const savedValue = window.localStorage.getItem(savedBuildsStorageKey);
+    const parsedBuilds = savedValue ? (JSON.parse(savedValue) as SavedBuild[]) : [];
+
+    return Array.isArray(parsedBuilds) ? parsedBuilds : [];
+  } catch {
+    return [];
+  }
+}
 
 function getMultiplier(attackingType: PokemonType, defendingTypes: PokemonType[]) {
   return defendingTypes.reduce((multiplier, defendingType) => {
@@ -232,7 +255,11 @@ function calculateLevel50Stat({
 }
 
 export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
+  const [buildName, setBuildName] = useState("");
   const [query, setQuery] = useState("");
+  const [savedBuilds, setSavedBuilds] = useState<SavedBuild[]>(
+    getSavedBuildsFromStorage,
+  );
   const [team, setTeam] = useState<TeamSlot[]>([]);
   const optionsByName = useMemo(() => {
     return new Map(data.pokemon.map((pokemon) => [pokemon.name, pokemon]));
@@ -313,6 +340,44 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
     setTeam((currentTeam) => currentTeam.filter((_, slotIndex) => slotIndex !== index));
   }
 
+  function saveBuild() {
+    const trimmedName = buildName.trim();
+
+    if (!trimmedName) {
+      return;
+    }
+
+    const nextBuild: SavedBuild = {
+      id: `${Date.now()}`,
+      name: trimmedName,
+      savedAt: new Date().toLocaleDateString([], {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+      team,
+    };
+    const nextBuilds = [
+      nextBuild,
+      ...savedBuilds.filter((build) => build.name !== trimmedName),
+    ];
+
+    setSavedBuilds(nextBuilds);
+    window.localStorage.setItem(savedBuildsStorageKey, JSON.stringify(nextBuilds));
+  }
+
+  function loadBuild(build: SavedBuild) {
+    setBuildName(build.name);
+    setTeam(build.team);
+  }
+
+  function deleteBuild(buildId: string) {
+    const nextBuilds = savedBuilds.filter((build) => build.id !== buildId);
+
+    setSavedBuilds(nextBuilds);
+    window.localStorage.setItem(savedBuildsStorageKey, JSON.stringify(nextBuilds));
+  }
+
   return (
     <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
       <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
@@ -335,6 +400,65 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
               {team.length}/6 selected
             </span>
           </div>
+
+          <div className="mt-3 grid gap-2 md:grid-cols-[1fr_auto]">
+            <input
+              value={buildName}
+              onChange={(event) => setBuildName(event.target.value)}
+              placeholder="Build name"
+              className="h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
+            />
+            <button
+              type="button"
+              onClick={saveBuild}
+              disabled={!buildName.trim()}
+              className="h-10 rounded-md bg-ink px-4 text-sm font-bold text-white transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/30"
+            >
+              Save build
+            </button>
+          </div>
+
+          {savedBuilds.length > 0 ? (
+            <div className="mt-3 rounded-lg border border-ink/10 bg-mist p-3">
+              <p className="text-sm font-bold text-ink">Saved builds</p>
+              <div className="mt-2 grid gap-2 md:grid-cols-2">
+                {savedBuilds.slice(0, 6).map((build) => (
+                  <div
+                    key={build.id}
+                    className="grid grid-cols-[1fr_auto_auto] items-center gap-2 rounded-md bg-white px-3 py-2"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => loadBuild(build)}
+                      className="min-w-0 text-left"
+                    >
+                      <span className="block truncate text-sm font-bold text-ink">
+                        {build.name}
+                      </span>
+                      <span className="text-xs text-ink/45">
+                        {build.team.length}/6 · {build.savedAt}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => loadBuild(build)}
+                      className="rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink"
+                    >
+                      Load
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteBuild(build.id)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink/50 hover:bg-rose-50 hover:text-rose-700"
+                      aria-label={`Delete ${build.name}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           {team.length < 6 ? (
             <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
@@ -573,61 +697,6 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
                   Add Pokémon to reveal common threats.
                 </p>
               ) : null}
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-ink/10 bg-mist p-3">
-            <p className="text-sm font-bold text-ink">Speed tiers</p>
-            <div className="mt-3 overflow-hidden rounded-md border border-ink/10 bg-white">
-              <div className="max-h-80 overflow-auto">
-                <table className="w-full border-collapse text-left text-xs">
-                  <thead className="sticky top-0 bg-white text-ink/45">
-                    <tr>
-                      <th className="px-2 py-2">Mon</th>
-                      <th className="px-2 py-2">Speed</th>
-                      <th className="px-2 py-2">Spread</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-ink/10">
-                    {data.speedTiers.map((tier) => (
-                      <tr key={tier.name}>
-                        <td className="px-2 py-2 font-semibold text-ink">
-                          {tier.name}
-                        </td>
-                        <td className="px-2 py-2 font-bold text-ink">
-                          {tier.speed ?? "-"}
-                        </td>
-                        <td className="px-2 py-2 text-ink/55">
-                          {tier.nature} · {tier.evs} Spe
-                        </td>
-                      </tr>
-                    ))}
-                    {team.map((slot) => {
-                      const option = optionsByName.get(slot.pokemonName);
-                      const speed = calculateLevel50Stat({
-                        baseStats: option?.baseStats ?? null,
-                        ev: slot.evs.Spe,
-                        nature: slot.nature,
-                        stat: "Spe",
-                      });
-
-                      return (
-                        <tr key={`team-${slot.pokemonName}`} className="bg-skyglass">
-                          <td className="px-2 py-2 font-semibold text-ink">
-                            {slot.pokemonName}
-                          </td>
-                          <td className="px-2 py-2 font-bold text-moss">
-                            {speed ?? "-"}
-                          </td>
-                          <td className="px-2 py-2 text-ink/55">
-                            {slot.nature || "Neutral"} · {slot.evs.Spe} Spe
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
             </div>
           </div>
         </aside>
