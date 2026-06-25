@@ -1,5 +1,9 @@
 import type { VgcPastesData } from "@/lib/pokemon/vgc-pastes";
 
+export type PokemonStatKey = "HP" | "Atk" | "Def" | "SpA" | "SpD" | "Spe";
+
+export type PokemonBaseStats = Record<PokemonStatKey, number>;
+
 export type PokemonType =
   | "Normal"
   | "Fire"
@@ -22,6 +26,7 @@ export type PokemonType =
 
 export type PokemonBuilderOption = {
   abilities: string[];
+  baseStats: PokemonBaseStats | null;
   count: number;
   moves: string[];
   name: string;
@@ -29,16 +34,66 @@ export type PokemonBuilderOption = {
   types: PokemonType[];
 };
 
+export type PokemonSpeedTier = {
+  baseSpeed: number | null;
+  count: number;
+  evs: number;
+  name: string;
+  nature: string;
+  speed: number | null;
+};
+
 export type PokemonBuilderData = {
   pokemon: PokemonBuilderOption[];
+  speedTiers: PokemonSpeedTier[];
   types: PokemonType[];
 };
 
 type PastePokemonSet = {
   ability: string | null;
+  evs: Partial<Record<PokemonStatKey, number>>;
   moves: string[];
   name: string;
   nature: string | null;
+};
+
+const statLabels: Record<string, PokemonStatKey> = {
+  atk: "Atk",
+  def: "Def",
+  hp: "HP",
+  "special-attack": "SpA",
+  "special-defense": "SpD",
+  spa: "SpA",
+  spd: "SpD",
+  spe: "Spe",
+};
+
+const natureModifiers: Record<string, { down?: PokemonStatKey; up?: PokemonStatKey }> = {
+  Adamant: { down: "SpA", up: "Atk" },
+  Bashful: {},
+  Bold: { down: "Atk", up: "Def" },
+  Brave: { down: "Spe", up: "Atk" },
+  Calm: { down: "Atk", up: "SpD" },
+  Careful: { down: "SpA", up: "SpD" },
+  Docile: {},
+  Gentle: { down: "Def", up: "SpD" },
+  Hardy: {},
+  Hasty: { down: "Def", up: "Spe" },
+  Impish: { down: "SpA", up: "Def" },
+  Jolly: { down: "SpA", up: "Spe" },
+  Lax: { down: "SpD", up: "Def" },
+  Lonely: { down: "Def", up: "Atk" },
+  Mild: { down: "Def", up: "SpA" },
+  Modest: { down: "Atk", up: "SpA" },
+  Naive: { down: "SpD", up: "Spe" },
+  Naughty: { down: "SpD", up: "Atk" },
+  Quiet: { down: "Spe", up: "SpA" },
+  Quirky: {},
+  Rash: { down: "SpD", up: "SpA" },
+  Relaxed: { down: "Spe", up: "Def" },
+  Sassy: { down: "Spe", up: "SpD" },
+  Serious: {},
+  Timid: { down: "Atk", up: "Spe" },
 };
 
 const pokemonTypes: PokemonType[] = [
@@ -163,6 +218,44 @@ function addCount(map: Map<string, number>, value: string | null) {
   map.set(value, (map.get(value) ?? 0) + 1);
 }
 
+function getNatureMultiplier(nature: string | null, stat: PokemonStatKey) {
+  const modifier = nature ? natureModifiers[nature] : undefined;
+
+  if (modifier?.up === stat) {
+    return 1.1;
+  }
+
+  if (modifier?.down === stat) {
+    return 0.9;
+  }
+
+  return 1;
+}
+
+function calculateLevel50Stat({
+  base,
+  ev,
+  nature,
+  stat,
+}: {
+  base: number;
+  ev: number;
+  nature: string | null;
+  stat: PokemonStatKey;
+}) {
+  const iv = 31;
+  const level = 50;
+
+  if (stat === "HP") {
+    return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+  }
+
+  const rawStat =
+    Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+
+  return Math.floor(rawStat * getNatureMultiplier(nature, stat));
+}
+
 function getTopValues(map: Map<string, number>, limit: number) {
   return Array.from(map.entries())
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
@@ -185,10 +278,28 @@ function parsePasteSets(text: string): PastePokemonSet[] {
       }
 
       const abilityLine = lines.find((line) => line.startsWith("Ability:"));
+      const evLine = lines.find((line) => line.startsWith("EVs:"));
       const natureLine = lines.find((line) => line.endsWith(" Nature"));
+      const evs =
+        evLine
+          ?.replace("EVs:", "")
+          .split("/")
+          .reduce<Partial<Record<PokemonStatKey, number>>>((spreads, entry) => {
+            const match = entry.trim().match(/^(\d+)\s+([A-Za-z]+)/);
+            const stat = match?.[2]
+              ? statLabels[match[2].toLowerCase()]
+              : undefined;
+
+            if (stat && match?.[1]) {
+              spreads[stat] = Number(match[1]);
+            }
+
+            return spreads;
+          }, {}) ?? {};
 
       return {
         ability: abilityLine?.replace("Ability:", "").trim() ?? null,
+        evs,
         moves: lines
           .filter((line) => line.startsWith("- "))
           .map((line) => line.replace("- ", "").trim()),
@@ -197,6 +308,47 @@ function parsePasteSets(text: string): PastePokemonSet[] {
       };
     })
     .filter((set): set is PastePokemonSet => set !== null);
+}
+
+async function getPokemonBaseStats(name: string): Promise<PokemonBaseStats | null> {
+  const lookupNames = getLookupNames(name);
+
+  for (const lookupName of lookupNames) {
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${toPokemonSlug(lookupName)}`,
+      { next: { revalidate: 60 * 60 * 24 } },
+    ).catch(() => null);
+
+    if (!response?.ok) {
+      continue;
+    }
+
+    const data = (await response.json()) as {
+      stats?: { base_stat?: number; stat?: { name?: string } }[];
+    };
+    const stats = data.stats?.reduce<Partial<PokemonBaseStats>>((baseStats, entry) => {
+      const stat = entry.stat?.name ? statLabels[entry.stat.name] : undefined;
+
+      if (stat && typeof entry.base_stat === "number") {
+        baseStats[stat] = entry.base_stat;
+      }
+
+      return baseStats;
+    }, {});
+
+    if (
+      stats?.HP &&
+      stats.Atk &&
+      stats.Def &&
+      stats.SpA &&
+      stats.SpD &&
+      stats.Spe
+    ) {
+      return stats as PokemonBaseStats;
+    }
+  }
+
+  return null;
 }
 
 async function getPasteText(url: string) {
@@ -268,6 +420,34 @@ function getMergedTopValues(
   return getTopValues(mergedValues, limit);
 }
 
+function getCommonSpeedSpread(
+  source: Map<string, PastePokemonSet[]>,
+  pokemonName: string,
+) {
+  const spreads = new Map<string, { count: number; evs: number; nature: string }>();
+
+  getLookupNames(pokemonName).forEach((lookupName) => {
+    source.get(lookupName)?.forEach((set) => {
+      const evs = set.evs.Spe ?? 0;
+      const nature = set.nature ?? "Neutral";
+      const key = `${nature}-${evs}`;
+      const existingSpread = spreads.get(key);
+
+      spreads.set(key, {
+        count: (existingSpread?.count ?? 0) + 1,
+        evs,
+        nature,
+      });
+    });
+  });
+
+  return (
+    Array.from(spreads.values()).sort((a, b) => {
+      return b.count - a.count || b.evs - a.evs || a.nature.localeCompare(b.nature);
+    })[0] ?? { count: 0, evs: 0, nature: "Neutral" }
+  );
+}
+
 export async function getPokemonBuilderData(
   data: VgcPastesData,
 ): Promise<PokemonBuilderData> {
@@ -275,6 +455,7 @@ export async function getPokemonBuilderData(
   const movesByPokemon = new Map<string, Map<string, number>>();
   const abilitiesByPokemon = new Map<string, Map<string, number>>();
   const naturesByPokemon = new Map<string, Map<string, number>>();
+  const setsByPokemon = new Map<string, PastePokemonSet[]>();
 
   data.teams.forEach((team) => {
     team.pokemon.forEach((pokemon) => {
@@ -303,6 +484,7 @@ export async function getPokemonBuilderData(
       movesByPokemon.set(set.name, moves);
       abilitiesByPokemon.set(set.name, abilities);
       naturesByPokemon.set(set.name, natures);
+      setsByPokemon.set(set.name, [...(setsByPokemon.get(set.name) ?? []), set]);
     });
   });
 
@@ -311,8 +493,11 @@ export async function getPokemonBuilderData(
     .slice(0, 60);
   const pokemon = await Promise.all(
     popularPokemon.map(async ([name, count]) => {
+      const baseStats = await getPokemonBaseStats(name);
+
       return {
         abilities: getMergedTopValues(abilitiesByPokemon, name, 4),
+        baseStats,
         count,
         moves: getMergedTopValues(movesByPokemon, name, 12),
         name,
@@ -321,9 +506,37 @@ export async function getPokemonBuilderData(
       };
     }),
   );
+  const speedTiers = pokemon
+    .map((pokemonOption) => {
+      const commonSpeedSpread = getCommonSpeedSpread(setsByPokemon, pokemonOption.name);
+      const speed =
+        pokemonOption.baseStats?.Spe !== undefined
+          ? calculateLevel50Stat({
+              base: pokemonOption.baseStats.Spe,
+              ev: commonSpeedSpread.evs,
+              nature:
+                commonSpeedSpread.nature === "Neutral"
+                  ? null
+                  : commonSpeedSpread.nature,
+              stat: "Spe",
+            })
+          : null;
+
+      return {
+        baseSpeed: pokemonOption.baseStats?.Spe ?? null,
+        count: pokemonOption.count,
+        evs: commonSpeedSpread.evs,
+        name: pokemonOption.name,
+        nature: commonSpeedSpread.nature,
+        speed,
+      };
+    })
+    .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0) || b.count - a.count)
+    .slice(0, 24);
 
   return {
     pokemon,
+    speedTiers,
     types: pokemonTypes,
   };
 }

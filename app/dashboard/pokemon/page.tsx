@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ExternalLink, RefreshCcw } from "lucide-react";
 
+import { PokemonHubTabs } from "@/components/pokemon/PokemonHubTabs";
 import { PokemonTeamBuilder } from "@/components/pokemon/PokemonTeamBuilder";
 import { PokemonTeamsClient } from "@/components/pokemon/PokemonTeamsClient";
 import { Button } from "@/components/ui/Button";
@@ -41,9 +42,10 @@ export default async function PokemonHubPage() {
         </div>
       </section>
 
-      <PokemonTeamBuilder data={builderData} />
-
-      <PokemonTeamsClient data={data} />
+      <PokemonHubTabs
+        builder={<PokemonTeamBuilder data={builderData} />}
+        teams={<PokemonTeamsClient data={data} />}
+      />
     </div>
   );
 }

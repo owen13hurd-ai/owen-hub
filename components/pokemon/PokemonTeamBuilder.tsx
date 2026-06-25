@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import { PokemonSprite } from "@/components/pokemon/PokemonSprite";
 import type {
+  PokemonBaseStats,
   PokemonBuilderData,
   PokemonBuilderOption,
   PokemonType,
@@ -21,6 +22,35 @@ type TeamSlot = {
 type StatKey = "HP" | "Atk" | "Def" | "SpA" | "SpD" | "Spe";
 
 const stats: StatKey[] = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
+
+const natureModifiers: Record<string, { down?: StatKey; up?: StatKey }> = {
+  Adamant: { down: "SpA", up: "Atk" },
+  Bashful: {},
+  Bold: { down: "Atk", up: "Def" },
+  Brave: { down: "Spe", up: "Atk" },
+  Calm: { down: "Atk", up: "SpD" },
+  Careful: { down: "SpA", up: "SpD" },
+  Docile: {},
+  Gentle: { down: "Def", up: "SpD" },
+  Hardy: {},
+  Hasty: { down: "Def", up: "Spe" },
+  Impish: { down: "SpA", up: "Def" },
+  Jolly: { down: "SpA", up: "Spe" },
+  Lax: { down: "SpD", up: "Def" },
+  Lonely: { down: "Def", up: "Atk" },
+  Mild: { down: "Def", up: "SpA" },
+  Modest: { down: "Atk", up: "SpA" },
+  Naive: { down: "SpD", up: "Spe" },
+  Naughty: { down: "SpD", up: "Atk" },
+  Quiet: { down: "Spe", up: "SpA" },
+  Quirky: {},
+  Rash: { down: "SpD", up: "SpA" },
+  Relaxed: { down: "Spe", up: "Def" },
+  Sassy: { down: "Spe", up: "SpD" },
+  Serious: {},
+  Timid: { down: "Atk", up: "Spe" },
+};
+const natureOptions = Object.keys(natureModifiers);
 
 const typeChart: Record<PokemonType, Partial<Record<PokemonType, number>>> = {
   Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
@@ -155,6 +185,50 @@ function buildNewSlot(option: PokemonBuilderOption): TeamSlot {
     nature: option.natures[0] ?? "",
     pokemonName: option.name,
   };
+}
+
+function getNatureMultiplier(nature: string, stat: StatKey) {
+  const modifier = natureModifiers[nature];
+
+  if (modifier?.up === stat) {
+    return 1.1;
+  }
+
+  if (modifier?.down === stat) {
+    return 0.9;
+  }
+
+  return 1;
+}
+
+function calculateLevel50Stat({
+  baseStats,
+  ev,
+  nature,
+  stat,
+}: {
+  baseStats: PokemonBaseStats | null;
+  ev: number;
+  nature: string;
+  stat: StatKey;
+}) {
+  const base = baseStats?.[stat];
+
+  if (typeof base !== "number") {
+    return null;
+  }
+
+  const iv = 31;
+  const level = 50;
+
+  if (stat === "HP") {
+    return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+  }
+
+  const rawStat =
+    Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+
+  return Math.floor(rawStat * getNatureMultiplier(nature, stat));
 }
 
 export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
@@ -364,7 +438,7 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
                         className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-2 text-sm text-ink"
                       >
                         <option value="">Choose nature</option>
-                        {option.natures.map((nature) => (
+                        {Array.from(new Set([...option.natures, ...natureOptions])).map((nature) => (
                           <option key={nature} value={nature}>
                             {nature}
                           </option>
@@ -397,30 +471,45 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
                   </div>
 
                   <div className="mt-3 grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
-                    {stats.map((stat) => (
-                      <label key={stat} className="block">
-                        <span className="text-xs font-bold text-ink/45">
-                          {stat}
-                        </span>
-                        <input
-                          type="number"
-                          min={0}
-                          max={252}
-                          step={4}
-                          value={slot.evs[stat]}
-                          onChange={(event) => {
-                            updateSlot(index, {
-                              ...slot,
-                              evs: {
-                                ...slot.evs,
-                                [stat]: Number(event.target.value),
-                              },
-                            });
-                          }}
-                          className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-2 text-sm text-ink"
-                        />
-                      </label>
-                    ))}
+                    {stats.map((stat) => {
+                      const actualStat = calculateLevel50Stat({
+                        baseStats: option.baseStats,
+                        ev: slot.evs[stat],
+                        nature: slot.nature,
+                        stat,
+                      });
+
+                      return (
+                        <label key={stat} className="block">
+                          <span className="flex items-center justify-between gap-2 text-xs font-bold text-ink/45">
+                            <span>{stat}</span>
+                            <span className="text-ink">
+                              {actualStat ?? "-"}
+                            </span>
+                          </span>
+                          <input
+                            type="number"
+                            min={0}
+                            max={252}
+                            step={4}
+                            value={slot.evs[stat]}
+                            onChange={(event) => {
+                              updateSlot(index, {
+                                ...slot,
+                                evs: {
+                                  ...slot.evs,
+                                  [stat]: Number(event.target.value),
+                                },
+                              });
+                            }}
+                            className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-2 text-sm text-ink"
+                          />
+                          <span className="mt-0.5 block text-[11px] font-semibold text-ink/40">
+                            EV
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               );
@@ -484,6 +573,61 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
                   Add Pokémon to reveal common threats.
                 </p>
               ) : null}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-ink/10 bg-mist p-3">
+            <p className="text-sm font-bold text-ink">Speed tiers</p>
+            <div className="mt-3 overflow-hidden rounded-md border border-ink/10 bg-white">
+              <div className="max-h-80 overflow-auto">
+                <table className="w-full border-collapse text-left text-xs">
+                  <thead className="sticky top-0 bg-white text-ink/45">
+                    <tr>
+                      <th className="px-2 py-2">Mon</th>
+                      <th className="px-2 py-2">Speed</th>
+                      <th className="px-2 py-2">Spread</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {data.speedTiers.map((tier) => (
+                      <tr key={tier.name}>
+                        <td className="px-2 py-2 font-semibold text-ink">
+                          {tier.name}
+                        </td>
+                        <td className="px-2 py-2 font-bold text-ink">
+                          {tier.speed ?? "-"}
+                        </td>
+                        <td className="px-2 py-2 text-ink/55">
+                          {tier.nature} · {tier.evs} Spe
+                        </td>
+                      </tr>
+                    ))}
+                    {team.map((slot) => {
+                      const option = optionsByName.get(slot.pokemonName);
+                      const speed = calculateLevel50Stat({
+                        baseStats: option?.baseStats ?? null,
+                        ev: slot.evs.Spe,
+                        nature: slot.nature,
+                        stat: "Spe",
+                      });
+
+                      return (
+                        <tr key={`team-${slot.pokemonName}`} className="bg-skyglass">
+                          <td className="px-2 py-2 font-semibold text-ink">
+                            {slot.pokemonName}
+                          </td>
+                          <td className="px-2 py-2 font-bold text-moss">
+                            {speed ?? "-"}
+                          </td>
+                          <td className="px-2 py-2 text-ink/55">
+                            {slot.nature || "Neutral"} · {slot.evs.Spe} Spe
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </aside>
