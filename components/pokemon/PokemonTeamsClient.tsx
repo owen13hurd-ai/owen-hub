@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Search, Shuffle, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PokemonSprite } from "@/components/pokemon/PokemonSprite";
-import type { VgcPastesData } from "@/lib/pokemon/vgc-pastes";
+import type { VgcPasteTeam, VgcPastesData } from "@/lib/pokemon/vgc-pastes";
 
 function includesQuery(values: string[], query: string) {
   const normalizedQuery = query.trim().toLowerCase();
@@ -31,9 +31,149 @@ function buildPokemonOptions(teams: VgcPastesData["teams"]) {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
+function getRandomTeam(teams: VgcPasteTeam[], currentTeamId?: string) {
+  if (teams.length === 0) {
+    return null;
+  }
+
+  if (teams.length === 1) {
+    return teams[0];
+  }
+
+  const nextTeams = currentTeamId
+    ? teams.filter((team) => team.id !== currentTeamId)
+    : teams;
+  const randomIndex = Math.floor(Math.random() * nextTeams.length);
+
+  return nextTeams[randomIndex] ?? null;
+}
+
+function TeamCard({
+  isSpotlight = false,
+  selectedPokemon,
+  team,
+  togglePokemon,
+}: {
+  isSpotlight?: boolean;
+  selectedPokemon: string[];
+  team: VgcPasteTeam;
+  togglePokemon: (pokemon: string) => void;
+}) {
+  return (
+    <article
+      className={`rounded-lg border border-ink/10 bg-white p-4 shadow-soft ${
+        isSpotlight ? "w-full max-w-5xl" : ""
+      }`}
+    >
+      <div className="grid gap-4 xl:grid-cols-[1fr_280px]">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-md bg-ink px-2 py-1 text-xs font-bold text-white">
+              {team.id}
+            </span>
+            <span className="rounded-md bg-mist px-2 py-1 text-xs font-bold text-ink/65">
+              {team.rank}
+            </span>
+            {team.replicaCode !== "None" ? (
+              <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">
+                Code {team.replicaCode}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {team.pokemon.map((pokemon) => {
+              const isSelected = selectedPokemon.includes(pokemon);
+
+              return (
+                <button
+                  key={`${team.id}-${pokemon}`}
+                  type="button"
+                  onClick={() => togglePokemon(pokemon)}
+                  className={`flex min-h-24 items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${
+                    isSelected
+                      ? "border-moss bg-emerald-50"
+                      : "border-ink/10 bg-skyglass hover:border-moss/40"
+                  }`}
+                >
+                  <PokemonSprite
+                    name={pokemon}
+                    className="h-16 w-16 shrink-0"
+                  />
+                  <span className="text-sm font-bold leading-5 text-ink">
+                    {pokemon}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="rounded-lg bg-mist p-3">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-moss">
+            Team info
+          </p>
+          <h2 className="mt-2 text-base font-bold leading-6 text-ink">
+            {team.description}
+          </h2>
+
+          <div className="mt-3 space-y-3 text-sm text-ink/65">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink/40">
+                Creator / Event
+              </p>
+              <p className="mt-1 font-semibold text-ink">
+                {team.fullName || team.creator || "-"}
+              </p>
+              <p className="mt-1 break-words">
+                {team.creator ? `@${team.creator}` : ""}
+                {team.creator && team.event !== "-" ? " · " : ""}
+                {team.event !== "-" ? team.event : ""}
+              </p>
+              <p className="mt-1 text-xs text-ink/45">{team.dateShared}</p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink/40">
+                Replica
+              </p>
+              <p className="mt-1 font-semibold text-ink">{team.replicaCode}</p>
+              <p className="mt-1 text-xs text-ink/45">{team.replicaStatus}</p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {team.pokepasteUrl ? (
+                <Link
+                  href={team.pokepasteUrl}
+                  target="_blank"
+                  className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
+                >
+                  Pokepaste
+                </Link>
+              ) : null}
+              {team.sourceUrl && team.sourceUrl !== "-" ? (
+                <Link
+                  href={team.sourceUrl}
+                  target="_blank"
+                  className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
+                >
+                  Source
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </aside>
+      </div>
+    </article>
+  );
+}
+
 export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
   const [query, setQuery] = useState("");
   const [pokemonQuery, setPokemonQuery] = useState("");
+  const [randomTeam, setRandomTeam] = useState<VgcPasteTeam | null>(null);
+  const [isRandomTeamOpen, setIsRandomTeamOpen] = useState(false);
+  const [isThrowingTeam, setIsThrowingTeam] = useState(false);
   const [selectedPokemon, setSelectedPokemon] = useState<string[]>([]);
 
   const pokemonOptions = useMemo(() => {
@@ -95,6 +235,52 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
     setPokemonQuery("");
     setSelectedPokemon([]);
   }
+
+  function showRandomTeam() {
+    setRandomTeam((currentTeam) => getRandomTeam(visibleTeams, currentTeam?.id));
+    setIsRandomTeamOpen(true);
+    setIsThrowingTeam(false);
+  }
+
+  const showNextRandomTeam = useCallback(() => {
+    if (visibleTeams.length === 0) {
+      return;
+    }
+
+    setIsThrowingTeam(true);
+    window.setTimeout(() => {
+      setRandomTeam((currentTeam) => getRandomTeam(visibleTeams, currentTeam?.id));
+      setIsThrowingTeam(false);
+    }, 180);
+  }, [visibleTeams]);
+
+  const closeRandomTeam = useCallback(() => {
+    setIsRandomTeamOpen(false);
+    setIsThrowingTeam(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isRandomTeamOpen) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.code === "Space") {
+        event.preventDefault();
+        showNextRandomTeam();
+      }
+
+      if (event.key === "Escape") {
+        closeRandomTeam();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeRandomTeam, isRandomTeamOpen, showNextRandomTeam]);
 
   return (
     <>
@@ -184,6 +370,18 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
                 </button>
               </div>
             ) : null}
+
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={showRandomTeam}
+                disabled={visibleTeams.length === 0}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/30"
+              >
+                <Shuffle className="h-4 w-4" aria-hidden="true" />
+                Find a team
+              </button>
+            </div>
           </div>
         </div>
 
@@ -256,116 +454,12 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
 
       <section className="space-y-3">
         {visibleTeams.map((team) => (
-          <article
+          <TeamCard
             key={team.id}
-            className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft"
-          >
-            <div className="grid gap-4 xl:grid-cols-[1fr_280px]">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-md bg-ink px-2 py-1 text-xs font-bold text-white">
-                    {team.id}
-                  </span>
-                  <span className="rounded-md bg-mist px-2 py-1 text-xs font-bold text-ink/65">
-                    {team.rank}
-                  </span>
-                  {team.replicaCode !== "None" ? (
-                    <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">
-                      Code {team.replicaCode}
-                    </span>
-                  ) : null}
-                </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {team.pokemon.map((pokemon) => {
-                    const isSelected = selectedPokemon.includes(pokemon);
-
-                    return (
-                      <button
-                        key={`${team.id}-${pokemon}`}
-                        type="button"
-                        onClick={() => togglePokemon(pokemon)}
-                        className={`flex min-h-24 items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${
-                          isSelected
-                            ? "border-moss bg-emerald-50"
-                            : "border-ink/10 bg-skyglass hover:border-moss/40"
-                        }`}
-                      >
-                        <PokemonSprite
-                          name={pokemon}
-                          className="h-16 w-16 shrink-0"
-                        />
-                        <span className="text-sm font-bold leading-5 text-ink">
-                          {pokemon}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <aside className="rounded-lg bg-mist p-3">
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-moss">
-                  Team info
-                </p>
-                <h2 className="mt-2 text-base font-bold leading-6 text-ink">
-                  {team.description}
-                </h2>
-
-                <div className="mt-3 space-y-3 text-sm text-ink/65">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink/40">
-                      Creator / Event
-                    </p>
-                    <p className="mt-1 font-semibold text-ink">
-                      {team.fullName || team.creator || "-"}
-                    </p>
-                    <p className="mt-1 break-words">
-                      {team.creator ? `@${team.creator}` : ""}
-                      {team.creator && team.event !== "-" ? " · " : ""}
-                      {team.event !== "-" ? team.event : ""}
-                    </p>
-                    <p className="mt-1 text-xs text-ink/45">
-                      {team.dateShared}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink/40">
-                      Replica
-                    </p>
-                    <p className="mt-1 font-semibold text-ink">
-                      {team.replicaCode}
-                    </p>
-                    <p className="mt-1 text-xs text-ink/45">
-                      {team.replicaStatus}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {team.pokepasteUrl ? (
-                      <Link
-                        href={team.pokepasteUrl}
-                        target="_blank"
-                        className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
-                      >
-                        Pokepaste
-                      </Link>
-                    ) : null}
-                    {team.sourceUrl && team.sourceUrl !== "-" ? (
-                      <Link
-                        href={team.sourceUrl}
-                        target="_blank"
-                        className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
-                      >
-                        Source
-                      </Link>
-                    ) : null}
-                  </div>
-                </div>
-              </aside>
-            </div>
-          </article>
+            selectedPokemon={selectedPokemon}
+            team={team}
+            togglePokemon={togglePokemon}
+          />
         ))}
 
         {visibleTeams.length === 0 ? (
@@ -374,6 +468,53 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
           </div>
         ) : null}
       </section>
+
+      {isRandomTeamOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-5xl">
+            <div className="mb-3 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={showNextRandomTeam}
+                disabled={visibleTeams.length === 0}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-white px-4 text-sm font-semibold text-ink transition hover:bg-skyglass disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Shuffle className="h-4 w-4" aria-hidden="true" />
+                Next
+              </button>
+              <button
+                type="button"
+                onClick={closeRandomTeam}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white text-ink transition hover:bg-skyglass"
+                aria-label="Close random team"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div
+              className={`transition duration-200 ${
+                isThrowingTeam
+                  ? "translate-x-full rotate-3 opacity-0"
+                  : "translate-x-0 rotate-0 opacity-100"
+              }`}
+            >
+              {randomTeam ? (
+                <TeamCard
+                  isSpotlight
+                  selectedPokemon={selectedPokemon}
+                  team={randomTeam}
+                  togglePokemon={togglePokemon}
+                />
+              ) : (
+                <div className="rounded-lg border border-dashed border-white/40 bg-white p-6 text-sm text-ink/60">
+                  No teams match that filter.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
