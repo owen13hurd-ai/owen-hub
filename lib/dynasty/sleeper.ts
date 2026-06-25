@@ -7,6 +7,7 @@ export type SleeperLeagueSummary = {
 
 export type SleeperRosterAsset = {
   id: string;
+  age: number | null;
   leagueId: string;
   leagueName: string;
   playerId: string;
@@ -21,6 +22,50 @@ export type SleeperPortfolioData = {
   rosterAssets: SleeperRosterAsset[];
   season: string;
   username: string;
+};
+
+export type SleeperLeaguemateMatch = {
+  avatar: string | null;
+  displayName: string;
+  leagueId: string;
+  leagueName: string;
+  rosterId: number;
+  teamName: string | null;
+  userId: string;
+  username: string | null;
+};
+
+export type SleeperLeaguematePlayer = {
+  age: number | null;
+  exposure: number;
+  leagueNames: string[];
+  name: string;
+  playerId: string;
+  position: string;
+  team: string | null;
+};
+
+export type SleeperLeaguemateTradePlayer = {
+  count: number;
+  name: string;
+  playerId: string;
+  position: string;
+  team: string | null;
+};
+
+export type SleeperLeaguemateInsights = {
+  averageAge: number | null;
+  matches: SleeperLeaguemateMatch[];
+  playerCount: number;
+  players: SleeperLeaguematePlayer[];
+  positionCounts: Record<string, number>;
+  profileLabels: string[];
+  searchedName: string;
+  season: string;
+  sharedLeagueCount: number;
+  topAcquiredPlayers: SleeperLeaguemateTradePlayer[];
+  topTradedAwayPlayers: SleeperLeaguemateTradePlayer[];
+  tradeCount: number;
 };
 
 type SleeperUser = {
@@ -43,12 +88,31 @@ type SleeperRoster = {
   roster_id?: number;
 };
 
+type SleeperLeagueUser = {
+  avatar?: string | null;
+  display_name?: string | null;
+  metadata?: {
+    team_name?: string;
+  } | null;
+  user_id?: string;
+  username?: string | null;
+};
+
 type SleeperPlayer = {
+  age?: number;
   first_name?: string;
   full_name?: string;
   last_name?: string;
   position?: string;
   team?: string | null;
+};
+
+type SleeperTransaction = {
+  adds?: Record<string, number> | null;
+  drops?: Record<string, number> | null;
+  roster_ids?: number[] | null;
+  status?: string;
+  type?: string;
 };
 
 const sleeperBaseUrl = "https://api.sleeper.app/v1";
@@ -75,6 +139,104 @@ function getPlayerName(playerId: string, player?: SleeperPlayer) {
   }
 
   return [player.first_name, player.last_name].filter(Boolean).join(" ");
+}
+
+function normalizeSearchText(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function getPlayerAsset({
+  leagueId,
+  leagueName,
+  playerId,
+  player,
+}: {
+  leagueId: string;
+  leagueName: string;
+  player?: SleeperPlayer;
+  playerId: string;
+}): SleeperRosterAsset {
+  return {
+    age: player?.age ?? null,
+    id: `${leagueId}-${playerId}`,
+    leagueId,
+    leagueName,
+    playerId,
+    name: getPlayerName(playerId, player),
+    position: player?.position ?? "UNK",
+    team: player?.team ?? null,
+  };
+}
+
+function sortTradePlayers(
+  counts: Map<string, number>,
+  players: Record<string, SleeperPlayer>,
+) {
+  return Array.from(counts.entries())
+    .map(([playerId, count]) => {
+      const player = players[playerId];
+
+      return {
+        count,
+        name: getPlayerName(playerId, player),
+        playerId,
+        position: player?.position ?? "UNK",
+        team: player?.team ?? null,
+      };
+    })
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+    .slice(0, 8);
+}
+
+function incrementPlayerCount(counts: Map<string, number>, playerId: string) {
+  counts.set(playerId, (counts.get(playerId) ?? 0) + 1);
+}
+
+function getProfileLabels({
+  averageAge,
+  playerCount,
+  positionCounts,
+  tradeCount,
+}: {
+  averageAge: number | null;
+  playerCount: number;
+  positionCounts: Record<string, number>;
+  tradeCount: number;
+}) {
+  const labels: string[] = [];
+  const qbRate = playerCount > 0 ? (positionCounts.QB ?? 0) / playerCount : 0;
+  const rbRate = playerCount > 0 ? (positionCounts.RB ?? 0) / playerCount : 0;
+  const wrRate = playerCount > 0 ? (positionCounts.WR ?? 0) / playerCount : 0;
+
+  if (averageAge !== null && averageAge <= 25.5) {
+    labels.push("Young asset collector");
+  } else if (averageAge !== null && averageAge >= 27.5) {
+    labels.push("Veteran-leaning roster");
+  } else {
+    labels.push("Age-balanced roster");
+  }
+
+  if (qbRate >= 0.22) {
+    labels.push("QB investor");
+  }
+
+  if (rbRate >= 0.34) {
+    labels.push("RB-heavy build");
+  }
+
+  if (wrRate >= 0.42) {
+    labels.push("WR-heavy build");
+  }
+
+  if (tradeCount >= 6) {
+    labels.push("Active trader");
+  } else if (tradeCount > 0) {
+    labels.push("Selective trader");
+  } else {
+    labels.push("Quiet trader");
+  }
+
+  return labels;
 }
 
 export async function getSleeperPortfolio({
@@ -138,15 +300,14 @@ export async function getSleeperPortfolio({
       userRoster?.players?.forEach((playerId) => {
         const player = players[playerId];
 
-        rosterAssets.push({
-          id: `${league.league_id}-${playerId}`,
-          leagueId: league.league_id ?? "",
-          leagueName,
-          playerId,
-          name: getPlayerName(playerId, player),
-          position: player?.position ?? "UNK",
-          team: player?.team ?? null,
-        });
+        rosterAssets.push(
+          getPlayerAsset({
+            leagueId: league.league_id ?? "",
+            leagueName,
+            player,
+            playerId,
+          }),
+        );
       });
     }),
   );
@@ -157,5 +318,208 @@ export async function getSleeperPortfolio({
     rosterAssets,
     season,
     username: trimmedUsername,
+  };
+}
+
+export async function getSleeperLeaguemateInsights({
+  managerName,
+  season,
+  username,
+}: {
+  managerName: string;
+  season: string;
+  username: string;
+}): Promise<SleeperLeaguemateInsights> {
+  const searchedName = managerName.trim();
+
+  if (!searchedName) {
+    throw new Error("Enter a leaguemate name, username, or team name.");
+  }
+
+  const myPortfolio = await getSleeperPortfolio({ season, username });
+  const players = await fetchSleeperJson<Record<string, SleeperPlayer>>(
+    "/players/nfl",
+    60 * 60 * 24,
+  );
+  const normalizedSearch = normalizeSearchText(searchedName);
+  const matches: SleeperLeaguemateMatch[] = [];
+  const rosterAssets: SleeperRosterAsset[] = [];
+  const acquiredCounts = new Map<string, number>();
+  const tradedAwayCounts = new Map<string, number>();
+  let tradeCount = 0;
+
+  await Promise.all(
+    myPortfolio.leagues.map(async (league) => {
+      const [leagueUsers, rosters] = await Promise.all([
+        fetchSleeperJson<SleeperLeagueUser[]>(
+          `/league/${league.id}/users`,
+          60 * 10,
+        ),
+        fetchSleeperJson<SleeperRoster[]>(`/league/${league.id}/rosters`, 60 * 10),
+      ]);
+
+      const matchingUsers = leagueUsers.filter((leagueUser) => {
+        const haystack = normalizeSearchText(
+          [
+            leagueUser.display_name,
+            leagueUser.username,
+            leagueUser.metadata?.team_name,
+          ]
+            .filter(Boolean)
+            .join(" "),
+        );
+
+        return haystack.includes(normalizedSearch);
+      });
+
+      await Promise.all(
+        matchingUsers.map(async (leagueUser) => {
+          if (!leagueUser.user_id) {
+            return;
+          }
+
+          const roster = rosters.find((candidate) => {
+            return (
+              candidate.owner_id === leagueUser.user_id ||
+              candidate.co_owners?.includes(leagueUser.user_id ?? "")
+            );
+          });
+
+          if (!roster?.roster_id) {
+            return;
+          }
+
+          const targetRosterId = roster.roster_id;
+
+          matches.push({
+            avatar: leagueUser.avatar ?? null,
+            displayName:
+              leagueUser.display_name ??
+              leagueUser.username ??
+              leagueUser.metadata?.team_name ??
+              "Unknown manager",
+            leagueId: league.id,
+            leagueName: league.name,
+            rosterId: targetRosterId,
+            teamName: leagueUser.metadata?.team_name ?? null,
+            userId: leagueUser.user_id,
+            username: leagueUser.username ?? null,
+          });
+
+          roster.players?.forEach((playerId) => {
+            rosterAssets.push(
+              getPlayerAsset({
+                leagueId: league.id,
+                leagueName: league.name,
+                player: players[playerId],
+                playerId,
+              }),
+            );
+          });
+
+          const transactionWeeks = Array.from({ length: 18 }, (_, index) => index + 1);
+          const transactionsByWeek = await Promise.all(
+            transactionWeeks.map((week) =>
+              fetchSleeperJson<SleeperTransaction[]>(
+                `/league/${league.id}/transactions/${week}`,
+                60 * 10,
+              ).catch(() => []),
+            ),
+          );
+
+          transactionsByWeek.flat().forEach((transaction) => {
+            if (
+              transaction.type !== "trade" ||
+              transaction.status !== "complete" ||
+              !transaction.roster_ids?.includes(targetRosterId)
+            ) {
+              return;
+            }
+
+            tradeCount += 1;
+
+            Object.entries(transaction.adds ?? {}).forEach(
+              ([playerId, destinationRosterId]) => {
+                if (destinationRosterId === targetRosterId) {
+                  incrementPlayerCount(acquiredCounts, playerId);
+                }
+              },
+            );
+
+            Object.entries(transaction.drops ?? {}).forEach(
+              ([playerId, sourceRosterId]) => {
+                if (sourceRosterId === targetRosterId) {
+                  incrementPlayerCount(tradedAwayCounts, playerId);
+                }
+              },
+            );
+          });
+        }),
+      );
+    }),
+  );
+
+  const playersById = new Map<string, SleeperLeaguematePlayer>();
+
+  rosterAssets.forEach((asset) => {
+    const existingPlayer = playersById.get(asset.playerId);
+
+    if (existingPlayer) {
+      existingPlayer.exposure += 1;
+      existingPlayer.leagueNames.push(asset.leagueName);
+      return;
+    }
+
+    playersById.set(asset.playerId, {
+      age: asset.age,
+      exposure: 1,
+      leagueNames: [asset.leagueName],
+      name: asset.name,
+      playerId: asset.playerId,
+      position: asset.position,
+      team: asset.team,
+    });
+  });
+
+  const insightPlayers = Array.from(playersById.values()).sort((a, b) => {
+    return b.exposure - a.exposure || a.name.localeCompare(b.name);
+  });
+  const knownAges = insightPlayers
+    .map((player) => player.age)
+    .filter((age): age is number => typeof age === "number");
+  const averageAge =
+    knownAges.length > 0
+      ? Number(
+          (
+            knownAges.reduce((total, age) => total + age, 0) / knownAges.length
+          ).toFixed(1),
+        )
+      : null;
+  const positionCounts = insightPlayers.reduce<Record<string, number>>(
+    (counts, player) => {
+      counts[player.position] = (counts[player.position] ?? 0) + 1;
+      return counts;
+    },
+    {},
+  );
+
+  return {
+    averageAge,
+    matches: matches.sort((a, b) => a.leagueName.localeCompare(b.leagueName)),
+    playerCount: insightPlayers.length,
+    players: insightPlayers,
+    positionCounts,
+    profileLabels: getProfileLabels({
+      averageAge,
+      playerCount: insightPlayers.length,
+      positionCounts,
+      tradeCount,
+    }),
+    searchedName,
+    season,
+    sharedLeagueCount: matches.length,
+    topAcquiredPlayers: sortTradePlayers(acquiredCounts, players),
+    topTradedAwayPlayers: sortTradePlayers(tradedAwayCounts, players),
+    tradeCount,
   };
 }

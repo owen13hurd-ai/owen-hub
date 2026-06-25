@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BarChart3, RefreshCcw } from "lucide-react";
+import { BarChart3, RefreshCcw, Users } from "lucide-react";
 
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
@@ -79,11 +79,17 @@ export default async function DynastyHubPage({
           creates the foundation for saved custom rankings, market comparisons,
           and trade tools.
         </p>
-        <div className="mt-5">
+        <div className="mt-5 flex flex-wrap gap-2">
           <Button asChild variant="secondary">
             <Link href={portfolioHref}>
               <BarChart3 className="h-4 w-4" aria-hidden="true" />
               Portfolio exposure
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard/dynasty/leaguemates">
+              <Users className="h-4 w-4" aria-hidden="true" />
+              Leaguemate insights
             </Link>
           </Button>
         </div>
