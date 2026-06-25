@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BarChart3, RefreshCcw, Users } from "lucide-react";
+import { BarChart3, RefreshCcw, TableProperties, Users } from "lucide-react";
 
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
@@ -90,6 +90,12 @@ export default async function DynastyHubPage({
             <Link href="/dashboard/dynasty/leaguemates">
               <Users className="h-4 w-4" aria-hidden="true" />
               Leaguemate insights
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard/dynasty/leagues">
+              <TableProperties className="h-4 w-4" aria-hidden="true" />
+              League rosters
             </Link>
           </Button>
         </div>

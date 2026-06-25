@@ -1,3 +1,6 @@
+import { getDynastyRankings } from "@/lib/dynasty/rankings";
+import type { DynastyRanking } from "@/types/dynasty";
+
 export type SleeperLeagueSummary = {
   id: string;
   name: string;
@@ -68,6 +71,39 @@ export type SleeperLeaguemateInsights = {
   tradeCount: number;
 };
 
+export type SleeperLeagueRosterRole = "starter" | "first-bench" | "bench";
+
+export type SleeperLeagueRosterPlayer = SleeperRosterAsset & {
+  personalRank: number | null;
+  positionRank: string | null;
+  rosterRole: SleeperLeagueRosterRole;
+  starterSlot: string | null;
+  value: number | null;
+};
+
+export type SleeperLeagueRosterTeam = {
+  averageAge: number | null;
+  firstBenchCount: number;
+  ownerName: string;
+  playersByPosition: Record<string, SleeperLeagueRosterPlayer[]>;
+  rosterId: number;
+  starterCount: number;
+  starterValue: number;
+  teamName: string | null;
+  totalValue: number;
+  username: string | null;
+};
+
+export type SleeperLeagueRosterBoard = {
+  leagues: SleeperLeagueSummary[];
+  rosterPositions: string[];
+  season: string;
+  selectedLeague: SleeperLeagueSummary;
+  starterSlots: string[];
+  teams: SleeperLeagueRosterTeam[];
+  username: string;
+};
+
 type SleeperUser = {
   display_name?: string;
   user_id?: string;
@@ -78,6 +114,7 @@ type SleeperLeague = {
   avatar?: string | null;
   league_id?: string;
   name?: string;
+  roster_positions?: string[] | null;
   total_rosters?: number;
 };
 
@@ -143,6 +180,123 @@ function getPlayerName(playerId: string, player?: SleeperPlayer) {
 
 function normalizeSearchText(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function normalizePlayerMatchText(value: string) {
+  return normalizeSearchText(value)
+    .replace(/\b(jr|sr|ii|iii|iv|v)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getLeagueSummary(league: SleeperLeague): SleeperLeagueSummary {
+  return {
+    id: league.league_id ?? "",
+    name: league.name ?? league.league_id ?? "Sleeper league",
+    avatar: league.avatar ?? null,
+    totalRosters: league.total_rosters ?? null,
+  };
+}
+
+function getRankingByPlayerName(rankings: DynastyRanking[]) {
+  const rankingsByName = new Map<string, DynastyRanking>();
+
+  rankings.forEach((ranking) => {
+    const fullNameKey = normalizeSearchText(ranking.player);
+    const suffixlessNameKey = normalizePlayerMatchText(ranking.player);
+
+    rankingsByName.set(fullNameKey, ranking);
+
+    if (!rankingsByName.has(suffixlessNameKey)) {
+      rankingsByName.set(suffixlessNameKey, ranking);
+    }
+  });
+
+  return rankingsByName;
+}
+
+function sortRosterPlayers(
+  firstPlayer: SleeperLeagueRosterPlayer,
+  secondPlayer: SleeperLeagueRosterPlayer,
+) {
+  const firstRank = firstPlayer.personalRank ?? Number.POSITIVE_INFINITY;
+  const secondRank = secondPlayer.personalRank ?? Number.POSITIVE_INFINITY;
+
+  return firstRank - secondRank || firstPlayer.name.localeCompare(secondPlayer.name);
+}
+
+function getEligiblePositions(slot: string) {
+  const normalizedSlot = slot.toUpperCase();
+
+  if (["QB", "RB", "WR", "TE"].includes(normalizedSlot)) {
+    return [normalizedSlot];
+  }
+
+  if (
+    [
+      "FLEX",
+      "REC_FLEX",
+      "WRRB_FLEX",
+      "WRRB",
+      "WRT",
+      "WRTE_FLEX",
+      "WRTE",
+    ].includes(normalizedSlot)
+  ) {
+    return ["RB", "WR", "TE"];
+  }
+
+  if (
+    ["SUPER_FLEX", "SUPERFLEX", "OP", "OFFENSIVE_PLAYER"].includes(
+      normalizedSlot,
+    )
+  ) {
+    return ["QB", "RB", "WR", "TE"];
+  }
+
+  return [];
+}
+
+function isStarterSlot(slot: string) {
+  return !["BN", "IR", "TAXI"].includes(slot.toUpperCase());
+}
+
+function assignRosterRoles(
+  players: SleeperLeagueRosterPlayer[],
+  starterSlots: string[],
+) {
+  const remainingPlayers = [...players].sort(sortRosterPlayers);
+  const starters: SleeperLeagueRosterPlayer[] = [];
+
+  starterSlots.forEach((slot) => {
+    const eligiblePositions = getEligiblePositions(slot);
+    const nextPlayerIndex = remainingPlayers.findIndex((player) =>
+      eligiblePositions.includes(player.position),
+    );
+
+    if (nextPlayerIndex === -1) {
+      return;
+    }
+
+    const [starter] = remainingPlayers.splice(nextPlayerIndex, 1);
+    starters.push({
+      ...starter,
+      rosterRole: "starter",
+      starterSlot: slot,
+    });
+  });
+
+  const firstBenchLimit = Math.min(2, remainingPlayers.length);
+  const firstBench = remainingPlayers.slice(0, firstBenchLimit).map((player) => ({
+    ...player,
+    rosterRole: "first-bench" as const,
+  }));
+  const bench = remainingPlayers.slice(firstBenchLimit).map((player) => ({
+    ...player,
+    rosterRole: "bench" as const,
+  }));
+
+  return [...starters, ...firstBench, ...bench].sort(sortRosterPlayers);
 }
 
 function getPlayerAsset({
@@ -521,5 +675,169 @@ export async function getSleeperLeaguemateInsights({
     topAcquiredPlayers: sortTradePlayers(acquiredCounts, players),
     topTradedAwayPlayers: sortTradePlayers(tradedAwayCounts, players),
     tradeCount,
+  };
+}
+
+export async function getSleeperLeagueRosterBoard({
+  leagueId,
+  season,
+  username,
+}: {
+  leagueId?: string;
+  season: string;
+  username: string;
+}): Promise<SleeperLeagueRosterBoard> {
+  const trimmedUsername = username.trim();
+
+  if (!trimmedUsername) {
+    throw new Error("Enter a Sleeper username.");
+  }
+
+  const user = await fetchSleeperJson<SleeperUser | null>(
+    `/user/${encodeURIComponent(trimmedUsername)}`,
+    60 * 60,
+  );
+
+  if (!user?.user_id) {
+    throw new Error("Sleeper user was not found.");
+  }
+
+  const [userLeagues, players] = await Promise.all([
+    fetchSleeperJson<SleeperLeague[]>(
+      `/user/${user.user_id}/leagues/nfl/${season}`,
+      60 * 10,
+    ),
+    fetchSleeperJson<Record<string, SleeperPlayer>>("/players/nfl", 60 * 60 * 24),
+  ]);
+  const leagues = userLeagues
+    .filter((league) => Boolean(league.league_id))
+    .map(getLeagueSummary)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const selectedLeague =
+    leagues.find((league) => league.id === leagueId) ?? leagues[0];
+
+  if (!selectedLeague) {
+    throw new Error(`No Sleeper leagues were found for ${season}.`);
+  }
+
+  const [leagueDetails, leagueUsers, rosters] = await Promise.all([
+    fetchSleeperJson<SleeperLeague>(
+      `/league/${selectedLeague.id}`,
+      60 * 10,
+    ).catch(() => null),
+    fetchSleeperJson<SleeperLeagueUser[]>(
+      `/league/${selectedLeague.id}/users`,
+      60 * 10,
+    ),
+    fetchSleeperJson<SleeperRoster[]>(
+      `/league/${selectedLeague.id}/rosters`,
+      60 * 10,
+    ),
+  ]);
+  const rosterPositions =
+    leagueDetails?.roster_positions?.filter(Boolean) ??
+    userLeagues.find((league) => league.league_id === selectedLeague.id)
+      ?.roster_positions?.filter(Boolean) ??
+    ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "SUPER_FLEX", "BN"];
+  const starterSlots = rosterPositions.filter(isStarterSlot);
+  const rankingsByName = getRankingByPlayerName(getDynastyRankings());
+  const leagueUsersById = new Map(
+    leagueUsers
+      .filter((leagueUser) => Boolean(leagueUser.user_id))
+      .map((leagueUser) => [leagueUser.user_id ?? "", leagueUser]),
+  );
+
+  const teams = rosters
+    .filter((roster) => typeof roster.roster_id === "number")
+    .map((roster) => {
+      const owner = roster.owner_id
+        ? leagueUsersById.get(roster.owner_id)
+        : undefined;
+      const ownerName =
+        owner?.display_name ??
+        owner?.username ??
+        owner?.metadata?.team_name ??
+        `Roster ${roster.roster_id}`;
+      const basePlayers = (roster.players ?? [])
+        .map((playerId) => {
+          const asset = getPlayerAsset({
+            leagueId: selectedLeague.id,
+            leagueName: selectedLeague.name,
+            player: players[playerId],
+            playerId,
+          });
+          const ranking =
+            rankingsByName.get(normalizeSearchText(asset.name)) ??
+            rankingsByName.get(normalizePlayerMatchText(asset.name));
+
+          return {
+            ...asset,
+            personalRank: ranking?.overallRank ?? null,
+            positionRank: ranking?.positionRank ?? null,
+            rosterRole: "bench" as const,
+            starterSlot: null,
+            value: ranking?.relativeBaseValue ?? null,
+          };
+        })
+        .filter((player) => ["QB", "RB", "WR", "TE"].includes(player.position));
+      const rolePlayers = assignRosterRoles(basePlayers, starterSlots);
+      const playersByPosition = rolePlayers.reduce<
+        Record<string, SleeperLeagueRosterPlayer[]>
+      >((positions, player) => {
+        positions[player.position] = positions[player.position] ?? [];
+        positions[player.position].push(player);
+        return positions;
+      }, {});
+      const knownAges = rolePlayers
+        .map((player) => player.age)
+        .filter((age): age is number => typeof age === "number");
+      const averageAge =
+        knownAges.length > 0
+          ? Number(
+              (
+                knownAges.reduce((total, age) => total + age, 0) /
+                knownAges.length
+              ).toFixed(1),
+            )
+          : null;
+      const totalValue = rolePlayers.reduce(
+        (total, player) => total + (player.value ?? 0),
+        0,
+      );
+      const starterValue = rolePlayers.reduce((total, player) => {
+        return player.rosterRole === "starter"
+          ? total + (player.value ?? 0)
+          : total;
+      }, 0);
+
+      return {
+        averageAge,
+        firstBenchCount: rolePlayers.filter(
+          (player) => player.rosterRole === "first-bench",
+        ).length,
+        ownerName,
+        playersByPosition,
+        rosterId: roster.roster_id ?? 0,
+        starterCount: rolePlayers.filter(
+          (player) => player.rosterRole === "starter",
+        ).length,
+        starterValue,
+        teamName: owner?.metadata?.team_name ?? null,
+        totalValue,
+        username: owner?.username ?? null,
+      };
+    })
+    .sort((a, b) => {
+      return b.starterValue - a.starterValue || a.ownerName.localeCompare(b.ownerName);
+    });
+
+  return {
+    leagues,
+    rosterPositions,
+    season,
+    selectedLeague,
+    starterSlots,
+    teams,
+    username: trimmedUsername,
   };
 }

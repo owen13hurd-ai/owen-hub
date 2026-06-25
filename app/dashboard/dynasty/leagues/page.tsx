@@ -1,0 +1,303 @@
+import Link from "next/link";
+import { ArrowLeft, RefreshCcw, Rows3, Star } from "lucide-react";
+import clsx from "clsx";
+
+import { Button } from "@/components/ui/Button";
+import { getSleeperLeagueRosterBoard } from "@/lib/dynasty/sleeper";
+import { personalSettings } from "@/lib/personal-settings";
+import type { SleeperLeagueRosterPlayer } from "@/lib/dynasty/sleeper";
+
+const positionColumns = ["QB", "RB", "WR", "TE"];
+
+function formatValue(value: number | null) {
+  if (value === null) {
+    return "-";
+  }
+
+  return Math.round(value).toLocaleString();
+}
+
+function formatSlot(slot: string) {
+  return slot
+    .replaceAll("_", " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function PlayerRow({ player }: { player: SleeperLeagueRosterPlayer }) {
+  const isStarter = player.rosterRole === "starter";
+  const isFirstBench = player.rosterRole === "first-bench";
+
+  return (
+    <div
+      className={clsx(
+        "grid min-h-10 grid-cols-[1fr_auto] items-center gap-2 rounded-md border px-2 py-1.5",
+        isStarter
+          ? "border-emerald-200 bg-emerald-50"
+          : isFirstBench
+            ? "border-amber-200 bg-amber-50"
+            : "border-ink/10 bg-white",
+      )}
+    >
+      <div className="min-w-0">
+        <div className="flex min-w-0 items-center gap-1.5">
+          {isStarter ? (
+            <Star
+              className="h-3.5 w-3.5 shrink-0 fill-emerald-600 text-emerald-600"
+              aria-hidden="true"
+            />
+          ) : null}
+          <span className="truncate text-sm font-semibold text-ink">
+            {player.name}
+          </span>
+        </div>
+        <div className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-ink/50">
+          {player.positionRank ? <span>{player.positionRank}</span> : null}
+          {player.personalRank ? <span>#{player.personalRank}</span> : null}
+          {player.team ? <span>{player.team}</span> : null}
+          {isStarter && player.starterSlot ? (
+            <span>{formatSlot(player.starterSlot)}</span>
+          ) : null}
+          {isFirstBench ? <span>First bench</span> : null}
+        </div>
+      </div>
+      <span
+        className={clsx(
+          "text-sm font-bold",
+          isStarter
+            ? "text-emerald-700"
+            : isFirstBench
+              ? "text-amber-700"
+              : "text-ink/55",
+        )}
+      >
+        {formatValue(player.value)}
+      </span>
+    </div>
+  );
+}
+
+export default async function DynastyLeagueRostersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ leagueId?: string; season?: string }>;
+}) {
+  const params = await searchParams;
+  const season = params?.season?.trim() || personalSettings.dynastySeason;
+  const rosterBoard = await getSleeperLeagueRosterBoard({
+    leagueId: params?.leagueId,
+    season,
+    username: personalSettings.sleeperUsername,
+  }).catch((error) => {
+    return error instanceof Error ? error : new Error("Sleeper failed.");
+  });
+  const hasError = rosterBoard instanceof Error;
+  const data = hasError ? null : rosterBoard;
+
+  return (
+    <div className="space-y-8">
+      <section>
+        <Button asChild variant="secondary">
+          <Link href="/dashboard/dynasty">
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Rankings
+          </Link>
+        </Button>
+        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.16em] text-moss">
+          Dynasty Hub
+        </p>
+        <h1 className="mt-2 text-3xl font-bold text-ink">League Rosters</h1>
+        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
+          View a full Sleeper league through your personal rankings, with each
+          roster split by position and starter format.
+        </p>
+      </section>
+
+      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+        <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="text-sm font-semibold text-ink">Roster view</p>
+            <p className="mt-1 text-sm text-ink/60">
+              Loading leagues for{" "}
+              <span className="font-semibold text-ink">
+                {personalSettings.sleeperUsername}
+              </span>
+              .
+            </p>
+          </div>
+          <form className="grid gap-3 sm:grid-cols-[minmax(220px,320px)_120px_auto]">
+            <label className="block">
+              <span className="text-sm font-semibold text-ink">League</span>
+              <select
+                name="leagueId"
+                defaultValue={data?.selectedLeague.id}
+                className="mt-2 h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
+              >
+                {data?.leagues.map((league) => (
+                  <option key={league.id} value={league.id}>
+                    {league.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-sm font-semibold text-ink">Season</span>
+              <input
+                name="season"
+                defaultValue={season}
+                className="mt-2 h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
+              />
+            </label>
+            <div className="flex items-end">
+              <Button type="submit">
+                <RefreshCcw className="h-4 w-4" aria-hidden="true" />
+                Load
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        {hasError ? (
+          <p className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+            {rosterBoard.message}
+          </p>
+        ) : null}
+      </section>
+
+      {data ? (
+        <>
+          <section className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+              <p className="text-sm text-ink/55">League</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                {data.selectedLeague.name}
+              </p>
+            </div>
+            <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+              <p className="text-sm text-ink/55">Starter format</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                Start {data.starterSlots.length}
+              </p>
+            </div>
+            <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+              <p className="text-sm text-ink/55">Teams</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                {data.teams.length}
+              </p>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            {data.teams.map((team, index) => (
+              <article
+                key={team.rosterId}
+                className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft"
+              >
+                <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-start">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-white">
+                        #{index + 1}
+                      </span>
+                      <h2 className="truncate text-lg font-bold text-ink">
+                        {team.teamName ?? team.ownerName}
+                      </h2>
+                      {team.teamName ? (
+                        <span className="text-sm text-ink/50">
+                          {team.ownerName}
+                        </span>
+                      ) : null}
+                    </div>
+                    {team.username ? (
+                      <p className="mt-1 text-sm text-ink/50">
+                        @{team.username}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    <div className="rounded-md bg-mist px-3 py-2">
+                      <p className="text-xs text-ink/50">Starter value</p>
+                      <p className="text-sm font-bold text-ink">
+                        {formatValue(team.starterValue)}
+                      </p>
+                    </div>
+                    <div className="rounded-md bg-mist px-3 py-2">
+                      <p className="text-xs text-ink/50">Total value</p>
+                      <p className="text-sm font-bold text-ink">
+                        {formatValue(team.totalValue)}
+                      </p>
+                    </div>
+                    <div className="rounded-md bg-mist px-3 py-2">
+                      <p className="text-xs text-ink/50">Starters</p>
+                      <p className="text-sm font-bold text-ink">
+                        {team.starterCount}
+                      </p>
+                    </div>
+                    <div className="rounded-md bg-mist px-3 py-2">
+                      <p className="text-xs text-ink/50">Avg age</p>
+                      <p className="text-sm font-bold text-ink">
+                        {team.averageAge ?? "-"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 xl:grid-cols-4">
+                  {positionColumns.map((position) => {
+                    const players = team.playersByPosition[position] ?? [];
+
+                    return (
+                      <div key={position} className="min-w-0">
+                        <div className="mb-2 flex items-center justify-between border-b border-ink/10 pb-2">
+                          <p className="text-sm font-bold text-ink">
+                            {position}
+                          </p>
+                          <span className="text-xs font-semibold text-ink/45">
+                            {players.length}
+                          </span>
+                        </div>
+                        <div className="space-y-1.5">
+                          {players.map((player) => (
+                            <PlayerRow key={player.playerId} player={player} />
+                          ))}
+                          {players.length === 0 ? (
+                            <div className="rounded-md border border-dashed border-ink/15 bg-mist px-3 py-4 text-center text-sm text-ink/45">
+                              Empty
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </article>
+            ))}
+          </section>
+
+          <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+            <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <Rows3 className="h-4 w-4 text-moss" aria-hidden="true" />
+              Roster slots
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {data.rosterPositions.map((slot, index) => (
+                <span
+                  key={`${slot}-${index}`}
+                  className={clsx(
+                    "rounded-full px-3 py-1 text-xs font-bold",
+                    index < data.starterSlots.length
+                      ? "bg-emerald-50 text-emerald-800"
+                      : "bg-mist text-ink/55",
+                  )}
+                >
+                  {formatSlot(slot)}
+                </span>
+              ))}
+            </div>
+          </section>
+        </>
+      ) : null}
+    </div>
+  );
+}
