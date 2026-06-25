@@ -19,10 +19,11 @@ function formatPercent(count: number, total: number) {
 export default async function LeaguemateInsightsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ manager?: string; season?: string }>;
+  searchParams?: Promise<{ manager?: string; managerId?: string; season?: string }>;
 }) {
   const params = await searchParams;
   const managerName = params?.manager?.trim() ?? "";
+  const managerUserId = params?.managerId?.trim();
   const season = params?.season?.trim() || personalSettings.dynastySeason;
   const searchOptions = await getSleeperLeaguemateSearchOptions({
     season,
@@ -31,6 +32,7 @@ export default async function LeaguemateInsightsPage({
   const insights = managerName
     ? await getSleeperLeaguemateInsights({
         managerName,
+        managerUserId,
         season,
         username: personalSettings.sleeperUsername,
       }).catch((error) => {
@@ -131,7 +133,9 @@ export default async function LeaguemateInsightsPage({
               {suggestedManagers.map((option) => (
                 <Link
                   key={option.userId}
-                  href={`/dashboard/dynasty/leaguemates?manager=${encodeURIComponent(
+                  href={`/dashboard/dynasty/leaguemates?managerId=${encodeURIComponent(
+                    option.userId,
+                  )}&manager=${encodeURIComponent(
                     option.displayName,
                   )}&season=${encodeURIComponent(season)}`}
                   className="rounded-full border border-ink/10 bg-mist px-3 py-1.5 text-xs font-bold text-ink transition hover:border-moss hover:bg-skyglass"
@@ -167,7 +171,7 @@ export default async function LeaguemateInsightsPage({
         </section>
       ) : null}
 
-      {managerName && data?.sharedLeagueCount === 0 ? (
+      {managerName && data?.totalLeagueCount === 0 ? (
         <section className="rounded-lg border border-dashed border-ink/20 bg-white p-6">
           <Users className="h-6 w-6 text-ink/45" aria-hidden="true" />
           <h2 className="mt-3 text-lg font-bold text-ink">
@@ -180,11 +184,17 @@ export default async function LeaguemateInsightsPage({
         </section>
       ) : null}
 
-      {data && data.sharedLeagueCount > 0 ? (
+      {data && data.totalLeagueCount > 0 ? (
         <>
-          <section className="grid gap-4 md:grid-cols-4">
+          <section className="grid gap-4 md:grid-cols-5">
             <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-              <p className="text-sm text-ink/55">Shared leagues</p>
+              <p className="text-sm text-ink/55">Leagues found</p>
+              <p className="mt-1 text-2xl font-bold text-ink">
+                {data.totalLeagueCount}
+              </p>
+            </div>
+            <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+              <p className="text-sm text-ink/55">Shared with you</p>
               <p className="mt-1 text-2xl font-bold text-ink">
                 {data.sharedLeagueCount}
               </p>
@@ -254,7 +264,7 @@ export default async function LeaguemateInsightsPage({
 
             <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
               <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
-                Shared league matches
+                League matches
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {data.matches.map((match) => (
@@ -267,6 +277,9 @@ export default async function LeaguemateInsightsPage({
                     </p>
                     <p className="mt-1 text-sm text-ink/60">
                       {match.leagueName}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-ink/45">
+                      {match.isSharedLeague ? "Shared league" : "Other league"}
                     </p>
                     {match.teamName ? (
                       <p className="mt-1 text-xs text-ink/45">
@@ -310,7 +323,7 @@ export default async function LeaguemateInsightsPage({
                           {player.team ?? "-"}
                         </td>
                         <td className="px-3 py-3 font-semibold text-ink">
-                          {player.exposure}/{data.sharedLeagueCount}
+                          {player.exposure}/{data.totalLeagueCount}
                         </td>
                         <td className="px-3 py-3 text-ink/60">
                           {player.leagueNames.join(", ")}

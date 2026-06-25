@@ -30,6 +30,7 @@ export type SleeperPortfolioData = {
 export type SleeperLeaguemateMatch = {
   avatar: string | null;
   displayName: string;
+  isSharedLeague: boolean;
   leagueId: string;
   leagueName: string;
   rosterId: number;
@@ -66,6 +67,7 @@ export type SleeperLeaguemateInsights = {
   searchedName: string;
   season: string;
   sharedLeagueCount: number;
+  totalLeagueCount: number;
   topAcquiredPlayers: SleeperLeaguemateTradePlayer[];
   topTradedAwayPlayers: SleeperLeaguemateTradePlayer[];
   tradeCount: number;
@@ -592,17 +594,20 @@ export async function getSleeperLeaguemateSearchOptions({
 }
 
 export async function getSleeperLeaguemateInsights({
+  managerUserId,
   managerName,
   season,
   username,
 }: {
+  managerUserId?: string;
   managerName: string;
   season: string;
   username: string;
 }): Promise<SleeperLeaguemateInsights> {
   const searchedName = managerName.trim();
+  const searchedUserId = managerUserId?.trim();
 
-  if (!searchedName) {
+  if (!searchedName && !searchedUserId) {
     throw new Error("Enter a leaguemate name, username, or team name.");
   }
 
@@ -616,6 +621,18 @@ export async function getSleeperLeaguemateInsights({
   const rosterAssets: SleeperRosterAsset[] = [];
   const acquiredCounts = new Map<string, number>();
   const tradedAwayCounts = new Map<string, number>();
+  const targetUsers = new Map<
+    string,
+    {
+      avatar: string | null;
+      displayName: string;
+      teamName: string | null;
+      userId: string;
+      username: string | null;
+    }
+  >();
+  const matchKeys = new Set<string>();
+  const sharedLeagueIds = new Set(myPortfolio.leagues.map((league) => league.id));
   let tradeCount = 0;
 
   await Promise.all(
@@ -629,92 +646,198 @@ export async function getSleeperLeaguemateInsights({
       ]);
 
       const matchingUsers = leagueUsers.filter((leagueUser) => {
+        if (searchedUserId) {
+          return leagueUser.user_id === searchedUserId;
+        }
+
         return isLeagueUserMatch(leagueUser, normalizedSearch);
       });
 
+      matchingUsers.forEach((leagueUser) => {
+        if (!leagueUser.user_id) {
+          return;
+        }
+
+        const roster = rosters.find((candidate) => {
+          return (
+            candidate.owner_id === leagueUser.user_id ||
+            candidate.co_owners?.includes(leagueUser.user_id ?? "")
+          );
+        });
+
+        if (!roster?.roster_id) {
+          return;
+        }
+
+        targetUsers.set(leagueUser.user_id, {
+          avatar: leagueUser.avatar ?? null,
+          displayName:
+            leagueUser.display_name ??
+            leagueUser.username ??
+            leagueUser.metadata?.team_name ??
+            "Unknown manager",
+          teamName: leagueUser.metadata?.team_name ?? null,
+          userId: leagueUser.user_id,
+          username: leagueUser.username ?? null,
+        });
+      });
+    }),
+  );
+
+  if (targetUsers.size === 0 && searchedName) {
+    const searchedUser = await fetchSleeperJson<SleeperUser | null>(
+      `/user/${encodeURIComponent(searchedName)}`,
+      60 * 60,
+    ).catch(() => null);
+
+    if (searchedUser?.user_id) {
+      targetUsers.set(searchedUser.user_id, {
+        avatar: null,
+        displayName: searchedUser.display_name ?? searchedUser.username ?? searchedName,
+        teamName: null,
+        userId: searchedUser.user_id,
+        username: searchedUser.username ?? null,
+      });
+    }
+  }
+
+  async function addLeagueRoster({
+    fallbackUser,
+    league,
+    roster,
+    user,
+  }: {
+    fallbackUser: {
+      avatar: string | null;
+      displayName: string;
+      teamName: string | null;
+      userId: string;
+      username: string | null;
+    };
+    league: SleeperLeagueSummary;
+    roster: SleeperRoster;
+    user?: SleeperLeagueUser;
+  }) {
+    if (!roster.roster_id) {
+      return;
+    }
+
+    const targetRosterId = roster.roster_id;
+    const matchKey = `${league.id}-${targetRosterId}`;
+
+    if (matchKeys.has(matchKey)) {
+      return;
+    }
+
+    matchKeys.add(matchKey);
+
+    matches.push({
+      avatar: user?.avatar ?? fallbackUser.avatar,
+      displayName:
+        user?.display_name ??
+        user?.username ??
+        user?.metadata?.team_name ??
+        fallbackUser.displayName,
+      isSharedLeague: sharedLeagueIds.has(league.id),
+      leagueId: league.id,
+      leagueName: league.name,
+      rosterId: targetRosterId,
+      teamName: user?.metadata?.team_name ?? fallbackUser.teamName,
+      userId: fallbackUser.userId,
+      username: user?.username ?? fallbackUser.username,
+    });
+
+    roster.players?.forEach((playerId) => {
+      rosterAssets.push(
+        getPlayerAsset({
+          leagueId: league.id,
+          leagueName: league.name,
+          player: players[playerId],
+          playerId,
+        }),
+      );
+    });
+
+    const transactionWeeks = Array.from({ length: 18 }, (_, index) => index + 1);
+    const transactionsByWeek = await Promise.all(
+      transactionWeeks.map((week) =>
+        fetchSleeperJson<SleeperTransaction[]>(
+          `/league/${league.id}/transactions/${week}`,
+          60 * 10,
+        ).catch(() => []),
+      ),
+    );
+
+    transactionsByWeek.flat().forEach((transaction) => {
+      if (
+        transaction.type !== "trade" ||
+        transaction.status !== "complete" ||
+        !transaction.roster_ids?.includes(targetRosterId)
+      ) {
+        return;
+      }
+
+      tradeCount += 1;
+
+      Object.entries(transaction.adds ?? {}).forEach(
+        ([playerId, destinationRosterId]) => {
+          if (destinationRosterId === targetRosterId) {
+            incrementPlayerCount(acquiredCounts, playerId);
+          }
+        },
+      );
+
+      Object.entries(transaction.drops ?? {}).forEach(([playerId, sourceRosterId]) => {
+        if (sourceRosterId === targetRosterId) {
+          incrementPlayerCount(tradedAwayCounts, playerId);
+        }
+      });
+    });
+  }
+
+  await Promise.all(
+    Array.from(targetUsers.values()).map(async (targetUser) => {
+      const targetLeagues = await fetchSleeperJson<SleeperLeague[]>(
+        `/user/${targetUser.userId}/leagues/nfl/${season}`,
+        60 * 10,
+      ).catch(() => []);
+
       await Promise.all(
-        matchingUsers.map(async (leagueUser) => {
-          if (!leagueUser.user_id) {
-            return;
-          }
-
-          const roster = rosters.find((candidate) => {
-            return (
-              candidate.owner_id === leagueUser.user_id ||
-              candidate.co_owners?.includes(leagueUser.user_id ?? "")
-            );
-          });
-
-          if (!roster?.roster_id) {
-            return;
-          }
-
-          const targetRosterId = roster.roster_id;
-
-          matches.push({
-            avatar: leagueUser.avatar ?? null,
-            displayName:
-              leagueUser.display_name ??
-              leagueUser.username ??
-              leagueUser.metadata?.team_name ??
-              "Unknown manager",
-            leagueId: league.id,
-            leagueName: league.name,
-            rosterId: targetRosterId,
-            teamName: leagueUser.metadata?.team_name ?? null,
-            userId: leagueUser.user_id,
-            username: leagueUser.username ?? null,
-          });
-
-          roster.players?.forEach((playerId) => {
-            rosterAssets.push(
-              getPlayerAsset({
-                leagueId: league.id,
-                leagueName: league.name,
-                player: players[playerId],
-                playerId,
-              }),
-            );
-          });
-
-          const transactionWeeks = Array.from({ length: 18 }, (_, index) => index + 1);
-          const transactionsByWeek = await Promise.all(
-            transactionWeeks.map((week) =>
-              fetchSleeperJson<SleeperTransaction[]>(
-                `/league/${league.id}/transactions/${week}`,
+        targetLeagues
+          .filter((league) => Boolean(league.league_id))
+          .map(async (league) => {
+            const leagueSummary = getLeagueSummary(league);
+            const [leagueUsers, rosters] = await Promise.all([
+              fetchSleeperJson<SleeperLeagueUser[]>(
+                `/league/${leagueSummary.id}/users`,
                 60 * 10,
               ).catch(() => []),
-            ),
-          );
+              fetchSleeperJson<SleeperRoster[]>(
+                `/league/${leagueSummary.id}/rosters`,
+                60 * 10,
+              ).catch(() => []),
+            ]);
+            const leagueUser = leagueUsers.find((candidate) => {
+              return candidate.user_id === targetUser.userId;
+            });
+            const roster = rosters.find((candidate) => {
+              return (
+                candidate.owner_id === targetUser.userId ||
+                candidate.co_owners?.includes(targetUser.userId)
+              );
+            });
 
-          transactionsByWeek.flat().forEach((transaction) => {
-            if (
-              transaction.type !== "trade" ||
-              transaction.status !== "complete" ||
-              !transaction.roster_ids?.includes(targetRosterId)
-            ) {
+            if (!roster) {
               return;
             }
 
-            tradeCount += 1;
-
-            Object.entries(transaction.adds ?? {}).forEach(
-              ([playerId, destinationRosterId]) => {
-                if (destinationRosterId === targetRosterId) {
-                  incrementPlayerCount(acquiredCounts, playerId);
-                }
-              },
-            );
-
-            Object.entries(transaction.drops ?? {}).forEach(
-              ([playerId, sourceRosterId]) => {
-                if (sourceRosterId === targetRosterId) {
-                  incrementPlayerCount(tradedAwayCounts, playerId);
-                }
-              },
-            );
-          });
-        }),
+            await addLeagueRoster({
+              fallbackUser: targetUser,
+              league: leagueSummary,
+              roster,
+              user: leagueUser,
+            });
+          }),
       );
     }),
   );
@@ -777,7 +900,8 @@ export async function getSleeperLeaguemateInsights({
     }),
     searchedName,
     season,
-    sharedLeagueCount: matches.length,
+    sharedLeagueCount: matches.filter((match) => match.isSharedLeague).length,
+    totalLeagueCount: matches.length,
     topAcquiredPlayers: sortTradePlayers(acquiredCounts, players),
     topTradedAwayPlayers: sortTradePlayers(tradedAwayCounts, players),
     tradeCount,
