@@ -58,14 +58,17 @@ type PastePokemonSet = {
 };
 
 const statLabels: Record<string, PokemonStatKey> = {
+  attack: "Atk",
   atk: "Atk",
   def: "Def",
+  defense: "Def",
   hp: "HP",
   "special-attack": "SpA",
   "special-defense": "SpD",
   spa: "SpA",
   spd: "SpD",
   spe: "Spe",
+  speed: "Spe",
 };
 
 const natureModifiers: Record<string, { down?: PokemonStatKey; up?: PokemonStatKey }> = {
