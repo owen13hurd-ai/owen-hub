@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { getDynastyRankings, getDynastyTiers } from "@/lib/dynasty/rankings";
 import { getSleeperPortfolio } from "@/lib/dynasty/sleeper";
 import { enrichRankingsWithMarketSources } from "@/lib/dynasty/sources/marketSources";
+import { personalSettings } from "@/lib/personal-settings";
 import type { DynastyOwnershipSummary } from "@/types/dynasty";
-
-const defaultSeason = "2026";
 
 function normalizePlayerName(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -18,21 +17,21 @@ function normalizePlayerName(value: string) {
 export default async function DynastyHubPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ season?: string; username?: string }>;
+  searchParams?: Promise<{ season?: string }>;
 }) {
   const params = await searchParams;
-  const username = params?.username?.trim() ?? "";
-  const season = params?.season?.trim() || defaultSeason;
+  const username = personalSettings.sleeperUsername;
+  const season = params?.season?.trim() || personalSettings.dynastySeason;
   const importedRankings = getDynastyRankings();
   const { rankings, sources } =
     await enrichRankingsWithMarketSources(importedRankings);
   const tiers = getDynastyTiers(rankings);
   const savedRowsByScope = await getSavedDynastyBoard();
-  const sleeperPortfolio = username
-    ? await getSleeperPortfolio({ season, username }).catch((error) => {
-        return error instanceof Error ? error : new Error("Sleeper failed.");
-      })
-    : null;
+  const sleeperPortfolio = await getSleeperPortfolio({ season, username }).catch(
+    (error) => {
+      return error instanceof Error ? error : new Error("Sleeper failed.");
+    },
+  );
   const hasSleeperError = sleeperPortfolio instanceof Error;
   const sleeperData = hasSleeperError ? null : sleeperPortfolio;
   const leagueCount = sleeperData?.leagues.length ?? 0;
@@ -41,7 +40,8 @@ export default async function DynastyHubPage({
 
   sleeperData?.rosterAssets.forEach((asset) => {
     const key = normalizePlayerName(asset.name);
-    const existingLeagues = rosteredLeagueNamesByPlayer.get(key) ?? new Set<string>();
+    const existingLeagues =
+      rosteredLeagueNamesByPlayer.get(key) ?? new Set<string>();
 
     existingLeagues.add(asset.leagueName);
     rosteredLeagueNamesByPlayer.set(key, existingLeagues);
@@ -59,9 +59,10 @@ export default async function DynastyHubPage({
       percent: leagueCount > 0 ? Math.round((exposure / leagueCount) * 100) : 0,
     };
   });
-  const portfolioHref = username
-    ? `/dashboard/dynasty/portfolio?username=${encodeURIComponent(username)}&season=${encodeURIComponent(season)}`
-    : "/dashboard/dynasty/portfolio";
+  const portfolioHref =
+    season === personalSettings.dynastySeason
+      ? "/dashboard/dynasty/portfolio"
+      : `/dashboard/dynasty/portfolio?season=${encodeURIComponent(season)}`;
 
   return (
     <div className="space-y-8">
@@ -89,38 +90,41 @@ export default async function DynastyHubPage({
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-        <form className="grid gap-3 md:grid-cols-[1fr_160px_auto]">
-          <label className="block">
-            <span className="text-sm font-semibold text-ink">
+        <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="text-sm font-semibold text-ink">
               Sleeper ownership
-            </span>
-            <input
-              name="username"
-              defaultValue={username}
-              placeholder="Sleeper username"
-              className="mt-2 h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
-            />
-          </label>
-          <label className="block">
-            <span className="text-sm font-semibold text-ink">Season</span>
-            <input
-              name="season"
-              defaultValue={season}
-              className="mt-2 h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
-            />
-          </label>
-          <div className="flex items-end">
-            <Button type="submit">
-              <RefreshCcw className="h-4 w-4" aria-hidden="true" />
-              Load ownership
-            </Button>
+            </p>
+            <p className="mt-1 text-sm text-ink/60">
+              Automatically loading teams for{" "}
+              <span className="font-semibold text-ink">{username}</span>.
+            </p>
           </div>
-        </form>
+          <form className="grid gap-3 sm:grid-cols-[140px_auto]">
+            <label className="block">
+              <span className="text-sm font-semibold text-ink">Season</span>
+              <input
+                name="season"
+                defaultValue={season}
+                className="mt-2 h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
+              />
+            </label>
+            <div className="flex items-end">
+              <Button type="submit">
+                <RefreshCcw className="h-4 w-4" aria-hidden="true" />
+                Load ownership
+              </Button>
+            </div>
+          </form>
+        </div>
 
         {sleeperData ? (
           <p className="mt-3 text-sm text-ink/60">
             Showing ownership across {leagueCount} Sleeper leagues for{" "}
-            <span className="font-semibold text-ink">{sleeperData.displayName}</span>.
+            <span className="font-semibold text-ink">
+              {sleeperData.displayName}
+            </span>
+            .
           </p>
         ) : null}
 
@@ -135,7 +139,7 @@ export default async function DynastyHubPage({
         initialRankings={rankings}
         initialTiers={tiers}
         initialRowsByScope={savedRowsByScope}
-        ownershipByPlayerId={username ? ownershipByPlayerId : null}
+        ownershipByPlayerId={ownershipByPlayerId}
         sources={sources}
       />
     </div>
