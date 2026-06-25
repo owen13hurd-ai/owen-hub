@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ExternalLink, RefreshCcw, Search } from "lucide-react";
 
+import { PokemonSprite } from "@/components/pokemon/PokemonSprite";
 import { Button } from "@/components/ui/Button";
 import { getChampionsMbTeams } from "@/lib/pokemon/vgc-pastes";
 
@@ -120,12 +121,18 @@ export default async function PokemonHubPage({
           {data.topPokemon.map((pokemon) => (
             <div
               key={pokemon.name}
-              className="rounded-md border border-ink/10 bg-mist p-3"
+              className="flex items-center gap-3 rounded-md border border-ink/10 bg-mist p-3"
             >
-              <p className="font-semibold text-ink">{pokemon.name}</p>
-              <p className="mt-1 text-sm text-ink/55">
-                {pokemon.count} team{pokemon.count === 1 ? "" : "s"}
-              </p>
+              <PokemonSprite
+                name={pokemon.name}
+                className="h-14 w-14 shrink-0"
+              />
+              <div>
+                <p className="font-semibold text-ink">{pokemon.name}</p>
+                <p className="mt-1 text-sm text-ink/55">
+                  {pokemon.count} team{pokemon.count === 1 ? "" : "s"}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -175,14 +182,20 @@ export default async function PokemonHubPage({
                       {team.rank}
                     </td>
                     <td className="px-3 py-3">
-                      <div className="flex max-w-md flex-wrap gap-1.5">
+                      <div className="grid max-w-xl grid-cols-2 gap-2">
                         {team.pokemon.map((pokemon) => (
-                          <span
+                          <div
                             key={`${team.id}-${pokemon}`}
-                            className="rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink"
+                            className="flex min-h-14 items-center gap-2 rounded-md bg-skyglass px-2 py-1"
                           >
-                            {pokemon}
-                          </span>
+                            <PokemonSprite
+                              name={pokemon}
+                              className="h-10 w-10 shrink-0"
+                            />
+                            <span className="text-xs font-bold leading-4 text-ink">
+                              {pokemon}
+                            </span>
+                          </div>
                         ))}
                       </div>
                     </td>
