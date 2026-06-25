@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { ExternalLink, RefreshCcw } from "lucide-react";
 
+import { PokemonTeamBuilder } from "@/components/pokemon/PokemonTeamBuilder";
 import { PokemonTeamsClient } from "@/components/pokemon/PokemonTeamsClient";
 import { Button } from "@/components/ui/Button";
+import { getPokemonBuilderData } from "@/lib/pokemon/team-builder";
 import { getChampionsMbTeams } from "@/lib/pokemon/vgc-pastes";
 
 export default async function PokemonHubPage() {
   const data = await getChampionsMbTeams();
+  const builderData = await getPokemonBuilderData(data);
 
   return (
     <div className="space-y-8">
@@ -37,6 +40,8 @@ export default async function PokemonHubPage() {
           </Button>
         </div>
       </section>
+
+      <PokemonTeamBuilder data={builderData} />
 
       <PokemonTeamsClient data={data} />
     </div>
