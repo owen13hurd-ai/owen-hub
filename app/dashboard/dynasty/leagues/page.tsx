@@ -9,12 +9,58 @@ import type { SleeperLeagueRosterPlayer } from "@/lib/dynasty/sleeper";
 
 const positionColumns = ["QB", "RB", "WR", "TE"];
 
+type PositionRankings = Record<string, Record<string, number>>;
+
 function formatValue(value: number | null) {
   if (value === null) {
     return "-";
   }
 
   return Math.round(value).toLocaleString();
+}
+
+function getValueColor(value: number | null) {
+  if (value === null) {
+    return {
+      border: "border-ink/10",
+      background: "bg-white",
+      text: "text-ink/55",
+    };
+  }
+
+  if (value >= 8) {
+    return {
+      border: "border-emerald-300",
+      background: "bg-emerald-50",
+      text: "text-emerald-800",
+    };
+  }
+
+  if (value >= 4) {
+    return {
+      border: "border-sky-300",
+      background: "bg-sky-50",
+      text: "text-sky-800",
+    };
+  }
+
+  if (value >= 1) {
+    return {
+      border: "border-amber-300",
+      background: "bg-amber-50",
+      text: "text-amber-800",
+    };
+  }
+
+  return {
+    border: "border-rose-200",
+    background: "bg-rose-50",
+    text: "text-rose-700",
+  };
+}
+
+function getPositionValue(players: SleeperLeagueRosterPlayer[]) {
+  return players.reduce((total, player) => total + (player.value ?? 0), 0);
 }
 
 function formatSlot(slot: string) {
@@ -24,19 +70,40 @@ function formatSlot(slot: string) {
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
+function getPositionRankings(
+  teams: {
+    rosterId: number;
+    playersByPosition: Record<string, SleeperLeagueRosterPlayer[]>;
+  }[],
+) {
+  return positionColumns.reduce<PositionRankings>((rankings, position) => {
+    const positionTotals = teams
+      .map((team) => ({
+        rosterId: team.rosterId,
+        value: getPositionValue(team.playersByPosition[position] ?? []),
+      }))
+      .sort((firstTeam, secondTeam) => secondTeam.value - firstTeam.value);
+
+    rankings[position] = {};
+    positionTotals.forEach((team, index) => {
+      rankings[position][team.rosterId] = index + 1;
+    });
+
+    return rankings;
+  }, {});
+}
+
 function PlayerRow({ player }: { player: SleeperLeagueRosterPlayer }) {
   const isStarter = player.rosterRole === "starter";
-  const isFirstBench = player.rosterRole === "first-bench";
+  const valueColor = getValueColor(player.value);
 
   return (
     <div
       className={clsx(
         "grid min-h-10 grid-cols-[1fr_auto] items-center gap-2 rounded-md border px-2 py-1.5",
-        isStarter
-          ? "border-emerald-200 bg-emerald-50"
-          : isFirstBench
-            ? "border-amber-200 bg-amber-50"
-            : "border-ink/10 bg-white",
+        valueColor.border,
+        valueColor.background,
+        !isStarter && "opacity-80",
       )}
     >
       <div className="min-w-0">
@@ -58,19 +125,9 @@ function PlayerRow({ player }: { player: SleeperLeagueRosterPlayer }) {
           {isStarter && player.starterSlot ? (
             <span>{formatSlot(player.starterSlot)}</span>
           ) : null}
-          {isFirstBench ? <span>First bench</span> : null}
         </div>
       </div>
-      <span
-        className={clsx(
-          "text-sm font-bold",
-          isStarter
-            ? "text-emerald-700"
-            : isFirstBench
-              ? "text-amber-700"
-              : "text-ink/55",
-        )}
-      >
+      <span className={clsx("text-sm font-bold", valueColor.text)}>
         {formatValue(player.value)}
       </span>
     </div>
@@ -93,6 +150,7 @@ export default async function DynastyLeagueRostersPage({
   });
   const hasError = rosterBoard instanceof Error;
   const data = hasError ? null : rosterBoard;
+  const positionRankings = data ? getPositionRankings(data.teams) : {};
 
   return (
     <div className="space-y-8">
@@ -246,15 +304,29 @@ export default async function DynastyLeagueRostersPage({
                 <div className="mt-4 grid gap-3 xl:grid-cols-4">
                   {positionColumns.map((position) => {
                     const players = team.playersByPosition[position] ?? [];
+                    const positionValue = getPositionValue(players);
+                    const positionRank = positionRankings[position]?.[team.rosterId];
 
                     return (
                       <div key={position} className="min-w-0">
-                        <div className="mb-2 flex items-center justify-between border-b border-ink/10 pb-2">
-                          <p className="text-sm font-bold text-ink">
-                            {position}
-                          </p>
-                          <span className="text-xs font-semibold text-ink/45">
-                            {players.length}
+                        <div className="mb-2 flex items-center justify-between gap-2 border-b border-ink/10 pb-2">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-bold text-ink">
+                                {position}
+                              </p>
+                              {positionRank ? (
+                                <span className="rounded-full bg-skyglass px-2 py-0.5 text-xs font-bold text-ink">
+                                  #{positionRank} {position}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="mt-0.5 text-xs text-ink/45">
+                              {players.length} players
+                            </p>
+                          </div>
+                          <span className="text-sm font-bold text-ink">
+                            {formatValue(positionValue)}
                           </span>
                         </div>
                         <div className="space-y-1.5">

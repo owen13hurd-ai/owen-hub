@@ -71,7 +71,7 @@ export type SleeperLeaguemateInsights = {
   tradeCount: number;
 };
 
-export type SleeperLeagueRosterRole = "starter" | "first-bench" | "bench";
+export type SleeperLeagueRosterRole = "starter" | "bench";
 
 export type SleeperLeagueRosterPlayer = SleeperRosterAsset & {
   personalRank: number | null;
@@ -83,7 +83,6 @@ export type SleeperLeagueRosterPlayer = SleeperRosterAsset & {
 
 export type SleeperLeagueRosterTeam = {
   averageAge: number | null;
-  firstBenchCount: number;
   ownerName: string;
   playersByPosition: Record<string, SleeperLeagueRosterPlayer[]>;
   rosterId: number;
@@ -286,17 +285,12 @@ function assignRosterRoles(
     });
   });
 
-  const firstBenchLimit = Math.min(2, remainingPlayers.length);
-  const firstBench = remainingPlayers.slice(0, firstBenchLimit).map((player) => ({
-    ...player,
-    rosterRole: "first-bench" as const,
-  }));
-  const bench = remainingPlayers.slice(firstBenchLimit).map((player) => ({
+  const bench = remainingPlayers.map((player) => ({
     ...player,
     rosterRole: "bench" as const,
   }));
 
-  return [...starters, ...firstBench, ...bench].sort(sortRosterPlayers);
+  return [...starters, ...bench].sort(sortRosterPlayers);
 }
 
 function getPlayerAsset({
@@ -812,9 +806,6 @@ export async function getSleeperLeagueRosterBoard({
 
       return {
         averageAge,
-        firstBenchCount: rolePlayers.filter(
-          (player) => player.rosterRole === "first-bench",
-        ).length,
         ownerName,
         playersByPosition,
         rosterId: roster.roster_id ?? 0,
