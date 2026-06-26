@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   BarChart3,
+  ClipboardList,
   RefreshCcw,
   ShieldCheck,
   TableProperties,
@@ -108,6 +109,12 @@ export default async function DynastyHubPage({
             <Link href="/dashboard/dynasty/my-teams">
               <ShieldCheck className="h-4 w-4" aria-hidden="true" />
               My teams
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard/dynasty/rookies">
+              <ClipboardList className="h-4 w-4" aria-hidden="true" />
+              Rookie draft
             </Link>
           </Button>
         </div>
