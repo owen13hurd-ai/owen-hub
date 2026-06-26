@@ -315,6 +315,9 @@ export function RookieDraftClient({
               return (
                 <div key={prospect.id} className="rounded-md bg-mist p-3">
                   <p className="text-xs font-bold text-ink/45">#{index + 1}</p>
+                  <p className="text-xs font-bold text-moss">
+                    {prospect.classYear}
+                  </p>
                   <p className="mt-1 truncate text-sm font-bold text-ink">
                     {prospect.name}
                   </p>
