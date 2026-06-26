@@ -25,13 +25,16 @@ export default async function DynastyPortfolioPage({
   const uniquePlayerCount = data
     ? new Set(data.rosterAssets.map((asset) => asset.playerId)).size
     : 0;
-  const maxExposure = data
+  const maxValueExposure = data
     ? Math.max(
         0,
         ...Array.from(
-          data.rosterAssets.reduce((counts, asset) => {
-            counts.set(asset.playerId, (counts.get(asset.playerId) ?? 0) + 1);
-            return counts;
+          data.rosterAssets.reduce((values, asset) => {
+            values.set(
+              asset.playerId,
+              (values.get(asset.playerId) ?? 0) + (asset.value ?? 0),
+            );
+            return values;
           }, new Map<string, number>()).values(),
         ),
       )
@@ -54,8 +57,8 @@ export default async function DynastyPortfolioPage({
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
           Pull your Sleeper teams, combine your rosters, and see where you are
-          most exposed across leagues. Use the league dropdown to include or
-          remove leagues from the exposure view.
+          most exposed by total personal ranking value. Use the league dropdown
+          to include or remove leagues from the exposure view.
         </p>
       </section>
 
@@ -115,9 +118,9 @@ export default async function DynastyPortfolioPage({
               </p>
             </div>
             <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-              <p className="text-sm text-ink/55">Max exposure</p>
+              <p className="text-sm text-ink/55">Top value held</p>
               <p className="mt-1 text-2xl font-bold text-rose-700">
-                {maxExposure}
+                {maxValueExposure.toFixed(2)}
               </p>
             </div>
           </section>

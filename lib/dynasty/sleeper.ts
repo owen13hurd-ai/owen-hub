@@ -15,8 +15,11 @@ export type SleeperRosterAsset = {
   leagueName: string;
   playerId: string;
   name: string;
+  personalRank: number | null;
   position: string;
+  positionRank: string | null;
   team: string | null;
+  value: number | null;
 };
 
 export type SleeperPortfolioData = {
@@ -153,6 +156,7 @@ export type SleeperTradeInboxAsset = {
   id: string;
   label: string;
   kind: "player" | "pick" | "faab";
+  value: number | null;
 };
 
 export type SleeperPendingTrade = {
@@ -162,11 +166,15 @@ export type SleeperPendingTrade = {
   leagueId: string;
   leagueName: string;
   rosterIds: number[];
+  sendsValue: number;
   sends: SleeperTradeInboxAsset[];
   status: string;
   tradeId: string;
   tradeUrl: string;
   tradeWith: string[];
+  valueGap: number;
+  valueLabel: "Winning" | "Even" | "Losing";
+  receivesValue: number;
   receives: SleeperTradeInboxAsset[];
 };
 
@@ -528,21 +536,31 @@ function getPlayerAsset({
   leagueName,
   playerId,
   player,
+  rankingsByName,
 }: {
   leagueId: string;
   leagueName: string;
   player?: SleeperPlayer;
   playerId: string;
+  rankingsByName?: Map<string, DynastyRanking>;
 }): SleeperRosterAsset {
+  const name = getPlayerName(playerId, player);
+  const ranking =
+    rankingsByName?.get(normalizeSearchText(name)) ??
+    rankingsByName?.get(normalizePlayerMatchText(name));
+
   return {
     age: player?.age ?? null,
     id: `${leagueId}-${playerId}`,
     leagueId,
     leagueName,
     playerId,
-    name: getPlayerName(playerId, player),
+    name,
+    personalRank: ranking?.overallRank ?? null,
     position: player?.position ?? "UNK",
+    positionRank: ranking?.positionRank ?? null,
     team: player?.team ?? null,
+    value: ranking?.relativeBaseValue ?? null,
   };
 }
 
@@ -785,11 +803,66 @@ function getTradePartnerNames({
     .map((rosterId) => teamsByRosterId.get(rosterId) ?? `Roster ${rosterId}`);
 }
 
-function toTradeAsset(id: string, label: string): SleeperTradeInboxAsset {
+function getRankingForPlayerName({
+  name,
+  rankingsByName,
+}: {
+  name: string;
+  rankingsByName: Map<string, DynastyRanking>;
+}) {
+  return (
+    rankingsByName.get(normalizeSearchText(name)) ??
+    rankingsByName.get(normalizePlayerMatchText(name))
+  );
+}
+
+function getTradePickValue(pick: SleeperGraphQlTradePick) {
+  if (typeof pick.round !== "number" || !pick.season) {
+    return null;
+  }
+
+  return getDraftPickValue({
+    round: pick.round,
+    season: pick.season,
+  });
+}
+
+function sumTradeAssetValues(assets: SleeperTradeInboxAsset[]) {
+  return Number(
+    assets
+      .reduce((total, asset) => total + (asset.value ?? 0), 0)
+      .toFixed(2),
+  );
+}
+
+function getTradeValueLabel(valueGap: number): SleeperPendingTrade["valueLabel"] {
+  if (valueGap >= 0.75) {
+    return "Winning";
+  }
+
+  if (valueGap <= -0.75) {
+    return "Losing";
+  }
+
+  return "Even";
+}
+
+function toTradeAsset({
+  id,
+  kind = "player",
+  label,
+  value,
+}: {
+  id: string;
+  kind?: SleeperTradeInboxAsset["kind"];
+  label: string;
+  value: number | null;
+}): SleeperTradeInboxAsset {
   return {
     id,
-    kind: "player",
+    kind,
     label,
+    value,
   };
 }
 
@@ -798,6 +871,7 @@ function mapPendingTrade({
   myRosterId,
   myUserId,
   players,
+  rankingsByName,
   teamsByRosterId,
   trade,
 }: {
@@ -805,6 +879,7 @@ function mapPendingTrade({
   myRosterId: number;
   myUserId: string;
   players: Record<string, SleeperPlayer>;
+  rankingsByName: Map<string, DynastyRanking>;
   teamsByRosterId: Map<number, string>;
   trade: SleeperGraphQlTrade;
 }): SleeperPendingTrade | null {
@@ -820,22 +895,41 @@ function mapPendingTrade({
 
   Object.entries(trade.adds ?? {}).forEach(([playerId, rosterId]) => {
     if (rosterId === myRosterId) {
-      receives.push(toTradeAsset(playerId, getPlayerLabel(playerId, trade.player_map, players)));
+      const label = getPlayerLabel(playerId, trade.player_map, players);
+      const ranking = getRankingForPlayerName({ name: label, rankingsByName });
+
+      receives.push(
+        toTradeAsset({
+          id: playerId,
+          label,
+          value: ranking?.relativeBaseValue ?? null,
+        }),
+      );
     }
   });
 
   Object.entries(trade.drops ?? {}).forEach(([playerId, rosterId]) => {
     if (rosterId === myRosterId) {
-      sends.push(toTradeAsset(playerId, getPlayerLabel(playerId, trade.player_map, players)));
+      const label = getPlayerLabel(playerId, trade.player_map, players);
+      const ranking = getRankingForPlayerName({ name: label, rankingsByName });
+
+      sends.push(
+        toTradeAsset({
+          id: playerId,
+          label,
+          value: ranking?.relativeBaseValue ?? null,
+        }),
+      );
     }
   });
 
   trade.draft_picks?.forEach((pick, index) => {
-    const asset = {
+    const asset = toTradeAsset({
       id: `${transactionId}-pick-${index}`,
-      kind: "pick" as const,
+      kind: "pick",
       label: getPickLabel(pick),
-    };
+      value: getTradePickValue(pick),
+    });
 
     if (pick.owner_id === myRosterId) {
       receives.push(asset);
@@ -848,11 +942,12 @@ function mapPendingTrade({
 
   trade.waiver_budget?.forEach((budget, index) => {
     const amount = budget.amount ?? 0;
-    const asset = {
+    const asset = toTradeAsset({
       id: `${transactionId}-faab-${index}`,
-      kind: "faab" as const,
+      kind: "faab",
       label: `$${amount} FAAB`,
-    };
+      value: amount > 0 ? Number((amount / 100).toFixed(2)) : null,
+    });
 
     if (budget.receiver === myRosterId) {
       receives.push(asset);
@@ -873,6 +968,9 @@ function mapPendingTrade({
       : hasConsented
         ? "Needs Review"
         : "Incoming";
+  const receivesValue = sumTradeAssetValues(receives);
+  const sendsValue = sumTradeAssetValues(sends);
+  const valueGap = Number((receivesValue - sendsValue).toFixed(2));
 
   return {
     createdAt: trade.created ? new Date(trade.created).toISOString() : null,
@@ -881,8 +979,10 @@ function mapPendingTrade({
     leagueId: league.id,
     leagueName: league.name,
     receives,
+    receivesValue,
     rosterIds,
     sends,
+    sendsValue,
     status: trade.status ?? "pending",
     tradeId: transactionId,
     tradeUrl: `https://sleeper.com/leagues/${league.id}/trades`,
@@ -891,6 +991,8 @@ function mapPendingTrade({
       rosterIds,
       teamsByRosterId,
     }),
+    valueGap,
+    valueLabel: getTradeValueLabel(valueGap),
   };
 }
 
@@ -1081,6 +1183,7 @@ export async function getSleeperPortfolio({
     ),
     fetchSleeperJson<Record<string, SleeperPlayer>>("/players/nfl", 60 * 60 * 24),
   ]);
+  const rankingsByName = getRankingByPlayerName(getDynastyRankings());
 
   const leagueSummaries: SleeperLeagueSummary[] = [];
   const rosterAssets: SleeperRosterAsset[] = [];
@@ -1119,6 +1222,7 @@ export async function getSleeperPortfolio({
             leagueName,
             player,
             playerId,
+            rankingsByName,
           }),
         );
       });
@@ -1167,6 +1271,7 @@ export async function getSleeperTradeInbox({
     .filter((league) => Boolean(league.league_id))
     .map(getLeagueSummary)
     .sort((a, b) => a.name.localeCompare(b.name));
+  const rankingsByName = getRankingByPlayerName(getDynastyRankings());
   const token = getSleeperAuthToken();
 
   if (!token) {
@@ -1236,6 +1341,7 @@ export async function getSleeperTradeInbox({
               myRosterId: myRoster.roster_id ?? 0,
               myUserId: user.user_id ?? "",
               players,
+              rankingsByName,
               teamsByRosterId,
               trade,
             }),

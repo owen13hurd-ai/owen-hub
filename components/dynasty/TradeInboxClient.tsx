@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Eye, EyeOff, ExternalLink, X } from "lucide-react";
+import { Bell, ExternalLink, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import clsx from "clsx";
 
@@ -57,6 +57,26 @@ function getDirectionClass(direction: SleeperPendingTrade["direction"]) {
   return "bg-amber-50 text-amber-900 ring-amber-200";
 }
 
+function formatValue(value: number | null | undefined) {
+  if (typeof value !== "number") {
+    return "-";
+  }
+
+  return value.toFixed(2);
+}
+
+function getValueLabelClass(label: SleeperPendingTrade["valueLabel"]) {
+  if (label === "Winning") {
+    return "bg-emerald-50 text-emerald-800 ring-emerald-200";
+  }
+
+  if (label === "Losing") {
+    return "bg-rose-50 text-rose-800 ring-rose-200";
+  }
+
+  return "bg-amber-50 text-amber-900 ring-amber-200";
+}
+
 function AssetList({
   assets,
   fallback,
@@ -78,8 +98,13 @@ function AssetList({
           <span className="min-w-0 truncate text-sm font-semibold text-ink">
             {asset.label}
           </span>
-          <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold uppercase text-ink/50">
-            {asset.kind}
+          <span className="flex shrink-0 items-center gap-1.5">
+            <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold uppercase text-ink/50">
+              {asset.kind}
+            </span>
+            <span className="rounded-full bg-ink px-2 py-0.5 text-[11px] font-bold text-white">
+              {formatValue(asset.value)}
+            </span>
           </span>
         </div>
       ))}
@@ -88,21 +113,14 @@ function AssetList({
 }
 
 function TradeCard({
-  isDismissed,
-  onDismiss,
+  onClear,
   trade,
 }: {
-  isDismissed: boolean;
-  onDismiss: () => void;
+  onClear: () => void;
   trade: SleeperPendingTrade;
 }) {
   return (
-    <article
-      className={clsx(
-        "rounded-lg border border-ink/10 bg-white p-4 shadow-soft",
-        isDismissed && "opacity-60",
-      )}
-    >
+    <article className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -117,11 +135,15 @@ function TradeCard({
             <span className="rounded-full bg-mist px-2.5 py-1 text-xs font-bold uppercase text-ink/55">
               {trade.status}
             </span>
-            {isDismissed ? (
-              <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-800 ring-1 ring-rose-200">
-                Cleared locally
-              </span>
-            ) : null}
+            <span
+              className={clsx(
+                "rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                getValueLabelClass(trade.valueLabel),
+              )}
+            >
+              {trade.valueLabel} {trade.valueGap > 0 ? "+" : ""}
+              {formatValue(trade.valueGap)}
+            </span>
           </div>
           <h2 className="mt-2 text-lg font-bold text-ink">{trade.leagueName}</h2>
           <p className="mt-1 text-sm text-ink/55">
@@ -143,22 +165,28 @@ function TradeCard({
           </Button>
           <button
             type="button"
-            onClick={onDismiss}
+            onClick={onClear}
             className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-ink/10 bg-white px-4 text-sm font-semibold text-ink transition hover:bg-rose-50 hover:text-rose-800"
           >
             <X className="h-4 w-4" aria-hidden="true" />
-            {isDismissed ? "Restore" : "Clear"}
+            Clear
           </button>
         </div>
       </div>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <div>
-          <p className="mb-2 text-sm font-bold text-emerald-800">You receive</p>
+          <p className="mb-2 flex items-center justify-between gap-3 text-sm font-bold text-emerald-800">
+            <span>You receive</span>
+            <span>{formatValue(trade.receivesValue)}</span>
+          </p>
           <AssetList assets={trade.receives} fallback="No matched incoming assets." />
         </div>
         <div>
-          <p className="mb-2 text-sm font-bold text-rose-800">You send</p>
+          <p className="mb-2 flex items-center justify-between gap-3 text-sm font-bold text-rose-800">
+            <span>You send</span>
+            <span>{formatValue(trade.sendsValue)}</span>
+          </p>
           <AssetList assets={trade.sends} fallback="No matched outgoing assets." />
         </div>
       </div>
@@ -167,32 +195,23 @@ function TradeCard({
 }
 
 export function TradeInboxClient({
+  checkedLeagueCount,
   pendingTrades,
 }: {
+  checkedLeagueCount: number;
   pendingTrades: SleeperPendingTrade[];
 }) {
   const [dismissedTradeIds, setDismissedTradeIds] =
     useState<Set<string>>(getDismissedTrades);
-  const [showCleared, setShowCleared] = useState(false);
   const visibleTrades = useMemo(() => {
-    if (showCleared) {
-      return pendingTrades;
-    }
-
     return pendingTrades.filter((trade) => !dismissedTradeIds.has(trade.tradeId));
-  }, [dismissedTradeIds, pendingTrades, showCleared]);
+  }, [dismissedTradeIds, pendingTrades]);
   const clearedCount = pendingTrades.length - visibleTrades.length;
 
-  function toggleDismissedTrade(tradeId: string) {
+  function clearTrade(tradeId: string) {
     setDismissedTradeIds((currentTradeIds) => {
       const nextTradeIds = new Set(currentTradeIds);
-
-      if (nextTradeIds.has(tradeId)) {
-        nextTradeIds.delete(tradeId);
-      } else {
-        nextTradeIds.add(tradeId);
-      }
-
+      nextTradeIds.add(tradeId);
       saveDismissedTrades(nextTradeIds);
       return nextTradeIds;
     });
@@ -213,31 +232,38 @@ export function TradeInboxClient({
 
   return (
     <section className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+          <p className="text-sm text-ink/55">Pending offers</p>
+          <p className="mt-1 text-2xl font-bold text-ink">{visibleTrades.length}</p>
+        </div>
+        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+          <p className="text-sm text-ink/55">Leagues checked</p>
+          <p className="mt-1 text-2xl font-bold text-ink">{checkedLeagueCount}</p>
+        </div>
+        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+          <p className="text-sm text-ink/55">Notification source</p>
+          <p className="mt-1 text-sm font-bold text-ink">
+            Sleeper pending/proposed trades
+          </p>
+        </div>
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-ink/10 bg-white p-3 shadow-soft">
         <p className="text-sm text-ink/60">
           {clearedCount > 0
-            ? `${clearedCount} offer${clearedCount === 1 ? "" : "s"} cleared locally`
+            ? `${clearedCount} offer${clearedCount === 1 ? "" : "s"} deleted from this inbox`
             : "Expired exploding offers are hidden automatically"}
         </p>
-        <button
-          type="button"
-          onClick={() => setShowCleared((currentValue) => !currentValue)}
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-ink/10 bg-white px-3 text-sm font-semibold text-ink transition hover:bg-skyglass"
-        >
-          {showCleared ? (
-            <EyeOff className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <Eye className="h-4 w-4" aria-hidden="true" />
-          )}
-          {showCleared ? "Hide cleared" : "Show cleared"}
-        </button>
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink/40">
+          Cleared offers stay hidden on this device
+        </p>
       </div>
 
       {visibleTrades.map((trade) => (
         <TradeCard
           key={trade.tradeId}
-          isDismissed={dismissedTradeIds.has(trade.tradeId)}
-          onDismiss={() => toggleDismissedTrade(trade.tradeId)}
+          onClear={() => clearTrade(trade.tradeId)}
           trade={trade}
         />
       ))}
@@ -247,8 +273,8 @@ export function TradeInboxClient({
           <Bell className="mx-auto h-8 w-8 text-moss" aria-hidden="true" />
           <p className="mt-3 text-lg font-bold text-ink">Inbox cleared</p>
           <p className="mt-2 text-sm leading-6 text-ink/55">
-            All current offers are hidden locally. Use show cleared if you want
-            to restore one.
+            All current offers were deleted from this local inbox. New pending
+            offers will appear after refresh.
           </p>
         </div>
       ) : null}

@@ -21,7 +21,6 @@ export default async function DynastyTradeInboxPage({
   });
   const hasError = data instanceof Error;
   const inbox = hasError ? null : data;
-  const pendingCount = inbox?.pendingTrades.length ?? 0;
 
   return (
     <div className="space-y-8">
@@ -93,29 +92,11 @@ export default async function DynastyTradeInboxPage({
         ) : null}
       </section>
 
-      {inbox ? (
-        <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-            <p className="text-sm text-ink/55">Pending offers</p>
-            <p className="mt-1 text-2xl font-bold text-ink">{pendingCount}</p>
-          </div>
-          <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-            <p className="text-sm text-ink/55">Leagues checked</p>
-            <p className="mt-1 text-2xl font-bold text-ink">
-              {inbox.checkedLeagueCount}
-            </p>
-          </div>
-          <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-            <p className="text-sm text-ink/55">Notification source</p>
-            <p className="mt-1 text-sm font-bold text-ink">
-              Sleeper pending/proposed trades
-            </p>
-          </div>
-        </section>
-      ) : null}
-
       {inbox && !inbox.missingToken ? (
-        <TradeInboxClient pendingTrades={inbox.pendingTrades} />
+        <TradeInboxClient
+          checkedLeagueCount={inbox.checkedLeagueCount}
+          pendingTrades={inbox.pendingTrades}
+        />
       ) : null}
     </div>
   );

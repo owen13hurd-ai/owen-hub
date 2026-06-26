@@ -13,9 +13,14 @@ type ExposureRow = {
   id: string;
   leagues: string[];
   name: string;
+  personalRank: number | null;
   playerId: string;
+  playerValue: number;
   position: string;
+  positionRank: string | null;
+  shareCount: number;
   team: string | null;
+  valueExposure: number;
 };
 
 type PortfolioFilter = "All" | "QB" | "RB" | "WR" | "TE" | "High Exposure";
@@ -30,22 +35,41 @@ function buildExposureRows(assets: SleeperRosterAsset[]) {
 
     if (existingRow) {
       existingRow.leagues.push(asset.leagueName);
+      existingRow.shareCount += 1;
+      existingRow.valueExposure = Number(
+        (existingRow.shareCount * existingRow.playerValue).toFixed(2),
+      );
       return;
     }
+
+    const playerValue = asset.value ?? 0;
 
     rowsByPlayerId.set(asset.playerId, {
       id: asset.playerId,
       leagues: [asset.leagueName],
       name: asset.name,
+      personalRank: asset.personalRank,
       playerId: asset.playerId,
+      playerValue,
       position: asset.position,
+      positionRank: asset.positionRank,
+      shareCount: 1,
       team: asset.team,
+      valueExposure: playerValue,
     });
   });
 
   return Array.from(rowsByPlayerId.values()).sort((a, b) => {
-    return b.leagues.length - a.leagues.length || a.name.localeCompare(b.name);
+    return (
+      b.valueExposure - a.valueExposure ||
+      b.shareCount - a.shareCount ||
+      a.name.localeCompare(b.name)
+    );
   });
+}
+
+function formatValue(value: number) {
+  return value.toFixed(2);
 }
 
 export function SleeperPortfolioClient({
@@ -83,7 +107,7 @@ export function SleeperPortfolioClient({
       }
 
       if (filter === "High Exposure") {
-        return row.leagues.length >= 3;
+        return row.valueExposure >= 10 || (row.shareCount >= 3 && row.playerValue >= 2);
       }
 
       if (filter !== "All") {
@@ -212,7 +236,9 @@ export function SleeperPortfolioClient({
                 <th className="px-3 py-3">Player</th>
                 <th className="px-3 py-3">Pos</th>
                 <th className="px-3 py-3">Team</th>
-                <th className="px-3 py-3">Exposure</th>
+                <th className="px-3 py-3">Value Held</th>
+                <th className="px-3 py-3">Shares</th>
+                <th className="px-3 py-3">Value/Share</th>
                 <th className="px-3 py-3">Leagues</th>
               </tr>
             </thead>
@@ -222,12 +248,18 @@ export function SleeperPortfolioClient({
                   <td className="px-3 py-3 font-semibold text-ink">{row.name}</td>
                   <td className="px-3 py-3">
                     <span className="rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink">
-                      {row.position}
+                      {row.positionRank ?? row.position}
                     </span>
                   </td>
                   <td className="px-3 py-3 text-ink/70">{row.team ?? "-"}</td>
                   <td className="px-3 py-3 font-semibold text-ink">
-                    {row.leagues.length}
+                    {formatValue(row.valueExposure)}
+                  </td>
+                  <td className="px-3 py-3 font-semibold text-ink">
+                    {row.shareCount}
+                  </td>
+                  <td className="px-3 py-3 text-ink/70">
+                    {row.playerValue > 0 ? formatValue(row.playerValue) : "-"}
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex max-w-xl flex-wrap gap-1.5">
@@ -255,10 +287,9 @@ export function SleeperPortfolioClient({
 
       <p className="mt-4 text-sm leading-6 text-ink/55">
         This view pulls your Sleeper rosters live and recalculates exposure based
-        on the leagues selected above. Draft-pick exposure will be a separate
-        follow-up because Sleeper stores picks differently from roster players.
+        on the leagues selected above. Players are sorted by total personal value
+        held first, then by share count.
       </p>
     </section>
   );
 }
-
