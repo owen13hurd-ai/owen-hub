@@ -158,6 +158,7 @@ export type SleeperTradeInboxAsset = {
 export type SleeperPendingTrade = {
   createdAt: string | null;
   direction: "Incoming" | "Outgoing" | "Needs Review";
+  expiresAt: string | null;
   leagueId: string;
   leagueName: string;
   rosterIds: number[];
@@ -253,6 +254,9 @@ type SleeperGraphQlTrade = {
   metadata?: Record<string, string | number | null> | null;
   player_map?: Record<string, SleeperPlayer> | null;
   roster_ids?: number[] | null;
+  settings?: {
+    expires_at?: number | null;
+  } | null;
   status?: string;
   status_updated?: number | null;
   transaction_id?: string;
@@ -860,6 +864,9 @@ function mapPendingTrade({
   });
 
   const hasConsented = trade.consenter_ids?.includes(myRosterId) ?? false;
+  const expiresAt = trade.settings?.expires_at
+    ? new Date(trade.settings.expires_at * 1000).toISOString()
+    : null;
   const direction =
     trade.creator === myUserId
       ? "Outgoing"
@@ -870,6 +877,7 @@ function mapPendingTrade({
   return {
     createdAt: trade.created ? new Date(trade.created).toISOString() : null,
     direction,
+    expiresAt,
     leagueId: league.id,
     leagueName: league.name,
     receives,
@@ -884,6 +892,14 @@ function mapPendingTrade({
       teamsByRosterId,
     }),
   };
+}
+
+function isExpiredTrade(trade: SleeperGraphQlTrade) {
+  if (!trade.settings?.expires_at) {
+    return false;
+  }
+
+  return trade.settings.expires_at * 1000 <= Date.now();
 }
 
 async function fetchPendingSleeperTrades({
@@ -1213,6 +1229,7 @@ export async function getSleeperTradeInbox({
         }).catch(() => []);
 
         return trades
+          .filter((trade) => !isExpiredTrade(trade))
           .map((trade) =>
             mapPendingTrade({
               league,
