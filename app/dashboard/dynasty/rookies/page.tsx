@@ -3,9 +3,14 @@ import { ArrowLeft, ClipboardList } from "lucide-react";
 
 import { RookieDraftClient } from "@/components/dynasty/RookieDraftClient";
 import { Button } from "@/components/ui/Button";
+import { getImportedRookieProspects } from "@/lib/dynasty/rookie-sources";
 import { starterRookieProspects } from "@/lib/dynasty/rookies";
 
-export default function DynastyRookieDraftPage() {
+export default async function DynastyRookieDraftPage() {
+  const { prospects, sources } = await getImportedRookieProspects(
+    starterRookieProspects,
+  );
+
   return (
     <div className="space-y-8">
       <section>
@@ -29,7 +34,7 @@ export default function DynastyRookieDraftPage() {
         </div>
       </section>
 
-      <RookieDraftClient initialProspects={starterRookieProspects} />
+      <RookieDraftClient initialProspects={prospects} sources={sources} />
     </div>
   );
 }

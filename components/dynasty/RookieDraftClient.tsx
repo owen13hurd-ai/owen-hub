@@ -10,6 +10,7 @@ import {
   rookieModelFactors,
   rookiePositionModelNotes,
 } from "@/lib/dynasty/rookies";
+import type { RookieSourceSummary } from "@/lib/dynasty/rookie-sources";
 import type { RookiePosition, RookieProspect } from "@/types/rookies";
 
 type DragState = {
@@ -18,7 +19,19 @@ type DragState = {
 
 const positions: ("ALL" | RookiePosition)[] = ["ALL", "QB", "RB", "WR", "TE"];
 const tiers = ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
-const storageKey = "owen-hub-rookie-draft-board";
+const storageKey = "owen-hub-rookie-draft-board-v2";
+
+function getSourceClass(status: RookieSourceSummary["status"]) {
+  if (status === "live") {
+    return "border-emerald-200 bg-emerald-50 text-emerald-800";
+  }
+
+  if (status === "fallback") {
+    return "border-amber-200 bg-amber-50 text-amber-900";
+  }
+
+  return "border-rose-200 bg-rose-50 text-rose-800";
+}
 
 function getSavedProspects(fallbackProspects: RookieProspect[]) {
   if (typeof window === "undefined") {
@@ -118,8 +131,10 @@ function reorderProspects(
 
 export function RookieDraftClient({
   initialProspects,
+  sources,
 }: {
   initialProspects: RookieProspect[];
+  sources: RookieSourceSummary[];
 }) {
   const [dragState, setDragState] = useState<DragState>(null);
   const [position, setPosition] = useState<"ALL" | RookiePosition>("ALL");
@@ -247,6 +262,23 @@ export function RookieDraftClient({
             Saved in this browser
           </p>
         </div>
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-2">
+        {sources.map((source) => (
+          <div
+            key={source.label}
+            className={clsx("rounded-lg border p-4 shadow-soft", getSourceClass(source.status))}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-bold">{source.label}</p>
+              <span className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-bold uppercase">
+                {source.status}
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-6 opacity-80">{source.detail}</p>
+          </div>
+        ))}
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
