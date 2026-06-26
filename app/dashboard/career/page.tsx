@@ -1,3 +1,4 @@
+import { CompanyResearchBoard } from "@/components/career/CompanyResearchBoard";
 import { JobApplicationTracker } from "@/components/career/JobApplicationTracker";
 
 const latestResume = {
@@ -27,6 +28,8 @@ export default function CareerHubPage() {
         resumeName={latestResume.name}
         resumePath={latestResume.path}
       />
+
+      <CompanyResearchBoard />
     </div>
   );
 }

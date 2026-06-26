@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
+import { TradeIdeaNotebook } from "@/components/dynasty/TradeIdeaNotebook";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
 import { Button } from "@/components/ui/Button";
 import { getDynastyRankings, getDynastyTiers } from "@/lib/dynasty/rankings";
@@ -119,6 +120,8 @@ export default async function DynastyHubPage({
           </Button>
         </div>
       </section>
+
+      <TradeIdeaNotebook />
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
