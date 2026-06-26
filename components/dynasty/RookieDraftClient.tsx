@@ -5,8 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 
 import {
-  calculateRookieModelScore,
-  getRookieModelBreakdown,
+  rookieModelWeights,
   rookieModelFactors,
   rookiePositionModelNotes,
 } from "@/lib/dynasty/rookies";
@@ -20,6 +19,10 @@ type DragState = {
 const positions: ("ALL" | RookiePosition)[] = ["ALL", "QB", "RB", "WR", "TE"];
 const tiers = ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
 const storageKey = "owen-hub-rookie-draft-board-v3";
+const weightsStorageKey = "owen-hub-rookie-model-weights-v1";
+
+type RookieModelWeightKey = keyof typeof rookieModelWeights;
+type RookieModelWeights = Record<RookieModelWeightKey, number>;
 
 function getSourceClass(status: RookieSourceSummary["status"]) {
   if (status === "live") {
@@ -47,6 +50,23 @@ function getSavedProspects(fallbackProspects: RookieProspect[]) {
     return Array.isArray(parsedProspects) ? parsedProspects : fallbackProspects;
   } catch {
     return fallbackProspects;
+  }
+}
+
+function getSavedWeights(): RookieModelWeights {
+  if (typeof window === "undefined") {
+    return rookieModelWeights;
+  }
+
+  try {
+    const savedValue = window.localStorage.getItem(weightsStorageKey);
+    const parsedWeights = savedValue
+      ? (JSON.parse(savedValue) as RookieModelWeights)
+      : null;
+
+    return parsedWeights ? { ...rookieModelWeights, ...parsedWeights } : rookieModelWeights;
+  } catch {
+    return rookieModelWeights;
   }
 }
 
@@ -130,6 +150,38 @@ function reorderProspects(
   return nextProspects;
 }
 
+function calculateCustomRookieModelScore(
+  prospect: RookieProspect,
+  weights: RookieModelWeights,
+) {
+  const positiveScore =
+    prospect.draftCapitalScore * weights.draftCapitalScore +
+    prospect.productionScore * weights.productionScore +
+    prospect.athleticScore * weights.athleticScore +
+    prospect.ageScore * weights.ageScore +
+    prospect.landingSpotScore * weights.landingSpotScore;
+  const riskPenalty = prospect.riskScore * weights.riskScore;
+
+  return Math.max(0, Math.min(10, positiveScore + (10 - riskPenalty) * 0.1));
+}
+
+function getCustomRookieModelBreakdown(
+  prospect: RookieProspect,
+  weights: RookieModelWeights,
+) {
+  return {
+    contextScore:
+      prospect.ageScore * weights.ageScore +
+      prospect.landingSpotScore * weights.landingSpotScore,
+    riskAdjustment: (10 - prospect.riskScore) * weights.riskScore,
+    score: calculateCustomRookieModelScore(prospect, weights),
+    weightedUpside:
+      prospect.draftCapitalScore * weights.draftCapitalScore +
+      prospect.productionScore * weights.productionScore +
+      prospect.athleticScore * weights.athleticScore,
+  };
+}
+
 export function RookieDraftClient({
   initialProspects,
   sources,
@@ -144,10 +196,16 @@ export function RookieDraftClient({
     getSavedProspects(initialProspects),
   );
   const [query, setQuery] = useState("");
+  const [modelWeights, setModelWeights] =
+    useState<RookieModelWeights>(getSavedWeights);
 
   useEffect(() => {
     window.localStorage.setItem(storageKey, JSON.stringify(prospects));
   }, [prospects]);
+
+  useEffect(() => {
+    window.localStorage.setItem(weightsStorageKey, JSON.stringify(modelWeights));
+  }, [modelWeights]);
 
   const visibleProspects = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -170,13 +228,13 @@ export function RookieDraftClient({
     return [...prospects]
       .sort((firstProspect, secondProspect) => {
         return (
-          calculateRookieModelScore(secondProspect) -
-            calculateRookieModelScore(firstProspect) ||
+          calculateCustomRookieModelScore(secondProspect, modelWeights) -
+            calculateCustomRookieModelScore(firstProspect, modelWeights) ||
           firstProspect.name.localeCompare(secondProspect.name)
         );
       })
       .slice(0, 5);
-  }, [prospects]);
+  }, [modelWeights, prospects]);
 
   const tierCounts = tiers.map((tier) => {
     return {
@@ -259,7 +317,10 @@ export function RookieDraftClient({
           <p className="text-sm text-ink/55">Top model score</p>
           <p className="mt-1 text-2xl font-bold text-emerald-700">
             {modelLeaders[0]
-              ? calculateRookieModelScore(modelLeaders[0]).toFixed(1)
+              ? calculateCustomRookieModelScore(
+                  modelLeaders[0],
+                  modelWeights,
+                ).toFixed(1)
               : "-"}
           </p>
         </div>
@@ -310,7 +371,10 @@ export function RookieDraftClient({
           </div>
           <div className="grid gap-2 sm:grid-cols-5 lg:min-w-[520px]">
             {modelLeaders.map((prospect, index) => {
-              const score = calculateRookieModelScore(prospect);
+              const score = calculateCustomRookieModelScore(
+                prospect,
+                modelWeights,
+              );
 
               return (
                 <div key={prospect.id} className="rounded-md bg-mist p-3">
@@ -337,12 +401,27 @@ export function RookieDraftClient({
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-bold text-ink">{factor.label}</p>
                   <span className="rounded-full bg-white px-2 py-0.5 text-xs font-bold text-ink/55">
-                    {Math.round(factor.weight * 100)}%
+                    {Math.round(modelWeights[factor.key] * 100)}%
                   </span>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-ink/55">
                   {factor.description}
                 </p>
+                <input
+                  aria-label={`${factor.label} weight`}
+                  type="range"
+                  min={0}
+                  max={40}
+                  step={1}
+                  value={Math.round(modelWeights[factor.key] * 100)}
+                  onChange={(event) =>
+                    setModelWeights((currentWeights) => ({
+                      ...currentWeights,
+                      [factor.key]: Number(event.target.value) / 100,
+                    }))
+                  }
+                  className="mt-3 w-full accent-emerald-700"
+                />
               </div>
             ))}
           </div>
@@ -462,8 +541,14 @@ export function RookieDraftClient({
                 {visibleProspects.map((prospect) => {
                   const rank =
                     prospects.findIndex((item) => item.id === prospect.id) + 1;
-                  const score = calculateRookieModelScore(prospect);
-                  const breakdown = getRookieModelBreakdown(prospect);
+                  const score = calculateCustomRookieModelScore(
+                    prospect,
+                    modelWeights,
+                  );
+                  const breakdown = getCustomRookieModelBreakdown(
+                    prospect,
+                    modelWeights,
+                  );
 
                   return (
                     <tr

@@ -4,6 +4,8 @@ import { Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import clsx from "clsx";
 
+import type { DynastyRanking } from "@/types/dynasty";
+
 type TradeIdeaStatus = "Idea" | "Ask Around" | "Sent" | "Accepted" | "Dead";
 
 type TradeIdea = {
@@ -70,10 +72,57 @@ function getStatusClass(status: TradeIdeaStatus) {
   return "bg-amber-50 text-amber-800 ring-amber-200";
 }
 
-export function TradeIdeaNotebook() {
+function normalizeAssetName(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function parseAssets(value: string) {
+  return value
+    .split(/,|\n|\+/)
+    .map((asset) => asset.trim())
+    .filter(Boolean);
+}
+
+function getSideValue(
+  value: string,
+  rankingsByName: Map<string, DynastyRanking>,
+) {
+  return parseAssets(value).reduce(
+    (summary, asset) => {
+      const ranking = rankingsByName.get(normalizeAssetName(asset));
+      const assetValue = ranking?.relativeBaseValue ?? 0;
+
+      return {
+        missing: ranking ? summary.missing : [...summary.missing, asset],
+        total: summary.total + assetValue,
+      };
+    },
+    { missing: [] as string[], total: 0 },
+  );
+}
+
+export function TradeIdeaNotebook({
+  rankings,
+}: {
+  rankings: DynastyRanking[];
+}) {
   const [draft, setDraft] = useState(emptyIdea);
   const [ideas, setIdeas] = useState<TradeIdea[]>(getIdeasFromStorage);
   const [statusFilter, setStatusFilter] = useState<"All" | TradeIdeaStatus>("All");
+  const rankingsByName = useMemo(() => {
+    return new Map(
+      rankings.map((ranking) => [normalizeAssetName(ranking.player), ranking]),
+    );
+  }, [rankings]);
+  const wantValue = useMemo(
+    () => getSideValue(draft.want, rankingsByName),
+    [draft.want, rankingsByName],
+  );
+  const giveValue = useMemo(
+    () => getSideValue(draft.give, rankingsByName),
+    [draft.give, rankingsByName],
+  );
+  const valueGap = wantValue.total - giveValue.total;
 
   const visibleIdeas = useMemo(() => {
     return ideas.filter((idea) => {
@@ -158,6 +207,45 @@ export function TradeIdeaNotebook() {
               placeholder="Angle"
               className="min-h-20 rounded-md border border-ink/10 bg-mist px-3 py-2 text-sm text-ink outline-none focus:border-moss focus:bg-white"
             />
+            <div className="rounded-lg border border-ink/10 bg-mist p-3">
+              <p className="text-sm font-bold text-ink">Value check</p>
+              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                <div className="rounded-md bg-white px-3 py-2">
+                  <p className="text-xs text-ink/50">Want</p>
+                  <p className="text-sm font-bold text-ink">
+                    {wantValue.total.toFixed(1)}
+                  </p>
+                </div>
+                <div className="rounded-md bg-white px-3 py-2">
+                  <p className="text-xs text-ink/50">Give</p>
+                  <p className="text-sm font-bold text-ink">
+                    {giveValue.total.toFixed(1)}
+                  </p>
+                </div>
+                <div
+                  className={clsx(
+                    "rounded-md px-3 py-2",
+                    valueGap > 0
+                      ? "bg-rose-50"
+                      : valueGap < 0
+                        ? "bg-emerald-50"
+                        : "bg-white",
+                  )}
+                >
+                  <p className="text-xs text-ink/50">Gap</p>
+                  <p className="text-sm font-bold text-ink">
+                    {valueGap > 0 ? "+" : ""}
+                    {valueGap.toFixed(1)}
+                  </p>
+                </div>
+              </div>
+              {[...wantValue.missing, ...giveValue.missing].length > 0 ? (
+                <p className="mt-2 text-xs leading-5 text-ink/50">
+                  Not matched yet:{" "}
+                  {[...wantValue.missing, ...giveValue.missing].join(", ")}
+                </p>
+              ) : null}
+            </div>
             <button
               type="button"
               onClick={addIdea}

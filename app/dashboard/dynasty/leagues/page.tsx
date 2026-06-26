@@ -74,6 +74,68 @@ function getPickBucketCounts(picks: SleeperLeagueDraftPick[]) {
   }, {});
 }
 
+function getTeamBuildLabel({
+  draftPickValue,
+  starterValue,
+  totalValue,
+}: {
+  draftPickValue: number;
+  starterValue: number;
+  totalValue: number;
+}) {
+  if (starterValue >= totalValue * 0.68 && draftPickValue < totalValue * 0.12) {
+    return "Win-now";
+  }
+
+  if (draftPickValue >= totalValue * 0.28) {
+    return "Reloading";
+  }
+
+  if (starterValue >= totalValue * 0.58 && draftPickValue >= totalValue * 0.16) {
+    return "Balanced contender";
+  }
+
+  if (starterValue < totalValue * 0.48) {
+    return "Depth build";
+  }
+
+  return "Middle build";
+}
+
+function getTeamBuildClass(label: string) {
+  if (label === "Win-now" || label === "Balanced contender") {
+    return "bg-emerald-50 text-emerald-800 ring-emerald-200";
+  }
+
+  if (label === "Reloading") {
+    return "bg-sky-50 text-sky-800 ring-sky-200";
+  }
+
+  if (label === "Depth build") {
+    return "bg-amber-50 text-amber-900 ring-amber-200";
+  }
+
+  return "bg-mist text-ink/70 ring-ink/10";
+}
+
+function getRosterStrengths(
+  team: {
+    rosterId: number;
+    playersByPosition: Record<string, SleeperLeagueRosterPlayer[]>;
+  },
+  positionRankings: PositionRankings,
+) {
+  return positionColumns
+    .map((position) => ({
+      position,
+      rank: positionRankings[position]?.[team.rosterId] ?? 99,
+      value: getPositionValue(team.playersByPosition[position] ?? []),
+    }))
+    .sort((firstPosition, secondPosition) => {
+      return firstPosition.rank - secondPosition.rank || secondPosition.value - firstPosition.value;
+    });
+}
+
 function formatSlot(slot: string) {
   return slot
     .replaceAll("_", " ")
@@ -263,7 +325,17 @@ export default async function DynastyPowerRankingsPage({
           </section>
 
           <section className="space-y-4">
-            {data.teams.map((team, index) => (
+            {data.teams.map((team, index) => {
+              const buildLabel = getTeamBuildLabel({
+                draftPickValue: team.draftPickValue,
+                starterValue: team.starterValue,
+                totalValue: team.totalValue,
+              });
+              const strengths = getRosterStrengths(team, positionRankings);
+              const topStrength = strengths[0];
+              const softSpot = strengths[strengths.length - 1];
+
+              return (
               <article
                 key={team.rosterId}
                 className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft"
@@ -282,12 +354,31 @@ export default async function DynastyPowerRankingsPage({
                           {team.ownerName}
                         </span>
                       ) : null}
+                      <span
+                        className={clsx(
+                          "rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                          getTeamBuildClass(buildLabel),
+                        )}
+                      >
+                        {buildLabel}
+                      </span>
                     </div>
                     {team.username ? (
                       <p className="mt-1 text-sm text-ink/50">
                         @{team.username}
                       </p>
                     ) : null}
+                    <p className="mt-2 text-sm text-ink/60">
+                      Best room:{" "}
+                      <span className="font-semibold text-ink">
+                        {topStrength?.position ?? "-"}
+                      </span>
+                      {topStrength ? ` #${topStrength.rank}` : ""} · Soft spot:{" "}
+                      <span className="font-semibold text-ink">
+                        {softSpot?.position ?? "-"}
+                      </span>
+                      {softSpot ? ` #${softSpot.rank}` : ""}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
@@ -367,6 +458,10 @@ export default async function DynastyPowerRankingsPage({
                         </span>
                       ))}
                   </div>
+                  <p className="mt-3 text-xs leading-5 text-ink/50">
+                    Pick value is included in the power score, but the team label
+                    separates current starters from future capital.
+                  </p>
                 </div>
 
                 <div className="mt-4 grid gap-3 xl:grid-cols-4">
@@ -412,7 +507,8 @@ export default async function DynastyPowerRankingsPage({
                   })}
                 </div>
               </article>
-            ))}
+              );
+            })}
           </section>
 
           <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">

@@ -7,6 +7,7 @@ import {
   Database,
   GripVertical,
   Search,
+  X,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -300,6 +301,140 @@ function SourceCard({ source }: { source: SourceStatus }) {
   );
 }
 
+function PlayerDetailDrawer({
+  assignedTier,
+  heatMapSignal,
+  marketSignal,
+  onClose,
+  ownership,
+  ranking,
+  rank,
+}: {
+  assignedTier: AssignedTier | undefined;
+  heatMapSignal: HeatMapSignal | undefined;
+  marketSignal: MarketSignal | undefined;
+  onClose: () => void;
+  ownership: DynastyOwnershipSummary | undefined;
+  ranking: DynastyRanking;
+  rank: number | undefined;
+}) {
+  return (
+    <div className="fixed inset-0 z-40 bg-ink/30 p-3 sm:p-6" role="dialog" aria-modal="true">
+      <div className="ml-auto flex h-full max-w-xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
+        <div className="flex items-start justify-between gap-4 border-b border-ink/10 p-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-moss">
+              Player detail
+            </p>
+            <h2 className="mt-1 text-2xl font-bold text-ink">{ranking.player}</h2>
+            <p className="mt-1 text-sm text-ink/55">
+              {ranking.team || "FA"} · {ranking.positionRank} · Overall #
+              {rank ?? ranking.overallRank}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-mist text-ink/55 hover:bg-skyglass hover:text-ink"
+            aria-label="Close player detail"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="flex-1 space-y-4 overflow-y-auto p-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-md bg-mist p-3">
+              <p className="text-xs text-ink/50">Your rank</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                #{rank ?? ranking.overallRank}
+              </p>
+            </div>
+            <div className="rounded-md bg-mist p-3">
+              <p className="text-xs text-ink/50">Market rank</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                {ranking.ktcRank ?? ranking.fantasyCalcRank ?? "-"}
+              </p>
+            </div>
+            <div className="rounded-md bg-mist p-3">
+              <p className="text-xs text-ink/50">Own</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                {ownership ? `${ownership.percent}%` : "-"}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-lg border border-ink/10 p-3">
+              <p className="text-sm font-bold text-ink">Market read</p>
+              <span
+                className={clsx(
+                  "mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                  getSignalClass(marketSignal?.label ?? "Hold"),
+                )}
+              >
+                {marketSignal?.label ?? "Hold"}
+              </span>
+              <p className="mt-2 text-sm leading-6 text-ink/60">
+                {marketSignal?.detail ?? "No market signal yet."}
+              </p>
+            </div>
+            <div className="rounded-lg border border-ink/10 p-3">
+              <p className="text-sm font-bold text-ink">Portfolio read</p>
+              <span
+                className={clsx(
+                  "mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                  getHeatMapClass(heatMapSignal?.label ?? "No Data"),
+                )}
+              >
+                {heatMapSignal?.label ?? "No Data"}
+              </span>
+              <p className="mt-2 text-sm leading-6 text-ink/60">
+                {heatMapSignal?.detail ?? "No portfolio signal yet."}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-ink/10 p-3">
+            <p className="text-sm font-bold text-ink">Value snapshot</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <p className="rounded-md bg-mist px-3 py-2 text-sm text-ink/70">
+                KTC: <span className="font-bold text-ink">{ranking.ktcRank ?? "-"}</span>
+              </p>
+              <p className="rounded-md bg-mist px-3 py-2 text-sm text-ink/70">
+                FantasyCalc:{" "}
+                <span className="font-bold text-ink">
+                  {ranking.fantasyCalcRank ?? "-"}
+                </span>
+              </p>
+              <p className="rounded-md bg-mist px-3 py-2 text-sm text-ink/70">
+                Pick value:{" "}
+                <span className="font-bold text-ink">
+                  {assignedTier?.pickValueLabel ?? ranking.importedTier}
+                </span>
+              </p>
+              <p className="rounded-md bg-mist px-3 py-2 text-sm text-ink/70">
+                RBV:{" "}
+                <span className="font-bold text-ink">
+                  {assignedTier?.pickValue ?? ranking.relativeBaseValue ?? "-"}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-dashed border-ink/20 bg-mist p-3">
+            <p className="text-sm font-bold text-ink">Next layer</p>
+            <p className="mt-1 text-sm leading-6 text-ink/55">
+              This drawer is ready for player notes, news blurbs, and trade
+              history once we add those feeds.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function buildRowsForScope({
   rankings,
   scope,
@@ -462,6 +597,7 @@ export function DynastyRankingsClient({
   );
   const [position, setPosition] = useState<Position>("ALL");
   const [query, setQuery] = useState("");
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [dragState, setDragState] = useState<DragState>(null);
   const [saveState, setSaveState] = useState<SaveState>(
     initialRowsByScope ? "saved" : "pending",
@@ -697,8 +833,24 @@ export function DynastyRankingsClient({
     });
   }
 
+  const selectedRanking = selectedPlayerId
+    ? rankingsById.get(selectedPlayerId)
+    : undefined;
+
   return (
     <div className="space-y-6">
+      {selectedRanking ? (
+        <PlayerDetailDrawer
+          assignedTier={assignedTierByPlayerId.get(selectedRanking.id)}
+          heatMapSignal={heatMapByPlayerId.get(selectedRanking.id)}
+          marketSignal={marketSignalByPlayerId.get(selectedRanking.id)}
+          onClose={() => setSelectedPlayerId(null)}
+          ownership={ownershipByPlayerId?.[selectedRanking.id]}
+          ranking={selectedRanking}
+          rank={overallRankByPlayerId.get(selectedRanking.id)}
+        />
+      ) : null}
+
       <section className="grid gap-4 md:grid-cols-4">
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <p className="text-sm text-ink/55">Players</p>
@@ -972,9 +1124,13 @@ export function DynastyRankingsClient({
                       </td>
                       <td className="px-3 py-3">
                         <div>
-                          <p className="font-semibold text-ink">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPlayerId(ranking.id)}
+                            className="text-left font-semibold text-ink underline-offset-4 hover:text-moss hover:underline"
+                          >
                             {ranking.player}
-                          </p>
+                          </button>
                           <p className="text-xs text-ink/45">
                             {ranking.rookiePick}
                           </p>

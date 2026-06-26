@@ -121,7 +121,7 @@ export default async function DynastyHubPage({
         </div>
       </section>
 
-      <TradeIdeaNotebook />
+      <TradeIdeaNotebook rankings={rankings} />
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
