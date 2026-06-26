@@ -22,13 +22,22 @@ type TeamSlot = {
 type SavedBuild = {
   id: string;
   name: string;
+  notes?: string;
   savedAt: string;
+  status?: SavedBuildStatus;
   team: TeamSlot[];
 };
 
 type StatKey = "HP" | "Atk" | "Def" | "SpA" | "SpD" | "Spe";
+type SavedBuildStatus = "Testing" | "Like" | "Rejected" | "Tournament idea";
 
 const stats: StatKey[] = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
+const savedBuildStatuses: SavedBuildStatus[] = [
+  "Testing",
+  "Like",
+  "Rejected",
+  "Tournament idea",
+];
 const maxChampionsInvestment = 32;
 const maxComparableEv = 252;
 
@@ -270,6 +279,9 @@ function calculateLevel50Stat({
 export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
   const [buildName, setBuildName] = useState("");
   const [query, setQuery] = useState("");
+  const [savedStatusFilter, setSavedStatusFilter] = useState<
+    SavedBuildStatus | "All"
+  >("All");
   const [savedBuilds, setSavedBuilds] = useState<SavedBuild[]>(
     getSavedBuildsFromStorage,
   );
@@ -297,6 +309,13 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
       })
       .slice(0, 12);
   }, [data.pokemon, query, team]);
+  const filteredSavedBuilds = savedBuilds.filter((build) => {
+    if (savedStatusFilter === "All") {
+      return true;
+    }
+
+    return (build.status ?? "Testing") === savedStatusFilter;
+  });
   const weaknessSummary = data.types
     .map((type) => {
       const weakCount = selectedOptions.filter((pokemon) => {
@@ -360,14 +379,17 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
       return;
     }
 
+    const existingBuild = savedBuilds.find((build) => build.name === trimmedName);
     const nextBuild: SavedBuild = {
-      id: `${Date.now()}`,
+      id: existingBuild?.id ?? `${Date.now()}`,
       name: trimmedName,
+      notes: existingBuild?.notes ?? "",
       savedAt: new Date().toLocaleDateString([], {
         day: "numeric",
         month: "short",
         year: "numeric",
       }),
+      status: existingBuild?.status ?? "Testing",
       team,
     };
     const nextBuilds = [
@@ -386,6 +408,15 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
 
   function deleteBuild(buildId: string) {
     const nextBuilds = savedBuilds.filter((build) => build.id !== buildId);
+
+    setSavedBuilds(nextBuilds);
+    window.localStorage.setItem(savedBuildsStorageKey, JSON.stringify(nextBuilds));
+  }
+
+  function updateSavedBuild(buildId: string, updates: Partial<SavedBuild>) {
+    const nextBuilds = savedBuilds.map((build) => {
+      return build.id === buildId ? { ...build, ...updates } : build;
+    });
 
     setSavedBuilds(nextBuilds);
     window.localStorage.setItem(savedBuildsStorageKey, JSON.stringify(nextBuilds));
@@ -431,47 +462,117 @@ export function PokemonTeamBuilder({ data }: { data: PokemonBuilderData }) {
             </button>
           </div>
 
-          {savedBuilds.length > 0 ? (
-            <div className="mt-3 rounded-lg border border-ink/10 bg-mist p-3">
-              <p className="text-sm font-bold text-ink">Saved builds</p>
-              <div className="mt-2 grid gap-2 md:grid-cols-2">
-                {savedBuilds.slice(0, 6).map((build) => (
+          <div className="mt-3 rounded-lg border border-ink/10 bg-mist p-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold text-ink">Saved builds library</p>
+                  <p className="mt-1 text-xs font-semibold text-ink/45">
+                    {savedBuilds.length} saved build
+                    {savedBuilds.length === 1 ? "" : "s"}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {(["All", ...savedBuildStatuses] as const).map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => setSavedStatusFilter(status)}
+                      className={`h-8 rounded-md px-2 text-xs font-bold transition ${
+                        savedStatusFilter === status
+                          ? "bg-ink text-white"
+                          : "bg-white text-ink/60 hover:bg-skyglass hover:text-ink"
+                      }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                {filteredSavedBuilds.map((build) => (
                   <div
                     key={build.id}
-                    className="grid grid-cols-[1fr_auto_auto] items-center gap-2 rounded-md bg-white px-3 py-2"
+                    className="rounded-md bg-white p-3"
                   >
-                    <button
-                      type="button"
-                      onClick={() => loadBuild(build)}
-                      className="min-w-0 text-left"
-                    >
-                      <span className="block truncate text-sm font-bold text-ink">
-                        {build.name}
-                      </span>
-                      <span className="text-xs text-ink/45">
-                        {build.team.length}/6 · {build.savedAt}
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => loadBuild(build)}
-                      className="rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink"
-                    >
-                      Load
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteBuild(build.id)}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink/50 hover:bg-rose-50 hover:text-rose-700"
-                      aria-label={`Delete ${build.name}`}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
+                    <div className="flex items-start justify-between gap-3">
+                      <button
+                        type="button"
+                        onClick={() => loadBuild(build)}
+                        className="min-w-0 text-left"
+                      >
+                        <span className="block truncate text-sm font-bold text-ink">
+                          {build.name}
+                        </span>
+                        <span className="text-xs text-ink/45">
+                          {build.team.length}/6 · {build.savedAt}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteBuild(build.id)}
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink/50 hover:bg-rose-50 hover:text-rose-700"
+                        aria-label={`Delete ${build.name}`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {build.team.map((slot) => (
+                        <span
+                          key={`${build.id}-${slot.pokemonName}`}
+                          className="inline-flex items-center gap-1 rounded-md bg-mist px-2 py-1 text-xs font-bold text-ink/65"
+                        >
+                          <PokemonSprite
+                            name={slot.pokemonName}
+                            className="h-5 w-5"
+                          />
+                          {slot.pokemonName}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-3 grid gap-2 md:grid-cols-[150px_1fr_auto]">
+                      <select
+                        value={build.status ?? "Testing"}
+                        onChange={(event) =>
+                          updateSavedBuild(build.id, {
+                            status: event.target.value as SavedBuildStatus,
+                          })
+                        }
+                        className="h-9 rounded-md border border-ink/10 bg-mist px-2 text-xs font-bold text-ink"
+                      >
+                        {savedBuildStatuses.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        value={build.notes ?? ""}
+                        onChange={(event) =>
+                          updateSavedBuild(build.id, { notes: event.target.value })
+                        }
+                        placeholder="Notes"
+                        className="h-9 rounded-md border border-ink/10 bg-mist px-2 text-xs text-ink outline-none transition focus:border-moss focus:bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => loadBuild(build)}
+                        className="h-9 rounded-md bg-skyglass px-3 text-xs font-bold text-ink transition hover:bg-ink hover:text-white"
+                      >
+                        Load
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
+              {filteredSavedBuilds.length === 0 ? (
+                <p className="mt-3 rounded-md bg-white px-3 py-4 text-sm text-ink/55">
+                  {savedBuilds.length === 0
+                    ? "Save a build above and it will appear here."
+                    : "No saved builds in that folder yet."}
+                </p>
+              ) : null}
             </div>
-          ) : null}
 
           {team.length < 6 ? (
             <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">

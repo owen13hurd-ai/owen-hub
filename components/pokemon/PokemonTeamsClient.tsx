@@ -49,6 +49,7 @@ function getRandomTeam(teams: VgcPasteTeam[], currentTeamId?: string) {
 }
 
 const wantToTryStorageKey = "owen-hub-want-to-try-teams";
+const wantToTryNotesStorageKey = "owen-hub-want-to-try-team-notes";
 
 function getWantToTryIdsFromStorage() {
   if (typeof window === "undefined") {
@@ -62,6 +63,23 @@ function getWantToTryIdsFromStorage() {
     return Array.isArray(parsedIds) ? parsedIds : [];
   } catch {
     return [];
+  }
+}
+
+function getWantToTryNotesFromStorage() {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const savedValue = window.localStorage.getItem(wantToTryNotesStorageKey);
+    const parsedNotes = savedValue
+      ? (JSON.parse(savedValue) as Record<string, string>)
+      : {};
+
+    return parsedNotes && typeof parsedNotes === "object" ? parsedNotes : {};
+  } catch {
+    return {};
   }
 }
 
@@ -214,6 +232,9 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
   const [wantToTryIds, setWantToTryIds] = useState<string[]>(
     getWantToTryIdsFromStorage,
   );
+  const [wantToTryNotes, setWantToTryNotes] = useState<Record<string, string>>(
+    getWantToTryNotesFromStorage,
+  );
 
   const pokemonOptions = useMemo(() => {
     return buildPokemonOptions(data.teams);
@@ -289,6 +310,23 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
       window.localStorage.setItem(wantToTryStorageKey, JSON.stringify(nextIds));
 
       return nextIds;
+    });
+  }
+
+  function updateWantToTryNote(teamId: string, note: string) {
+    setWantToTryNotes((currentNotes) => {
+      const nextNotes = { ...currentNotes, [teamId]: note };
+
+      if (!note.trim()) {
+        delete nextNotes[teamId];
+      }
+
+      window.localStorage.setItem(
+        wantToTryNotesStorageKey,
+        JSON.stringify(nextNotes),
+      );
+
+      return nextNotes;
     });
   }
 
@@ -380,16 +418,87 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
           </span>
         </div>
         {wantToTryTeams.length > 0 ? (
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
             {wantToTryTeams.map((team) => (
-              <TeamCard
+              <article
                 key={`want-${team.id}`}
-                isWantToTry={wantToTryIds.includes(team.id)}
-                selectedPokemon={selectedPokemon}
-                team={team}
-                togglePokemon={togglePokemon}
-                toggleWantToTry={toggleWantToTry}
-              />
+                className="rounded-lg border border-ink/10 bg-mist p-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-md bg-ink px-2 py-1 text-xs font-bold text-white">
+                        {team.id}
+                      </span>
+                      <span className="rounded-md bg-white px-2 py-1 text-xs font-bold text-ink/60">
+                        {team.rank}
+                      </span>
+                    </div>
+                    <h3 className="mt-2 line-clamp-2 text-sm font-bold leading-5 text-ink">
+                      {team.description}
+                    </h3>
+                    <p className="mt-1 text-xs text-ink/45">
+                      {team.fullName || team.creator || "-"} · {team.dateShared}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => toggleWantToTry(team.id)}
+                    className="h-8 rounded-md bg-white px-3 text-xs font-bold text-ink transition hover:bg-rose-50 hover:text-rose-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
+                  {team.pokemon.map((pokemon) => (
+                    <button
+                      key={`want-${team.id}-${pokemon}`}
+                      type="button"
+                      onClick={() => togglePokemon(pokemon)}
+                      className="rounded-md bg-white p-2 text-center transition hover:bg-skyglass"
+                    >
+                      <PokemonSprite
+                        name={pokemon}
+                        className="mx-auto h-12 w-12"
+                      />
+                      <span className="mt-1 block truncate text-[11px] font-bold text-ink">
+                        {pokemon}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <input
+                  value={wantToTryNotes[team.id] ?? ""}
+                  onChange={(event) =>
+                    updateWantToTryNote(team.id, event.target.value)
+                  }
+                  placeholder="Why I saved this team"
+                  className="mt-3 h-9 w-full rounded-md border border-ink/10 bg-white px-3 text-xs text-ink outline-none transition focus:border-moss"
+                />
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {team.pokepasteUrl ? (
+                    <Link
+                      href={team.pokepasteUrl}
+                      target="_blank"
+                      className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
+                    >
+                      Pokepaste
+                    </Link>
+                  ) : null}
+                  {team.sourceUrl && team.sourceUrl !== "-" ? (
+                    <Link
+                      href={team.sourceUrl}
+                      target="_blank"
+                      className="rounded-md bg-white px-3 py-2 text-xs font-bold text-moss transition hover:text-ink"
+                    >
+                      Source
+                    </Link>
+                  ) : null}
+                </div>
+              </article>
             ))}
           </div>
         ) : (
