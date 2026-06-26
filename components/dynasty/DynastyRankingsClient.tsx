@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type DragEvent as ReactDragEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -67,6 +74,8 @@ const tierColors = [
   "bg-violet-100 text-violet-900 border-violet-200",
   "bg-slate-100 text-slate-900 border-slate-200",
 ];
+const dragScrollEdgeSize = 120;
+const dragScrollMaxSpeed = 24;
 
 function formatDelta(delta: number | null) {
   if (delta === null) {
@@ -610,6 +619,9 @@ export function DynastyRankingsClient({
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const rowsByScopeRef = useRef(rowsByScope);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragScrollFrameRef = useRef<number | null>(null);
+  const dragScrollSpeedRef = useRef(0);
+  const tickDragAutoScrollRef = useRef<() => void>(() => undefined);
 
   useEffect(() => {
     rowsByScopeRef.current = rowsByScope;
@@ -666,6 +678,77 @@ export function DynastyRankingsClient({
       }
     };
   }, []);
+
+  const stopDragAutoScroll = useCallback(() => {
+    dragScrollSpeedRef.current = 0;
+
+    if (dragScrollFrameRef.current) {
+      window.cancelAnimationFrame(dragScrollFrameRef.current);
+      dragScrollFrameRef.current = null;
+    }
+  }, []);
+
+  const tickDragAutoScroll = useCallback(() => {
+    const speed = dragScrollSpeedRef.current;
+
+    if (speed === 0) {
+      dragScrollFrameRef.current = null;
+      return;
+    }
+
+    window.scrollBy({ top: speed });
+    dragScrollFrameRef.current = window.requestAnimationFrame(() =>
+      tickDragAutoScrollRef.current(),
+    );
+  }, []);
+
+  useEffect(() => {
+    tickDragAutoScrollRef.current = tickDragAutoScroll;
+  }, [tickDragAutoScroll]);
+
+  const updateDragAutoScroll = useCallback(
+    (clientY: number) => {
+      const viewportHeight = window.innerHeight;
+      const distanceFromTop = clientY;
+      const distanceFromBottom = viewportHeight - clientY;
+      let nextSpeed = 0;
+
+      if (distanceFromTop < dragScrollEdgeSize) {
+        const intensity = (dragScrollEdgeSize - distanceFromTop) / dragScrollEdgeSize;
+        nextSpeed = -Math.ceil(intensity * dragScrollMaxSpeed);
+      } else if (distanceFromBottom < dragScrollEdgeSize) {
+        const intensity =
+          (dragScrollEdgeSize - distanceFromBottom) / dragScrollEdgeSize;
+        nextSpeed = Math.ceil(intensity * dragScrollMaxSpeed);
+      }
+
+      dragScrollSpeedRef.current = nextSpeed;
+
+      if (nextSpeed !== 0 && !dragScrollFrameRef.current) {
+        dragScrollFrameRef.current =
+          window.requestAnimationFrame(tickDragAutoScroll);
+      }
+    },
+    [tickDragAutoScroll],
+  );
+
+  useEffect(() => {
+    if (!dragState) {
+      stopDragAutoScroll();
+      return;
+    }
+
+    function handleWindowDragOver(event: DragEvent) {
+      updateDragAutoScroll(event.clientY);
+    }
+
+    window.addEventListener("dragover", handleWindowDragOver);
+
+    return () => {
+      window.removeEventListener("dragover", handleWindowDragOver);
+      stopDragAutoScroll();
+    };
+  }, [dragState, stopDragAutoScroll, updateDragAutoScroll]);
 
   const overallPlayerRows = useMemo(() => {
     return rowsByScope.ALL.filter(
@@ -831,6 +914,25 @@ export function DynastyRankingsClient({
       queueAutosave(nextRowsByScope);
       return nextRowsByScope;
     });
+  }
+
+  function startRowDrag(rowId: string) {
+    setDragState({ rowId, scope: position });
+  }
+
+  function handleRowDragOver(event: ReactDragEvent<HTMLTableRowElement>) {
+    event.preventDefault();
+    updateDragAutoScroll(event.clientY);
+  }
+
+  function finishRowDrag() {
+    setDragState(null);
+    stopDragAutoScroll();
+  }
+
+  function dropRow(targetId: string) {
+    moveRow(targetId);
+    finishRowDrag();
   }
 
   const selectedRanking = selectedPlayerId
@@ -1052,12 +1154,10 @@ export function DynastyRankingsClient({
                       <tr
                         key={row.id}
                         draggable
-                        onDragStart={() =>
-                          setDragState({ rowId: row.id, scope: position })
-                        }
-                        onDragOver={(event) => event.preventDefault()}
-                        onDrop={() => moveRow(row.id)}
-                        onDragEnd={() => setDragState(null)}
+                        onDragStart={() => startRowDrag(row.id)}
+                        onDragOver={handleRowDragOver}
+                        onDrop={() => dropRow(row.id)}
+                        onDragEnd={finishRowDrag}
                         className={clsx(
                           "bg-white",
                           dragState?.rowId === row.id && "opacity-40",
@@ -1105,12 +1205,10 @@ export function DynastyRankingsClient({
                     <tr
                       key={row.id}
                       draggable
-                      onDragStart={() =>
-                        setDragState({ rowId: row.id, scope: position })
-                      }
-                      onDragOver={(event) => event.preventDefault()}
-                      onDrop={() => moveRow(row.id)}
-                      onDragEnd={() => setDragState(null)}
+                      onDragStart={() => startRowDrag(row.id)}
+                      onDragOver={handleRowDragOver}
+                      onDrop={() => dropRow(row.id)}
+                      onDragEnd={finishRowDrag}
                       className={clsx(
                         "bg-white transition hover:bg-mist/70",
                         dragState?.rowId === row.id && "opacity-40",
