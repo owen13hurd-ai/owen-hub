@@ -1,76 +1,18 @@
 "use client";
 
 import { BriefcaseBusiness, ExternalLink, Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 
-type ApplicationStatus =
-  | "Interested"
-  | "Applied"
-  | "Interviewing"
-  | "Offer"
-  | "Rejected"
-  | "Archived";
-
-type JobApplication = {
-  appliedDate: string;
-  company: string;
-  followUpDate: string;
-  id: string;
-  jobUrl: string;
-  notes: string;
-  priority: "High" | "Medium" | "Low";
-  resumeVersion: string;
-  role: string;
-  source: string;
-  status: ApplicationStatus;
-};
-
-const storageKey = "owen-hub-job-applications";
-const statuses: ("All" | ApplicationStatus)[] = [
-  "All",
-  "Interested",
-  "Applied",
-  "Interviewing",
-  "Offer",
-  "Rejected",
-  "Archived",
-];
-const defaultResumeName = "Hurd, Owen Resume.pdf";
-
-const emptyApplication: Omit<JobApplication, "id"> = {
-  appliedDate: "",
-  company: "",
-  followUpDate: "",
-  jobUrl: "",
-  notes: "",
-  priority: "Medium",
-  resumeVersion: defaultResumeName,
-  role: "",
-  source: "",
-  status: "Interested",
-};
-
-function getApplicationsFromStorage() {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const savedValue = window.localStorage.getItem(storageKey);
-    const parsedApplications = savedValue
-      ? (JSON.parse(savedValue) as JobApplication[])
-      : [];
-
-    return Array.isArray(parsedApplications) ? parsedApplications : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveApplications(applications: JobApplication[]) {
-  window.localStorage.setItem(storageKey, JSON.stringify(applications));
-}
+import {
+  applicationStatuses,
+  emptyApplication,
+  getApplicationsFromStorage,
+  jobApplicationsChangedEvent,
+  saveApplications,
+  type ApplicationStatus,
+  type JobApplication,
+} from "@/lib/career/applications";
 
 function getStatusClass(status: ApplicationStatus) {
   if (status === "Offer") {
@@ -125,6 +67,18 @@ export function JobApplicationTracker({
     "All" | ApplicationStatus
   >("All");
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    function refreshApplications() {
+      setApplications(getApplicationsFromStorage());
+    }
+
+    window.addEventListener(jobApplicationsChangedEvent, refreshApplications);
+
+    return () => {
+      window.removeEventListener(jobApplicationsChangedEvent, refreshApplications);
+    };
+  }, []);
 
   const visibleApplications = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -309,7 +263,7 @@ export function JobApplicationTracker({
                 }
                 className="h-10 rounded-md border border-ink/10 bg-mist px-3 text-sm font-semibold text-ink outline-none focus:border-moss focus:bg-white"
               >
-                {statuses.slice(1).map((status) => (
+                {applicationStatuses.slice(1).map((status) => (
                   <option key={status} value={status}>
                     {status}
                   </option>
@@ -368,7 +322,7 @@ export function JobApplicationTracker({
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-2">
-            {statuses.map((status) => (
+            {applicationStatuses.map((status) => (
               <button
                 key={status}
                 type="button"
@@ -458,7 +412,7 @@ export function JobApplicationTracker({
                   }
                   className="h-9 rounded-md border border-ink/10 bg-white px-2 text-xs font-bold text-ink"
                 >
-                  {statuses.slice(1).map((status) => (
+                  {applicationStatuses.slice(1).map((status) => (
                     <option key={status} value={status}>
                       {status}
                     </option>

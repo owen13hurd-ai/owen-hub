@@ -1,4 +1,5 @@
 import { CompanyResearchBoard } from "@/components/career/CompanyResearchBoard";
+import { JobScout } from "@/components/career/JobScout";
 import { JobApplicationTracker } from "@/components/career/JobApplicationTracker";
 
 const latestResume = {
@@ -22,6 +23,8 @@ export default function CareerHubPage() {
           version you used.
         </p>
       </section>
+
+      <JobScout />
 
       <JobApplicationTracker
         resumeModifiedAt={latestResume.modifiedAt}
