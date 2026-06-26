@@ -9,6 +9,64 @@ export const rookieModelWeights = {
   riskScore: 0.1,
 };
 
+export const rookieModelFactors = [
+  {
+    description: "NFL draft capital is the strongest signal because it predicts opportunity.",
+    key: "draftCapitalScore",
+    label: "Draft capital",
+    weight: rookieModelWeights.draftCapitalScore,
+  },
+  {
+    description: "College production shows whether the player actually earned touches or targets.",
+    key: "productionScore",
+    label: "Production",
+    weight: rookieModelWeights.productionScore,
+  },
+  {
+    description: "Athleticism helps separate ceiling bets from replacement-level profiles.",
+    key: "athleticScore",
+    label: "Athleticism",
+    weight: rookieModelWeights.athleticScore,
+  },
+  {
+    description: "Younger breakouts usually get more forgiveness and long-term value.",
+    key: "ageScore",
+    label: "Age",
+    weight: rookieModelWeights.ageScore,
+  },
+  {
+    description: "Landing spot matters, but it should not overpower talent.",
+    key: "landingSpotScore",
+    label: "Landing spot",
+    weight: rookieModelWeights.landingSpotScore,
+  },
+  {
+    description: "Risk subtracts for profile holes, role uncertainty, injuries, or bad assumptions.",
+    key: "riskScore",
+    label: "Risk",
+    weight: rookieModelWeights.riskScore,
+  },
+] as const;
+
+export const rookiePositionModelNotes = [
+  {
+    label: "QB",
+    note: "Prioritize draft capital, rushing upside, and job security. Landing spot matters less if the team invests premium capital.",
+  },
+  {
+    label: "RB",
+    note: "Prioritize draft capital, athleticism, and early touch path. Age cliffs come faster, so immediate role matters more.",
+  },
+  {
+    label: "WR",
+    note: "Prioritize early production, target earning, and draft capital. Landing spot can change quickly.",
+  },
+  {
+    label: "TE",
+    note: "Prioritize elite traits and patience. Most TEs need a development discount unless the profile is special.",
+  },
+] as const;
+
 export const starterRookieProspects: RookieProspect[] = [
   {
     ageScore: 7,
@@ -82,4 +140,23 @@ export function calculateRookieModelScore(prospect: RookieProspect) {
   const riskPenalty = prospect.riskScore * rookieModelWeights.riskScore;
 
   return Math.max(0, Math.min(10, positiveScore + (10 - riskPenalty) * 0.1));
+}
+
+export function getRookieModelBreakdown(prospect: RookieProspect) {
+  const score = calculateRookieModelScore(prospect);
+  const weightedUpside =
+    prospect.draftCapitalScore * rookieModelWeights.draftCapitalScore +
+    prospect.productionScore * rookieModelWeights.productionScore +
+    prospect.athleticScore * rookieModelWeights.athleticScore;
+  const contextScore =
+    prospect.ageScore * rookieModelWeights.ageScore +
+    prospect.landingSpotScore * rookieModelWeights.landingSpotScore;
+  const riskAdjustment = (10 - prospect.riskScore) * rookieModelWeights.riskScore;
+
+  return {
+    contextScore,
+    riskAdjustment,
+    score,
+    weightedUpside,
+  };
 }

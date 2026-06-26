@@ -92,10 +92,22 @@ export type SleeperLeagueRosterPlayer = SleeperRosterAsset & {
   value: number | null;
 };
 
+export type SleeperLeagueDraftPick = {
+  label: string;
+  originalRosterId: number;
+  ownerRosterId: number;
+  round: number;
+  season: string;
+  value: number;
+};
+
 export type SleeperLeagueRosterTeam = {
   averageAge: number | null;
+  draftPicks: SleeperLeagueDraftPick[];
+  draftPickValue: number;
   ownerName: string;
   playersByPosition: Record<string, SleeperLeagueRosterPlayer[]>;
+  powerValue: number;
   rosterId: number;
   starterCount: number;
   starterValue: number;
@@ -156,6 +168,14 @@ type SleeperRoster = {
   owner_id?: string | null;
   players?: string[] | null;
   roster_id?: number;
+};
+
+type SleeperTradedPick = {
+  owner_id?: number;
+  previous_owner_id?: number;
+  roster_id?: number;
+  round?: number;
+  season?: string;
 };
 
 type SleeperLeagueUser = {
@@ -256,6 +276,118 @@ function sortRosterPlayers(
   const secondRank = secondPlayer.personalRank ?? Number.POSITIVE_INFINITY;
 
   return firstRank - secondRank || firstPlayer.name.localeCompare(secondPlayer.name);
+}
+
+function getDraftPickValue({
+  round,
+  season,
+}: {
+  round: number;
+  season: string;
+}) {
+  const currentSeason = new Date().getFullYear();
+  const seasonNumber = Number(season);
+  const yearsOut = Number.isNaN(seasonNumber)
+    ? 1
+    : Math.max(1, seasonNumber - currentSeason);
+  const roundValues: Record<number, number> = {
+    1: 3,
+    2: 1.25,
+    3: 0.6,
+    4: 0.35,
+  };
+  const baseValue = roundValues[round] ?? 0.15;
+  const discount = Math.max(0.65, 1 - (yearsOut - 1) * 0.12);
+
+  return Number((baseValue * discount).toFixed(2));
+}
+
+function getFutureDraftSeasons(season: string) {
+  const seasonNumber = Number(season);
+  const baseSeason = Number.isNaN(seasonNumber)
+    ? new Date().getFullYear()
+    : seasonNumber;
+
+  return [1, 2, 3].map((offset) => `${baseSeason + offset}`);
+}
+
+function getDraftPickLabel(pick: {
+  round: number;
+  season: string;
+}) {
+  const suffix =
+    pick.round === 1
+      ? "1st"
+      : pick.round === 2
+        ? "2nd"
+        : pick.round === 3
+          ? "3rd"
+          : `${pick.round}th`;
+
+  return `${pick.season} ${suffix}`;
+}
+
+function buildDraftPicksByRosterId({
+  rosters,
+  season,
+  tradedPicks,
+}: {
+  rosters: SleeperRoster[];
+  season: string;
+  tradedPicks: SleeperTradedPick[];
+}) {
+  const picksByKey = new Map<string, SleeperLeagueDraftPick>();
+  const futureSeasons = getFutureDraftSeasons(season);
+  const rosterIds = rosters
+    .map((roster) => roster.roster_id)
+    .filter((rosterId): rosterId is number => typeof rosterId === "number");
+
+  rosterIds.forEach((rosterId) => {
+    futureSeasons.forEach((futureSeason) => {
+      [1, 2, 3, 4].forEach((round) => {
+        const key = `${futureSeason}-${round}-${rosterId}`;
+
+        picksByKey.set(key, {
+          label: getDraftPickLabel({ round, season: futureSeason }),
+          originalRosterId: rosterId,
+          ownerRosterId: rosterId,
+          round,
+          season: futureSeason,
+          value: getDraftPickValue({ round, season: futureSeason }),
+        });
+      });
+    });
+  });
+
+  tradedPicks.forEach((pick) => {
+    if (
+      typeof pick.round !== "number" ||
+      typeof pick.roster_id !== "number" ||
+      typeof pick.owner_id !== "number" ||
+      !pick.season
+    ) {
+      return;
+    }
+
+    const key = `${pick.season}-${pick.round}-${pick.roster_id}`;
+    const existingPick = picksByKey.get(key);
+
+    if (!existingPick) {
+      return;
+    }
+
+    picksByKey.set(key, {
+      ...existingPick,
+      ownerRosterId: pick.owner_id,
+    });
+  });
+
+  return Array.from(picksByKey.values()).reduce((picksByRosterId, pick) => {
+    const currentPicks = picksByRosterId.get(pick.ownerRosterId) ?? [];
+    currentPicks.push(pick);
+    picksByRosterId.set(pick.ownerRosterId, currentPicks);
+    return picksByRosterId;
+  }, new Map<number, SleeperLeagueDraftPick[]>());
 }
 
 function getEligiblePositions(slot: string) {
@@ -375,6 +507,7 @@ function getRosterOwner({
 }
 
 function buildSleeperLeagueRosterTeam({
+  draftPicksByRosterId,
   league,
   leagueUsersById,
   players,
@@ -382,6 +515,7 @@ function buildSleeperLeagueRosterTeam({
   roster,
   starterSlots,
 }: {
+  draftPicksByRosterId?: Map<number, SleeperLeagueDraftPick[]>;
   league: SleeperLeagueSummary;
   leagueUsersById: Map<string, SleeperLeagueUser>;
   players: Record<string, SleeperPlayer>;
@@ -446,11 +580,16 @@ function buildSleeperLeagueRosterTeam({
       ? total + (player.value ?? 0)
       : total;
   }, 0);
+  const draftPicks = draftPicksByRosterId?.get(rosterId) ?? [];
+  const draftPickValue = draftPicks.reduce((total, pick) => total + pick.value, 0);
 
   return {
     averageAge,
+    draftPicks,
+    draftPickValue,
     ownerName,
     playersByPosition,
+    powerValue: starterValue + draftPickValue,
     rosterId,
     starterCount: rolePlayers.filter(
       (player) => player.rosterRole === "starter",
@@ -1143,7 +1282,7 @@ export async function getSleeperLeagueRosterBoard({
     throw new Error(`No Sleeper leagues were found for ${season}.`);
   }
 
-  const [leagueDetails, leagueUsers, rosters] = await Promise.all([
+  const [leagueDetails, leagueUsers, rosters, tradedPicks] = await Promise.all([
     fetchSleeperJson<SleeperLeague>(
       `/league/${selectedLeague.id}`,
       60 * 10,
@@ -1156,6 +1295,10 @@ export async function getSleeperLeagueRosterBoard({
       `/league/${selectedLeague.id}/rosters`,
       60 * 10,
     ),
+    fetchSleeperJson<SleeperTradedPick[]>(
+      `/league/${selectedLeague.id}/traded_picks`,
+      60 * 10,
+    ).catch(() => []),
   ]);
   const rosterPositions =
     leagueDetails?.roster_positions?.filter(Boolean) ??
@@ -1169,11 +1312,17 @@ export async function getSleeperLeagueRosterBoard({
       .filter((leagueUser) => Boolean(leagueUser.user_id))
       .map((leagueUser) => [leagueUser.user_id ?? "", leagueUser]),
   );
+  const draftPicksByRosterId = buildDraftPicksByRosterId({
+    rosters,
+    season,
+    tradedPicks,
+  });
 
   const teams = rosters
     .filter((roster) => typeof roster.roster_id === "number")
     .map((roster) =>
       buildSleeperLeagueRosterTeam({
+        draftPicksByRosterId,
         league: selectedLeague,
         leagueUsersById,
         players,
@@ -1183,7 +1332,7 @@ export async function getSleeperLeagueRosterBoard({
       }),
     )
     .sort((a, b) => {
-      return b.starterValue - a.starterValue || a.ownerName.localeCompare(b.ownerName);
+      return b.powerValue - a.powerValue || a.ownerName.localeCompare(b.ownerName);
     });
 
   return {
@@ -1238,12 +1387,16 @@ export async function getSleeperMyTeamsBoard({
         const matchingLeague = userLeagues.find(
           (candidate) => candidate.league_id === league.id,
         );
-        const [leagueDetails, leagueUsers, rosters] = await Promise.all([
+        const [leagueDetails, leagueUsers, rosters, tradedPicks] = await Promise.all([
           fetchSleeperJson<SleeperLeague>(`/league/${league.id}`, 60 * 10).catch(
             () => null,
           ),
           fetchSleeperJson<SleeperLeagueUser[]>(`/league/${league.id}/users`, 60 * 10),
           fetchSleeperJson<SleeperRoster[]>(`/league/${league.id}/rosters`, 60 * 10),
+          fetchSleeperJson<SleeperTradedPick[]>(
+            `/league/${league.id}/traded_picks`,
+            60 * 10,
+          ).catch(() => []),
         ]);
         const rosterPositions =
           leagueDetails?.roster_positions?.filter(Boolean) ??
@@ -1255,10 +1408,16 @@ export async function getSleeperMyTeamsBoard({
             .filter((leagueUser) => Boolean(leagueUser.user_id))
             .map((leagueUser) => [leagueUser.user_id ?? "", leagueUser]),
         );
+        const draftPicksByRosterId = buildDraftPicksByRosterId({
+          rosters,
+          season,
+          tradedPicks,
+        });
         const leagueTeams = rosters
           .filter((roster) => typeof roster.roster_id === "number")
           .map((roster) =>
             buildSleeperLeagueRosterTeam({
+              draftPicksByRosterId,
               league,
               leagueUsersById,
               players,
@@ -1269,7 +1428,7 @@ export async function getSleeperMyTeamsBoard({
           )
           .sort((firstTeam, secondTeam) => {
             return (
-              secondTeam.starterValue - firstTeam.starterValue ||
+              secondTeam.powerValue - firstTeam.powerValue ||
               firstTeam.ownerName.localeCompare(secondTeam.ownerName)
             );
           });

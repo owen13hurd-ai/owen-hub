@@ -4,7 +4,12 @@ import { GripVertical, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 
-import { calculateRookieModelScore } from "@/lib/dynasty/rookies";
+import {
+  calculateRookieModelScore,
+  getRookieModelBreakdown,
+  rookieModelFactors,
+  rookiePositionModelNotes,
+} from "@/lib/dynasty/rookies";
 import type { RookiePosition, RookieProspect } from "@/types/rookies";
 
 type DragState = {
@@ -254,8 +259,8 @@ export function RookieDraftClient({
               Model leaders
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/55">
-              Score inputs from 0-10. Draft capital and production matter most,
-              while risk works as a penalty.
+              Score inputs from 0-10. The model starts with talent and draft
+              capital, then adjusts for age, landing spot, and risk.
             </p>
           </div>
           <div className="grid gap-2 sm:grid-cols-5 lg:min-w-[520px]">
@@ -275,6 +280,38 @@ export function RookieDraftClient({
               );
             })}
           </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_360px]">
+          <div className="grid gap-2 md:grid-cols-3">
+            {rookieModelFactors.map((factor) => (
+              <div key={factor.key} className="rounded-md bg-mist p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-bold text-ink">{factor.label}</p>
+                  <span className="rounded-full bg-white px-2 py-0.5 text-xs font-bold text-ink/55">
+                    {Math.round(factor.weight * 100)}%
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-ink/55">
+                  {factor.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <aside className="rounded-lg bg-mist p-3">
+            <p className="text-sm font-bold text-ink">Position lens</p>
+            <div className="mt-3 space-y-2">
+              {rookiePositionModelNotes.map((note) => (
+                <div key={note.label} className="rounded-md bg-white p-2">
+                  <p className="text-xs font-bold text-moss">{note.label}</p>
+                  <p className="mt-1 text-xs leading-5 text-ink/55">
+                    {note.note}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -358,6 +395,7 @@ export function RookieDraftClient({
                   const rank =
                     prospects.findIndex((item) => item.id === prospect.id) + 1;
                   const score = calculateRookieModelScore(prospect);
+                  const breakdown = getRookieModelBreakdown(prospect);
 
                   return (
                     <tr
@@ -486,6 +524,11 @@ export function RookieDraftClient({
                           >
                             {getModelLabel(score)}
                           </span>
+                          <p className="text-xs leading-4 text-ink/45">
+                            Upside {breakdown.weightedUpside.toFixed(1)} ·
+                            Context {breakdown.contextScore.toFixed(1)} · Risk{" "}
+                            {breakdown.riskAdjustment.toFixed(1)}
+                          </p>
                         </div>
                       </td>
                       <td className="px-3 py-3">

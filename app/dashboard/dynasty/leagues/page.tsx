@@ -5,7 +5,10 @@ import clsx from "clsx";
 import { Button } from "@/components/ui/Button";
 import { getSleeperLeagueRosterBoard } from "@/lib/dynasty/sleeper";
 import { personalSettings } from "@/lib/personal-settings";
-import type { SleeperLeagueRosterPlayer } from "@/lib/dynasty/sleeper";
+import type {
+  SleeperLeagueDraftPick,
+  SleeperLeagueRosterPlayer,
+} from "@/lib/dynasty/sleeper";
 
 const positionColumns = ["QB", "RB", "WR", "TE"];
 
@@ -61,6 +64,14 @@ function getValueColor(value: number | null) {
 
 function getPositionValue(players: SleeperLeagueRosterPlayer[]) {
   return players.reduce((total, player) => total + (player.value ?? 0), 0);
+}
+
+function getPickBucketCounts(picks: SleeperLeagueDraftPick[]) {
+  return picks.reduce<Record<string, number>>((counts, pick) => {
+    const label = `R${pick.round}`;
+    counts[label] = (counts[label] ?? 0) + 1;
+    return counts;
+  }, {});
 }
 
 function formatSlot(slot: string) {
@@ -224,7 +235,7 @@ export default async function DynastyPowerRankingsPage({
 
       {data ? (
         <>
-          <section className="grid gap-4 md:grid-cols-3">
+          <section className="grid gap-4 md:grid-cols-4">
             <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
               <p className="text-sm text-ink/55">League</p>
               <p className="mt-1 text-xl font-bold text-ink">
@@ -241,6 +252,12 @@ export default async function DynastyPowerRankingsPage({
               <p className="text-sm text-ink/55">Teams</p>
               <p className="mt-1 text-xl font-bold text-ink">
                 {data.teams.length}
+              </p>
+            </div>
+            <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+              <p className="text-sm text-ink/55">Pick value shown</p>
+              <p className="mt-1 text-xl font-bold text-ink">
+                Next 3 drafts
               </p>
             </div>
           </section>
@@ -273,7 +290,13 @@ export default async function DynastyPowerRankingsPage({
                     ) : null}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                    <div className="rounded-md bg-mist px-3 py-2">
+                      <p className="text-xs text-ink/50">Power score</p>
+                      <p className="text-sm font-bold text-ink">
+                        {formatValue(team.powerValue)}
+                      </p>
+                    </div>
                     <div className="rounded-md bg-mist px-3 py-2">
                       <p className="text-xs text-ink/50">Starter value</p>
                       <p className="text-sm font-bold text-ink">
@@ -284,6 +307,12 @@ export default async function DynastyPowerRankingsPage({
                       <p className="text-xs text-ink/50">Total value</p>
                       <p className="text-sm font-bold text-ink">
                         {formatValue(team.totalValue)}
+                      </p>
+                    </div>
+                    <div className="rounded-md bg-mist px-3 py-2">
+                      <p className="text-xs text-ink/50">Pick value</p>
+                      <p className="text-sm font-bold text-ink">
+                        {formatValue(team.draftPickValue)}
                       </p>
                     </div>
                     <div className="rounded-md bg-mist px-3 py-2">
@@ -298,6 +327,45 @@ export default async function DynastyPowerRankingsPage({
                         {team.averageAge ?? "-"}
                       </p>
                     </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-lg border border-ink/10 bg-mist p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-bold text-ink">Draft picks</p>
+                    <div className="flex flex-wrap gap-1">
+                      {Object.entries(getPickBucketCounts(team.draftPicks)).map(
+                        ([round, count]) => (
+                          <span
+                            key={`${team.rosterId}-${round}`}
+                            className="rounded-full bg-white px-2 py-0.5 text-xs font-bold text-ink/60"
+                          >
+                            {round}: {count}
+                          </span>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {[...team.draftPicks]
+                      .sort((firstPick, secondPick) => {
+                        return (
+                          firstPick.season.localeCompare(secondPick.season) ||
+                          firstPick.round - secondPick.round ||
+                          firstPick.originalRosterId - secondPick.originalRosterId
+                        );
+                      })
+                      .map((pick) => (
+                        <span
+                          key={`${team.rosterId}-${pick.season}-${pick.round}-${pick.originalRosterId}`}
+                          className="rounded-md bg-white px-2 py-1 text-xs font-bold text-ink/65"
+                        >
+                          {pick.label}
+                          {pick.originalRosterId !== team.rosterId
+                            ? ` from R${pick.originalRosterId}`
+                            : ""}
+                        </span>
+                      ))}
                   </div>
                 </div>
 
