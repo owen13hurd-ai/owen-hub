@@ -71,6 +71,7 @@ export const starterRookieProspects: RookieProspect[] = [
   {
     ageScore: 7,
     athleticScore: 7,
+    classYear: "2025",
     draftCapitalScore: 7,
     id: "rookie-qb-1",
     landingSpotScore: 5,
@@ -86,6 +87,7 @@ export const starterRookieProspects: RookieProspect[] = [
   {
     ageScore: 8,
     athleticScore: 8,
+    classYear: "2025",
     draftCapitalScore: 6,
     id: "rookie-rb-1",
     landingSpotScore: 5,
@@ -101,6 +103,7 @@ export const starterRookieProspects: RookieProspect[] = [
   {
     ageScore: 8,
     athleticScore: 8,
+    classYear: "2025",
     draftCapitalScore: 6,
     id: "rookie-wr-1",
     landingSpotScore: 5,
@@ -116,6 +119,7 @@ export const starterRookieProspects: RookieProspect[] = [
   {
     ageScore: 6,
     athleticScore: 7,
+    classYear: "2025",
     draftCapitalScore: 5,
     id: "rookie-te-1",
     landingSpotScore: 5,

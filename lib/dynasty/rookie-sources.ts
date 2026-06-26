@@ -1,13 +1,24 @@
 import type { RookiePosition, RookieProspect } from "@/types/rookies";
 
-const rankingsSheetId = "1f5u4SGrlrop1H0hrFZMYoIoxAfP4zVeFDI9ZmYKs5IM";
+const rankingSheets = [
+  {
+    classYear: "2025",
+    id: "1f5u4SGrlrop1H0hrFZMYoIoxAfP4zVeFDI9ZmYKs5IM",
+    label: "2025 rookie rankings sheet",
+  },
+  {
+    classYear: "2026",
+    id: "1ZnhkpoJspVQ8RDowAiXnWKL4_bBpcyki-JHkZhe5xVQ",
+    label: "2026 rookie rankings sheet",
+  },
+] as const;
 const statsSheetId = "167k1l6dMPJOw1V0eQh-R1WHqtmEhqoeyS4DmePmhiYY";
 
-const rankingsSheetUrl = `https://docs.google.com/spreadsheets/d/${rankingsSheetId}/gviz/tq?tqx=out:csv`;
 const statsSheetUrl = `https://docs.google.com/spreadsheets/d/${statsSheetId}/gviz/tq?tqx=out:csv`;
 
-type RookieSourceResult = {
+type RankingSheetResult = {
   detail: string;
+  label: string;
   prospects: RookieProspect[];
   status: "live" | "fallback" | "error";
 };
@@ -85,8 +96,8 @@ function getTierLabel(tier: string) {
   return match?.[0] ?? "Tier 6";
 }
 
-function toProspectId(name: string, position: RookiePosition) {
-  return `${position}-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+function toProspectId(name: string, position: RookiePosition, classYear: string) {
+  return `${classYear}-${position}-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 }
 
 function getProjectedPick(rank: number) {
@@ -108,7 +119,23 @@ async function fetchCsv(url: string) {
   return response.text();
 }
 
-function parseRankingProspects(csv: string): RookieProspect[] {
+function parseProspectName(value: string) {
+  const match = value.match(/^(.*?)\s*\((\d+(?:\.\d+)?)\)\s*$/);
+
+  if (!match) {
+    return {
+      name: value.trim(),
+      score: null,
+    };
+  }
+
+  return {
+    name: match[1].trim(),
+    score: Number(match[2]) / 10,
+  };
+}
+
+function parseRankingProspects(csv: string, classYear: string): RookieProspect[] {
   const rows = parseCsv(csv);
   const prospects: RookieProspect[] = [];
   let currentTier = "Tier 6 (<50)";
@@ -119,23 +146,27 @@ function parseRankingProspects(csv: string): RookieProspect[] {
     }
 
     positionColumns.forEach(({ columnIndex, position }) => {
-      const name = row[columnIndex]?.trim();
+      const rawName = row[columnIndex]?.trim();
 
-      if (!name) {
+      if (!rawName) {
         return;
       }
 
-      const score = getTierScore(currentTier);
+      const { name, score: sheetScore } = parseProspectName(rawName);
+      const score = sheetScore ?? getTierScore(currentTier);
       const rank = prospects.length + 1;
 
       prospects.push({
         ageScore: score,
         athleticScore: score,
+        classYear,
         draftCapitalScore: score,
-        id: toProspectId(name, position),
+        id: toProspectId(name, position, classYear),
         landingSpotScore: 5,
         name,
-        notes: `Imported from ${currentTier}`,
+        notes: sheetScore
+          ? `Imported from ${currentTier} with sheet score ${Math.round(sheetScore * 10)}`
+          : `Imported from ${currentTier}`,
         position,
         productionScore: score,
         projectedPick: getProjectedPick(rank),
@@ -169,50 +200,63 @@ async function getStatsSourceSummary(): Promise<RookieSourceSummary> {
   }
 }
 
+async function getRankingSheetResult(
+  sheet: (typeof rankingSheets)[number],
+): Promise<RankingSheetResult> {
+  const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheet.id}/gviz/tq?tqx=out:csv`;
+
+  try {
+    const csv = await fetchCsv(sheetUrl);
+    const prospects = parseRankingProspects(csv, sheet.classYear);
+
+    if (prospects.length === 0) {
+      return {
+        detail: "No rookies found",
+        label: sheet.label,
+        prospects: [],
+        status: "fallback",
+      };
+    }
+
+    return {
+      detail: `${prospects.length} rookies imported`,
+      label: sheet.label,
+      prospects,
+      status: "live",
+    };
+  } catch (error) {
+    return {
+      detail:
+        error instanceof Error
+          ? error.message
+          : "Could not load rookie ranking sheet",
+      label: sheet.label,
+      prospects: [],
+      status: "error",
+    };
+  }
+}
+
 export async function getImportedRookieProspects(
   fallbackProspects: RookieProspect[],
 ): Promise<{
   prospects: RookieProspect[];
   sources: RookieSourceSummary[];
 }> {
-  const rankingsResult: RookieSourceResult = await fetchCsv(rankingsSheetUrl)
-    .then((csv) => {
-      const prospects = parseRankingProspects(csv);
-
-      if (prospects.length === 0) {
-        return {
-          detail: "No rookies found, using starter rows",
-          prospects: fallbackProspects,
-          status: "fallback" as const,
-        };
-      }
-
-      return {
-        detail: `${prospects.length} rookies imported`,
-        prospects,
-        status: "live" as const,
-      };
-    })
-    .catch((error) => {
-      return {
-        detail:
-          error instanceof Error
-            ? error.message
-            : "Could not load rookie ranking sheet",
-        prospects: fallbackProspects,
-        status: "error" as const,
-      };
-    });
+  const rankingResults = await Promise.all(
+    rankingSheets.map((sheet) => getRankingSheetResult(sheet)),
+  );
+  const importedProspects = rankingResults.flatMap((result) => result.prospects);
   const statsSummary = await getStatsSourceSummary();
 
   return {
-    prospects: rankingsResult.prospects,
+    prospects: importedProspects.length > 0 ? importedProspects : fallbackProspects,
     sources: [
-      {
-        detail: rankingsResult.detail,
-        label: "Rookie rankings sheet",
-        status: rankingsResult.status,
-      },
+      ...rankingResults.map((result) => ({
+        detail: result.detail,
+        label: result.label,
+        status: result.status,
+      })),
       statsSummary,
     ],
   };

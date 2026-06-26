@@ -19,7 +19,7 @@ type DragState = {
 
 const positions: ("ALL" | RookiePosition)[] = ["ALL", "QB", "RB", "WR", "TE"];
 const tiers = ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
-const storageKey = "owen-hub-rookie-draft-board-v2";
+const storageKey = "owen-hub-rookie-draft-board-v3";
 
 function getSourceClass(status: RookieSourceSummary["status"]) {
   if (status === "live") {
@@ -94,6 +94,7 @@ function getNewProspect(nextRank: number): RookieProspect {
   return {
     ageScore: 5,
     athleticScore: 5,
+    classYear: "2026",
     draftCapitalScore: 5,
     id: `rookie-${Date.now()}`,
     landingSpotScore: 5,
@@ -137,6 +138,7 @@ export function RookieDraftClient({
   sources: RookieSourceSummary[];
 }) {
   const [dragState, setDragState] = useState<DragState>(null);
+  const [classYear, setClassYear] = useState("ALL");
   const [position, setPosition] = useState<"ALL" | RookiePosition>("ALL");
   const [prospects, setProspects] = useState<RookieProspect[]>(() =>
     getSavedProspects(initialProspects),
@@ -151,6 +153,8 @@ export function RookieDraftClient({
     const normalizedQuery = query.trim().toLowerCase();
 
     return prospects.filter((prospect) => {
+      const matchesClass =
+        classYear === "ALL" || prospect.classYear === classYear;
       const matchesPosition = position === "ALL" || prospect.position === position;
       const matchesQuery =
         !normalizedQuery ||
@@ -158,9 +162,9 @@ export function RookieDraftClient({
         prospect.school.toLowerCase().includes(normalizedQuery) ||
         prospect.notes.toLowerCase().includes(normalizedQuery);
 
-      return matchesPosition && matchesQuery;
+      return matchesClass && matchesPosition && matchesQuery;
     });
-  }, [position, prospects, query]);
+  }, [classYear, position, prospects, query]);
 
   const modelLeaders = useMemo(() => {
     return [...prospects]
@@ -180,6 +184,10 @@ export function RookieDraftClient({
       tier,
     };
   });
+  const classYears = [
+    "ALL",
+    ...Array.from(new Set(prospects.map((prospect) => prospect.classYear))).sort(),
+  ];
 
   function updateProspect(
     prospectId: string,
@@ -222,7 +230,12 @@ export function RookieDraftClient({
   }
 
   function moveProspect(targetId: string) {
-    if (!dragState || dragState.prospectId === targetId || position !== "ALL") {
+    if (
+      !dragState ||
+      dragState.prospectId === targetId ||
+      position !== "ALL" ||
+      classYear !== "ALL"
+    ) {
       return;
     }
 
@@ -349,22 +362,41 @@ export function RookieDraftClient({
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-2">
-            {positions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setPosition(item)}
-                className={clsx(
-                  "h-9 rounded-md px-3 text-sm font-semibold transition",
-                  position === item
-                    ? "bg-ink text-white"
-                    : "bg-mist text-ink/70 hover:bg-skyglass hover:text-ink",
-                )}
-              >
-                {item}
-              </button>
-            ))}
+          <div className="grid gap-2">
+            <div className="flex flex-wrap gap-2">
+              {classYears.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setClassYear(item)}
+                  className={clsx(
+                    "h-9 rounded-md px-3 text-sm font-semibold transition",
+                    classYear === item
+                      ? "bg-ink text-white"
+                      : "bg-mist text-ink/70 hover:bg-skyglass hover:text-ink",
+                  )}
+                >
+                  {item === "ALL" ? "All classes" : item}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {positions.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setPosition(item)}
+                  className={clsx(
+                    "h-9 rounded-md px-3 text-sm font-semibold transition",
+                    position === item
+                      ? "bg-ink text-white"
+                      : "bg-mist text-ink/70 hover:bg-skyglass hover:text-ink",
+                  )}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid gap-2 sm:grid-cols-[minmax(220px,1fr)_auto_auto]">
@@ -393,10 +425,10 @@ export function RookieDraftClient({
           </div>
         </div>
 
-        {position !== "ALL" ? (
+        {position !== "ALL" || classYear !== "ALL" ? (
           <p className="mt-3 rounded-md bg-mist px-3 py-2 text-sm text-ink/55">
-            Drag reordering is enabled on ALL so your main rookie board stays
-            consistent across positions.
+            Drag reordering is enabled on all classes and ALL positions so your
+            main rookie board stays consistent.
           </p>
         ) : null}
 
@@ -408,6 +440,7 @@ export function RookieDraftClient({
                   <th className="w-10 px-3 py-3" aria-label="Drag handle" />
                   <th className="px-3 py-3">Rank</th>
                   <th className="px-3 py-3">Prospect</th>
+                  <th className="px-3 py-3">Class</th>
                   <th className="px-3 py-3">Pos</th>
                   <th className="px-3 py-3">Tier</th>
                   <th className="px-3 py-3">Pick</th>
@@ -432,7 +465,7 @@ export function RookieDraftClient({
                   return (
                     <tr
                       key={prospect.id}
-                      draggable={position === "ALL"}
+                      draggable={position === "ALL" && classYear === "ALL"}
                       onDragStart={() =>
                         setDragState({ prospectId: prospect.id })
                       }
@@ -472,6 +505,17 @@ export function RookieDraftClient({
                             className="h-7 min-w-44 rounded-md border border-ink/10 bg-mist px-2 text-xs text-ink outline-none focus:border-moss"
                           />
                         </div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <input
+                          value={prospect.classYear}
+                          onChange={(event) =>
+                            updateProspect(prospect.id, {
+                              classYear: event.target.value,
+                            })
+                          }
+                          className="h-9 w-20 rounded-md border border-ink/10 bg-mist px-2 text-sm font-bold text-ink outline-none focus:border-moss"
+                        />
                       </td>
                       <td className="px-3 py-3">
                         <select

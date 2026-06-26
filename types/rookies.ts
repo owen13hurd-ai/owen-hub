@@ -3,6 +3,7 @@ export type RookiePosition = "QB" | "RB" | "WR" | "TE";
 export type RookieProspect = {
   ageScore: number;
   athleticScore: number;
+  classYear: string;
   draftCapitalScore: number;
   id: string;
   landingSpotScore: number;
