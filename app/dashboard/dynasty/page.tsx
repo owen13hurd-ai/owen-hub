@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   BarChart3,
+  Bell,
   ClipboardList,
   RefreshCcw,
   ShieldCheck,
@@ -98,6 +99,12 @@ export default async function DynastyHubPage({
             <Link href="/dashboard/dynasty/leaguemates">
               <Users className="h-4 w-4" aria-hidden="true" />
               Leaguemate insights
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard/dynasty/trade-inbox">
+              <Bell className="h-4 w-4" aria-hidden="true" />
+              Trade inbox
             </Link>
           </Button>
           <Button asChild variant="secondary">

@@ -149,6 +149,35 @@ export type SleeperMyTeamsBoard = {
   username: string;
 };
 
+export type SleeperTradeInboxAsset = {
+  id: string;
+  label: string;
+  kind: "player" | "pick" | "faab";
+};
+
+export type SleeperPendingTrade = {
+  createdAt: string | null;
+  direction: "Incoming" | "Outgoing" | "Needs Review";
+  leagueId: string;
+  leagueName: string;
+  rosterIds: number[];
+  sends: SleeperTradeInboxAsset[];
+  status: string;
+  tradeId: string;
+  tradeUrl: string;
+  tradeWith: string[];
+  receives: SleeperTradeInboxAsset[];
+};
+
+export type SleeperTradeInbox = {
+  checkedLeagueCount: number;
+  leagues: SleeperLeagueSummary[];
+  missingToken: boolean;
+  pendingTrades: SleeperPendingTrade[];
+  season: string;
+  username: string;
+};
+
 type SleeperUser = {
   display_name?: string;
   user_id?: string;
@@ -205,7 +234,38 @@ type SleeperTransaction = {
   type?: string;
 };
 
+type SleeperGraphQlTradePick = {
+  owner_id?: number;
+  previous_owner_id?: number;
+  roster_id?: number;
+  round?: number;
+  season?: string;
+};
+
+type SleeperGraphQlTrade = {
+  adds?: Record<string, number> | null;
+  consenter_ids?: number[] | null;
+  created?: number | null;
+  creator?: string | null;
+  draft_picks?: SleeperGraphQlTradePick[] | null;
+  drops?: Record<string, number> | null;
+  league_id?: string;
+  metadata?: Record<string, string | number | null> | null;
+  player_map?: Record<string, SleeperPlayer> | null;
+  roster_ids?: number[] | null;
+  status?: string;
+  status_updated?: number | null;
+  transaction_id?: string;
+  type?: string;
+  waiver_budget?: Array<{
+    amount?: number;
+    receiver?: number;
+    sender?: number;
+  }> | null;
+};
+
 const sleeperBaseUrl = "https://api.sleeper.app/v1";
+const sleeperGraphQlUrl = "https://api.sleeper.app/graphql";
 
 async function fetchSleeperJson<T>(path: string, revalidateSeconds: number) {
   const response = await fetch(`${sleeperBaseUrl}${path}`, {
@@ -679,6 +739,225 @@ function sortTradePlayers(
     .slice(0, 8);
 }
 
+function getSleeperAuthToken() {
+  return process.env.SLEEPER_AUTH_TOKEN?.trim() || null;
+}
+
+function getPlayerLabel(
+  playerId: string,
+  playerMap: Record<string, SleeperPlayer> | null | undefined,
+  players: Record<string, SleeperPlayer>,
+) {
+  const player = playerMap?.[playerId] ?? players[playerId];
+
+  if (!player) {
+    return playerId;
+  }
+
+  return (
+    player.full_name ??
+    [player.first_name, player.last_name].filter(Boolean).join(" ") ??
+    playerId
+  );
+}
+
+function getPickLabel(pick: SleeperGraphQlTradePick) {
+  const round = pick.round ?? "?";
+
+  return `${pick.season ?? "Future"} Round ${round}`;
+}
+
+function getTradePartnerNames({
+  myRosterId,
+  rosterIds,
+  teamsByRosterId,
+}: {
+  myRosterId: number;
+  rosterIds: number[];
+  teamsByRosterId: Map<number, string>;
+}) {
+  return rosterIds
+    .filter((rosterId) => rosterId !== myRosterId)
+    .map((rosterId) => teamsByRosterId.get(rosterId) ?? `Roster ${rosterId}`);
+}
+
+function toTradeAsset(id: string, label: string): SleeperTradeInboxAsset {
+  return {
+    id,
+    kind: "player",
+    label,
+  };
+}
+
+function mapPendingTrade({
+  league,
+  myRosterId,
+  myUserId,
+  players,
+  teamsByRosterId,
+  trade,
+}: {
+  league: SleeperLeagueSummary;
+  myRosterId: number;
+  myUserId: string;
+  players: Record<string, SleeperPlayer>;
+  teamsByRosterId: Map<number, string>;
+  trade: SleeperGraphQlTrade;
+}): SleeperPendingTrade | null {
+  const rosterIds = trade.roster_ids ?? [];
+  const transactionId = trade.transaction_id;
+
+  if (!transactionId || !rosterIds.includes(myRosterId)) {
+    return null;
+  }
+
+  const receives: SleeperTradeInboxAsset[] = [];
+  const sends: SleeperTradeInboxAsset[] = [];
+
+  Object.entries(trade.adds ?? {}).forEach(([playerId, rosterId]) => {
+    if (rosterId === myRosterId) {
+      receives.push(toTradeAsset(playerId, getPlayerLabel(playerId, trade.player_map, players)));
+    }
+  });
+
+  Object.entries(trade.drops ?? {}).forEach(([playerId, rosterId]) => {
+    if (rosterId === myRosterId) {
+      sends.push(toTradeAsset(playerId, getPlayerLabel(playerId, trade.player_map, players)));
+    }
+  });
+
+  trade.draft_picks?.forEach((pick, index) => {
+    const asset = {
+      id: `${transactionId}-pick-${index}`,
+      kind: "pick" as const,
+      label: getPickLabel(pick),
+    };
+
+    if (pick.owner_id === myRosterId) {
+      receives.push(asset);
+    }
+
+    if (pick.previous_owner_id === myRosterId || pick.roster_id === myRosterId) {
+      sends.push(asset);
+    }
+  });
+
+  trade.waiver_budget?.forEach((budget, index) => {
+    const amount = budget.amount ?? 0;
+    const asset = {
+      id: `${transactionId}-faab-${index}`,
+      kind: "faab" as const,
+      label: `$${amount} FAAB`,
+    };
+
+    if (budget.receiver === myRosterId) {
+      receives.push(asset);
+    }
+
+    if (budget.sender === myRosterId) {
+      sends.push(asset);
+    }
+  });
+
+  const hasConsented = trade.consenter_ids?.includes(myRosterId) ?? false;
+  const direction =
+    trade.creator === myUserId
+      ? "Outgoing"
+      : hasConsented
+        ? "Needs Review"
+        : "Incoming";
+
+  return {
+    createdAt: trade.created ? new Date(trade.created).toISOString() : null,
+    direction,
+    leagueId: league.id,
+    leagueName: league.name,
+    receives,
+    rosterIds,
+    sends,
+    status: trade.status ?? "pending",
+    tradeId: transactionId,
+    tradeUrl: `https://sleeper.com/leagues/${league.id}/trades`,
+    tradeWith: getTradePartnerNames({
+      myRosterId,
+      rosterIds,
+      teamsByRosterId,
+    }),
+  };
+}
+
+async function fetchPendingSleeperTrades({
+  leagueId,
+  myRosterId,
+  token,
+}: {
+  leagueId: string;
+  myRosterId: number;
+  token: string;
+}) {
+  const query = `query league_transactions_filtered {
+    league_transactions_filtered(
+      league_id: "${leagueId}",
+      roster_id_filters: [${myRosterId}],
+      type_filters: ["trade"],
+      leg_filters: [],
+      status_filters: ["pending", "proposed"],
+      limit: 50
+    ) {
+      adds
+      consenter_ids
+      created
+      creator
+      drops
+      league_id
+      leg
+      metadata
+      roster_ids
+      settings
+      status
+      status_updated
+      transaction_id
+      draft_picks
+      type
+      player_map
+      waiver_budget
+    }
+  }`;
+  const response = await fetch(sleeperGraphQlUrl, {
+    body: JSON.stringify({
+      operationName: "league_transactions_filtered",
+      query,
+      variables: {},
+    }),
+    cache: "no-store",
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+      "X-Sleeper-GraphQL-Op": "league_transactions_filtered",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Sleeper trade inbox returned ${response.status}.`);
+  }
+
+  const payload = (await response.json()) as {
+    data?: {
+      league_transactions_filtered?: SleeperGraphQlTrade[] | null;
+    };
+    errors?: Array<{ message?: string }>;
+  };
+
+  if (payload.errors?.length) {
+    throw new Error(
+      payload.errors.map((error) => error.message ?? "Sleeper error").join(", "),
+    );
+  }
+
+  return payload.data?.league_transactions_filtered ?? [];
+}
+
 function incrementPlayerCount(counts: Map<string, number>, playerId: string) {
   counts.set(playerId, (counts.get(playerId) ?? 0) + 1);
 }
@@ -834,6 +1113,134 @@ export async function getSleeperPortfolio({
     displayName: user.display_name ?? user.username ?? trimmedUsername,
     leagues: leagueSummaries.sort((a, b) => a.name.localeCompare(b.name)),
     rosterAssets,
+    season,
+    username: trimmedUsername,
+  };
+}
+
+export async function getSleeperTradeInbox({
+  season,
+  username,
+}: {
+  season: string;
+  username: string;
+}): Promise<SleeperTradeInbox> {
+  const trimmedUsername = username.trim();
+
+  if (!trimmedUsername) {
+    throw new Error("Enter a Sleeper username.");
+  }
+
+  const user = await fetchSleeperJson<SleeperUser | null>(
+    `/user/${encodeURIComponent(trimmedUsername)}`,
+    60 * 60,
+  );
+
+  if (!user?.user_id) {
+    throw new Error("Sleeper user was not found.");
+  }
+
+  const [userLeagues, players] = await Promise.all([
+    fetchSleeperJson<SleeperLeague[]>(
+      `/user/${user.user_id}/leagues/nfl/${season}`,
+      60 * 10,
+    ),
+    fetchSleeperJson<Record<string, SleeperPlayer>>("/players/nfl", 60 * 60 * 24),
+  ]);
+  const leagues = userLeagues
+    .filter((league) => Boolean(league.league_id))
+    .map(getLeagueSummary)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const token = getSleeperAuthToken();
+
+  if (!token) {
+    return {
+      checkedLeagueCount: leagues.length,
+      leagues,
+      missingToken: true,
+      pendingTrades: [],
+      season,
+      username: trimmedUsername,
+    };
+  }
+
+  const pendingTrades = (
+    await Promise.all(
+      leagues.map(async (league) => {
+        const [leagueUsers, rosters] = await Promise.all([
+          fetchSleeperJson<SleeperLeagueUser[]>(
+            `/league/${league.id}/users`,
+            60 * 10,
+          ),
+          fetchSleeperJson<SleeperRoster[]>(`/league/${league.id}/rosters`, 60 * 10),
+        ]);
+        const myRoster = rosters.find((roster) => {
+          return (
+            roster.owner_id === user.user_id ||
+            roster.co_owners?.includes(user.user_id ?? "")
+          );
+        });
+
+        if (!myRoster?.roster_id) {
+          return [];
+        }
+
+        const usersById = new Map(
+          leagueUsers
+            .filter((leagueUser) => Boolean(leagueUser.user_id))
+            .map((leagueUser) => [leagueUser.user_id ?? "", leagueUser]),
+        );
+        const teamsByRosterId = new Map(
+          rosters
+            .filter((roster) => typeof roster.roster_id === "number")
+            .map((roster) => {
+              const leagueUser = roster.owner_id
+                ? usersById.get(roster.owner_id)
+                : undefined;
+              const teamName =
+                leagueUser?.metadata?.team_name ??
+                leagueUser?.display_name ??
+                leagueUser?.username ??
+                `Roster ${roster.roster_id}`;
+
+              return [roster.roster_id ?? 0, teamName];
+            }),
+        );
+        const trades = await fetchPendingSleeperTrades({
+          leagueId: league.id,
+          myRosterId: myRoster.roster_id,
+          token,
+        }).catch(() => []);
+
+        return trades
+          .map((trade) =>
+            mapPendingTrade({
+              league,
+              myRosterId: myRoster.roster_id ?? 0,
+              myUserId: user.user_id ?? "",
+              players,
+              teamsByRosterId,
+              trade,
+            }),
+          )
+          .filter((trade): trade is SleeperPendingTrade => Boolean(trade));
+      }),
+    )
+  )
+    .flat()
+    .sort((a, b) => {
+      return (
+        (b.createdAt ? Date.parse(b.createdAt) : 0) -
+          (a.createdAt ? Date.parse(a.createdAt) : 0) ||
+        a.leagueName.localeCompare(b.leagueName)
+      );
+    });
+
+  return {
+    checkedLeagueCount: leagues.length,
+    leagues,
+    missingToken: false,
+    pendingTrades,
     season,
     username: trimmedUsername,
   };
