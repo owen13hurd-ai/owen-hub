@@ -134,7 +134,7 @@ function PlayerRow({ player }: { player: SleeperLeagueRosterPlayer }) {
   );
 }
 
-export default async function DynastyLeagueRostersPage({
+export default async function DynastyPowerRankingsPage({
   searchParams,
 }: {
   searchParams?: Promise<{ leagueId?: string; season?: string }>;
@@ -164,17 +164,17 @@ export default async function DynastyLeagueRostersPage({
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.16em] text-moss">
           Dynasty Hub
         </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">League Rosters</h1>
+        <h1 className="mt-2 text-3xl font-bold text-ink">Power Rankings</h1>
         <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          View a full Sleeper league through your personal rankings, with each
-          roster split by position and starter format.
+          Compare every team in a Sleeper league through your personal rankings,
+          with each roster split by position and starter format.
         </p>
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <p className="text-sm font-semibold text-ink">Roster view</p>
+            <p className="text-sm font-semibold text-ink">Power rankings view</p>
             <p className="mt-1 text-sm text-ink/60">
               Loading leagues for{" "}
               <span className="font-semibold text-ink">

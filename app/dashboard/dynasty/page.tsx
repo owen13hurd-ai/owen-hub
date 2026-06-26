@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { BarChart3, RefreshCcw, TableProperties, Users } from "lucide-react";
+import {
+  BarChart3,
+  RefreshCcw,
+  ShieldCheck,
+  TableProperties,
+  Users,
+} from "lucide-react";
 
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
@@ -95,7 +101,13 @@ export default async function DynastyHubPage({
           <Button asChild variant="secondary">
             <Link href="/dashboard/dynasty/leagues">
               <TableProperties className="h-4 w-4" aria-hidden="true" />
-              League rosters
+              Power rankings
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard/dynasty/my-teams">
+              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+              My teams
             </Link>
           </Button>
         </div>
