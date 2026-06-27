@@ -63,11 +63,16 @@ export function OpeningRangeViewer({ onStudy }: { onStudy: () => void }) {
         </div>
       </div>
       <div className="overflow-x-auto pb-2">
-        <div className="grid min-w-[620px] grid-cols-13 gap-1" role="grid" aria-label={`${position} ${action} range`}>
+        <div
+          className="grid w-[520px] gap-0.5"
+          style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}
+          role="grid"
+          aria-label={`${position} ${action} range`}
+        >
           {cells.map((cell) => (
             <button key={cell.hand} type="button" onMouseEnter={() => setSelected(cell)} onFocus={() => setSelected(cell)} onClick={() => setSelected(cell)}
               title={`${cell.hand}: ${cell.action} ${cell.frequency}%`}
-              className={clsx("aspect-square rounded-sm text-[11px] font-extrabold transition hover:ring-2 hover:ring-ink focus:outline-none focus:ring-2 focus:ring-ink sm:text-xs", cellStyles[cell.action])}>
+              className={clsx("aspect-square rounded-sm text-[10px] font-extrabold transition hover:ring-2 hover:ring-ink focus:outline-none focus:ring-2 focus:ring-ink", cellStyles[cell.action])}>
               {cell.hand}
             </button>
           ))}
