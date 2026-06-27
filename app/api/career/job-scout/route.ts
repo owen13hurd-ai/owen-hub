@@ -6,14 +6,17 @@ import type { JobPreferences, ScoutJob } from "@/lib/career/types";
 
 type SourceResult = { count: number; label: string; ok: boolean };
 type RawJob = Omit<ScoutJob, "matchBreakdown" | "reasons" | "score">;
-type RemotiveJob = {
-  candidate_required_location?: string; category?: string; company_name?: string;
-  description?: string; id?: number; job_type?: string; publication_date?: string;
-  salary?: string; tags?: string[]; title?: string; url?: string;
-};
-type ArbeitnowJob = {
-  company_name?: string; description?: string; location?: string; remote?: boolean;
-  slug?: string; tags?: string[]; title?: string; url?: string;
+type MuseJob = {
+  categories?: { name?: string }[];
+  company?: { name?: string };
+  contents?: string;
+  id?: number;
+  levels?: { name?: string }[];
+  locations?: { name?: string }[];
+  name?: string;
+  publication_date?: string;
+  refs?: { landing_page?: string };
+  tags?: string[];
 };
 
 function normalize(value: string) {
@@ -34,45 +37,34 @@ function dedupeJobs(jobs: RawJob[]) {
   });
 }
 
-async function fetchRemotiveJobs(): Promise<RawJob[]> {
-  const response = await fetch("https://remotive.com/api/remote-jobs?search=analyst", {
-    next: { revalidate: 60 * 30 },
-  });
-  if (!response.ok) throw new Error(`Remotive returned ${response.status}`);
-  const payload = (await response.json()) as { jobs?: RemotiveJob[] };
-  return (payload.jobs ?? []).slice(0, 35).map((job) => ({
-    company: job.company_name ?? "Unknown company",
-    description: plainText(job.description),
-    id: `remotive-${job.id ?? job.url ?? job.title}`,
-    location: job.candidate_required_location ?? "Remote",
+function isInAtlantaOrGeorgia(job: RawJob) {
+  const location = normalize(job.location);
+  return location.includes("atlanta") || location.includes("georgia") || /(^| )ga($| )/.test(location);
+}
+
+async function fetchMuseJobs(): Promise<RawJob[]> {
+  const response = await fetch(
+    "https://www.themuse.com/api/public/jobs?location=Atlanta%2C%20GA&page=1",
+    { next: { revalidate: 60 * 30 } },
+  );
+  if (!response.ok) throw new Error(`The Muse returned ${response.status}`);
+  const payload = (await response.json()) as { results?: MuseJob[] };
+  return (payload.results ?? []).map((job) => ({
+    company: job.company?.name ?? "Unknown company",
+    description: plainText(job.contents),
+    id: `muse-${job.id ?? job.refs?.landing_page ?? job.name}`,
+    location: job.locations?.map((location) => location.name).filter(Boolean).join(" / ") || "Atlanta, GA",
     postedAt: job.publication_date ?? null,
     salaryMaximum: null,
     salaryMinimum: null,
-    source: "Remotive",
-    tags: [job.category, job.job_type, ...(job.tags ?? [])].filter((tag): tag is string => Boolean(tag)),
-    title: job.title ?? "Untitled role",
-    url: job.url ?? "https://remotive.com/remote-jobs",
-  }));
-}
-
-async function fetchArbeitnowJobs(): Promise<RawJob[]> {
-  const response = await fetch("https://www.arbeitnow.com/api/job-board-api", {
-    next: { revalidate: 60 * 30 },
-  });
-  if (!response.ok) throw new Error(`Arbeitnow returned ${response.status}`);
-  const payload = (await response.json()) as { data?: ArbeitnowJob[] };
-  return (payload.data ?? []).slice(0, 60).map((job) => ({
-    company: job.company_name ?? "Unknown company",
-    description: plainText(job.description),
-    id: `arbeitnow-${job.slug ?? job.url ?? job.title}`,
-    location: job.location ?? (job.remote ? "Remote" : "Unknown"),
-    postedAt: null,
-    salaryMaximum: null,
-    salaryMinimum: null,
-    source: "Arbeitnow",
-    tags: job.tags ?? [],
-    title: job.title ?? "Untitled role",
-    url: job.url ?? "https://www.arbeitnow.com/",
+    source: "The Muse",
+    tags: [
+      ...(job.categories ?? []).map((category) => category.name),
+      ...(job.levels ?? []).map((level) => level.name),
+      ...(job.tags ?? []),
+    ].filter((tag): tag is string => Boolean(tag)),
+    title: job.name ?? "Untitled role",
+    url: job.refs?.landing_page ?? "https://www.themuse.com/search/location/atlanta-ga/",
   }));
 }
 
@@ -80,8 +72,7 @@ async function runScout(preferences: JobPreferences) {
   const sources: SourceResult[] = [];
   const jobs: RawJob[] = [];
   for (const source of [
-    { label: "Remotive", load: fetchRemotiveJobs },
-    { label: "Arbeitnow", load: fetchArbeitnowJobs },
+    { label: "The Muse", load: fetchMuseJobs },
   ]) {
     try {
       const sourceJobs = await source.load();
@@ -92,7 +83,7 @@ async function runScout(preferences: JobPreferences) {
     }
   }
 
-  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).map((job) => {
+  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).filter(isInAtlantaOrGeorgia).map((job) => {
     const match = scoreJob(job, preferences);
     return { ...job, matchBreakdown: match.breakdown, reasons: match.reasons, score: match.score };
   });

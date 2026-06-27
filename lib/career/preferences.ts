@@ -26,11 +26,11 @@ export const defaultJobPreferences: JobPreferences = {
     "Healthcare",
     "Food & Beverage",
   ],
-  workModes: ["Remote", "Hybrid", "On-site"],
-  preferredCities: [],
-  preferredStates: [],
+  workModes: ["Hybrid", "On-site"],
+  preferredCities: ["Atlanta"],
+  preferredStates: ["Georgia", "GA"],
   maximumCommuteMiles: null,
-  willingToRelocate: true,
+  willingToRelocate: false,
   minimumSalary: null,
   maximumSalary: null,
   companySizes: ["Large enterprise", "Fortune 500"],
@@ -51,13 +51,27 @@ export const defaultJobPreferences: JobPreferences = {
   ],
 };
 
+export function enforceGeorgiaPreferences(preferences: JobPreferences): JobPreferences {
+  return {
+    ...preferences,
+    preferredCities: ["Atlanta"],
+    preferredStates: ["Georgia", "GA"],
+    willingToRelocate: false,
+    workModes: (preferences.workModes ?? []).filter((mode) => mode !== "Remote"),
+  };
+}
+
 export function getJobPreferencesFromStorage(): JobPreferences {
   if (typeof window === "undefined") return defaultJobPreferences;
 
   try {
     const saved = window.localStorage.getItem(jobPreferencesStorageKey);
     if (!saved) return defaultJobPreferences;
-    return { ...defaultJobPreferences, ...(JSON.parse(saved) as JobPreferences) };
+    const parsed = JSON.parse(saved) as JobPreferences;
+    return enforceGeorgiaPreferences({
+      ...defaultJobPreferences,
+      ...parsed,
+    });
   } catch {
     return defaultJobPreferences;
   }
@@ -67,4 +81,3 @@ export function saveJobPreferences(preferences: JobPreferences) {
   window.localStorage.setItem(jobPreferencesStorageKey, JSON.stringify(preferences));
   window.dispatchEvent(new CustomEvent(jobPreferencesChangedEvent));
 }
-

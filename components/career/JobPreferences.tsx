@@ -6,6 +6,7 @@ import clsx from "clsx";
 
 import {
   defaultJobPreferences,
+  enforceGeorgiaPreferences,
   getJobPreferencesFromStorage,
   saveJobPreferences,
 } from "@/lib/career/preferences";
@@ -99,7 +100,7 @@ export function JobPreferencesPanel() {
   useEffect(() => {
     void loadCareerPreferencesFromCloud().then((cloudPreferences) => {
       if (cloudPreferences) {
-        setPreferences({ ...defaultJobPreferences, ...cloudPreferences });
+        setPreferences(enforceGeorgiaPreferences({ ...defaultJobPreferences, ...cloudPreferences }));
       }
     });
   }, []);
@@ -108,8 +109,10 @@ export function JobPreferencesPanel() {
     setSaved(false);
   }
   function save() {
-    saveJobPreferences(preferences);
-    void saveCareerPreferencesToCloud(preferences);
+    const enforcedPreferences = enforceGeorgiaPreferences(preferences);
+    setPreferences(enforcedPreferences);
+    saveJobPreferences(enforcedPreferences);
+    void saveCareerPreferencesToCloud(enforcedPreferences);
     setSaved(true);
   }
 
@@ -118,7 +121,7 @@ export function JobPreferencesPanel() {
       <div className="flex items-start justify-between gap-3">
         <div className="flex gap-2">
           <Settings2 className="mt-0.5 h-5 w-5 text-moss" aria-hidden="true" />
-          <div><h2 className="font-bold text-ink">Job preferences</h2><p className="mt-1 text-sm text-ink/55">These choices control every match score.</p></div>
+        <div><h2 className="font-bold text-ink">Job preferences</h2><p className="mt-1 text-sm text-ink/55">Atlanta or Georgia is required. These choices refine the matches.</p></div>
         </div>
         <button type="button" onClick={save} className="h-9 rounded-md bg-moss px-3 text-xs font-bold text-white">
           {saved ? "Saved" : "Save"}
@@ -135,7 +138,7 @@ export function JobPreferencesPanel() {
         <ListEditor label="Custom industries" values={preferences.industries.filter((value) => !industryOptions.includes(value))}
           placeholder="Add an industry"
           onChange={(custom) => update("industries", [...preferences.industries.filter((value) => industryOptions.includes(value)), ...custom])} />
-        <ChipGroup label="Work style" options={workModeOptions} values={preferences.workModes}
+        <ChipGroup label="Work style" options={workModeOptions.filter((mode) => mode !== "Remote")} values={preferences.workModes.filter((mode) => mode !== "Remote")}
           onChange={(value) => update("workModes", value as WorkMode[])} />
         <div className="grid gap-4 sm:grid-cols-2">
           <ListEditor label="Preferred cities" values={preferences.preferredCities} placeholder="Add a city"
