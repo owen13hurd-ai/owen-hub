@@ -61,6 +61,11 @@ function isInAtlantaOrGeorgia(job: RawJob) {
   return location.includes("atlanta") || location.includes("georgia") || /(^| )ga($| )/.test(location);
 }
 
+function isLikelyEarlyCareer(job: RawJob) {
+  const title = normalize(job.title);
+  return !/(^| )(senior|sr|director|principal|vice president|vp|manager|head of)( |$)/.test(title);
+}
+
 async function fetchMuseJobs(): Promise<RawJob[]> {
   const response = await fetch(
     "https://www.themuse.com/api/public/jobs?location=Atlanta%2C%20GA&page=1",
@@ -135,7 +140,7 @@ async function runScout(preferences: JobPreferences) {
     }
   }
 
-  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).map((job) => {
+  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).filter(isLikelyEarlyCareer).map((job) => {
     const match = scoreJob(job, preferences);
     return { ...job, matchBreakdown: match.breakdown, reasons: match.reasons, score: match.score };
   });

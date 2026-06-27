@@ -3,8 +3,24 @@ import type { JobPreferences } from "@/lib/career/types";
 export const jobPreferencesStorageKey = "owen-hub-job-preferences-v2";
 export const jobPreferencesChangedEvent = "owen-hub-job-preferences-changed";
 
+const requiredTargetRoles = [
+  "Transportation Coordinator",
+  "Logistics Coordinator",
+  "Freight Coordinator",
+  "Dispatch Coordinator",
+  "Sales Development Representative",
+  "Business Development Representative",
+  "Inside Sales Representative",
+];
+
+const requiredPositiveKeywords = ["Transportation Coordinator", "Freight", "SDR", "BDR", "SaaS"];
+
 export const defaultJobPreferences: JobPreferences = {
   targetRoles: [
+    "Transportation Coordinator",
+    "Logistics Coordinator",
+    "Freight Coordinator",
+    "Dispatch Coordinator",
     "Supply Chain Analyst",
     "Transportation Analyst",
     "Logistics Analyst",
@@ -14,6 +30,9 @@ export const defaultJobPreferences: JobPreferences = {
     "Strategy Analyst",
     "Corporate Rotational Programs",
     "Manufacturing Leadership Programs",
+    "Sales Development Representative",
+    "Business Development Representative",
+    "Inside Sales Representative",
   ],
   seniority: ["Entry Level", "Associate", "Early Career"],
   industries: [
@@ -41,6 +60,11 @@ export const defaultJobPreferences: JobPreferences = {
     "Logistics",
     "Transportation",
     "Planning",
+    "Transportation Coordinator",
+    "Freight",
+    "SDR",
+    "BDR",
+    "SaaS",
   ],
   negativeKeywords: [
     "Sales",
@@ -54,6 +78,8 @@ export const defaultJobPreferences: JobPreferences = {
 export function enforceGeorgiaPreferences(preferences: JobPreferences): JobPreferences {
   return {
     ...preferences,
+    targetRoles: Array.from(new Set([...requiredTargetRoles, ...(preferences.targetRoles ?? [])])),
+    positiveKeywords: Array.from(new Set([...requiredPositiveKeywords, ...(preferences.positiveKeywords ?? [])])),
     preferredCities: ["Atlanta"],
     preferredStates: ["Georgia", "GA"],
     willingToRelocate: false,

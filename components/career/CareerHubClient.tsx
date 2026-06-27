@@ -1,18 +1,20 @@
 "use client";
 
-import { BriefcaseBusiness, Building2, Search, Settings2 } from "lucide-react";
+import { BriefcaseBusiness, Building2, ListChecks, Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
 
 import { CompanyResearchBoard } from "@/components/career/CompanyResearchBoard";
+import { CompanyWatchlist } from "@/components/career/CompanyWatchlist";
 import { JobApplicationTracker } from "@/components/career/JobApplicationTracker";
 import { JobPreferencesPanel } from "@/components/career/JobPreferences";
 import { JobScout } from "@/components/career/JobScout";
 
-type CareerView = "Scout" | "Applications" | "Preferences" | "Companies";
+type CareerView = "Scout" | "Watchlist" | "Applications" | "Preferences" | "Companies";
 
 const views = [
   { icon: Search, label: "Scout" as const },
+  { icon: ListChecks, label: "Watchlist" as const },
   { icon: BriefcaseBusiness, label: "Applications" as const },
   { icon: Settings2, label: "Preferences" as const },
   { icon: Building2, label: "Companies" as const },
@@ -47,9 +49,9 @@ export function CareerHubClient({ resumeModifiedAt, resumeName, resumePath }: {
       {view === "Applications" ? (
         <JobApplicationTracker resumeModifiedAt={resumeModifiedAt} resumeName={resumeName} resumePath={resumePath} />
       ) : null}
+      {view === "Watchlist" ? <CompanyWatchlist /> : null}
       {view === "Preferences" ? <div className="max-w-4xl"><JobPreferencesPanel /></div> : null}
       {view === "Companies" ? <CompanyResearchBoard /> : null}
     </div>
   );
 }
-
