@@ -9,7 +9,7 @@ import clsx from "clsx";
 
 import { HandTrainer } from "@/components/poker/HandTrainer";
 import { OpeningRangeViewer } from "@/components/poker/OpeningRangeViewer";
-import { defaultPokerSettings, pokerConcepts, trainingSpots } from "@/lib/poker/data";
+import { defaultPokerSettings, pokerConcepts } from "@/lib/poker/data";
 import { loadPokerData, pokerStorageKeys, savePokerData } from "@/lib/poker/storage";
 import type { HandHistory, PokerNote, PokerSettings, SolverSolution, StudySession, TrainingSpot } from "@/lib/poker/types";
 
@@ -41,7 +41,7 @@ export function PokerHub() {
     const next = [{ completedAt: new Date().toISOString(), correct, minutes: 2, module, referenceId }, ...sessions];
     setSessions(next); savePokerData(pokerStorageKeys.sessions, next);
   }
-  function answer(spot: TrainingSpot, correct: boolean) { record(spot.id === trainingSpots[Math.floor(Date.now() / 86400000) % trainingSpots.length].id ? "Daily Spot" : "Hand Trainer", spot.id, correct); }
+  function answer(module: "Daily Spot" | "Hand Trainer", spot: TrainingSpot, correct: boolean) { record(module, spot.id, correct); }
   function updateSettings(next: PokerSettings) { setSettings(next); savePokerData(pokerStorageKeys.settings, next); }
 
   const searchResults = useMemo(() => {
@@ -69,8 +69,8 @@ export function PokerHub() {
 
       {view === "Home" ? <Dashboard sessions={sessions} dailyGoal={settings.dailyGoal} open={setView} /> : null}
       {view === "Ranges" ? <div className={panelClass}><OpeningRangeViewer onStudy={() => record("Range", "starter-range")} /></div> : null}
-      {view === "Trainer" ? <div className={panelClass}><HandTrainer onAnswer={answer} /></div> : null}
-      {view === "Daily" ? <div className={panelClass}><HandTrainer daily onAnswer={answer} /></div> : null}
+      {view === "Trainer" ? <div className={panelClass}><HandTrainer onAnswer={(spot, correct) => answer("Hand Trainer", spot, correct)} /></div> : null}
+      {view === "Daily" ? <div className={panelClass}><HandTrainer daily onAnswer={(spot, correct) => answer("Daily Spot", spot, correct)} /></div> : null}
       {view === "Concepts" ? <ConceptLibrary onLearn={(conceptId) => record("Concept", conceptId)} /> : null}
       {view === "Solver" ? <SolverLibrary items={solutions} setItems={(next) => { setSolutions(next); savePokerData(pokerStorageKeys.solutions, next); }} /> : null}
       {view === "Hands" ? <HandLibrary items={hands} setItems={(next) => { setHands(next); savePokerData(pokerStorageKeys.hands, next); }} /> : null}

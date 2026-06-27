@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "import:pokerbench": "node scripts/import-pokerbench.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.4",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.87.1",
-    "@radix-ui/react-slot": "^1.2.4",
     "clsx": "^2.1.1",
     "fast-xml-parser": "^5.9.3",
     "lucide-react": "^0.562.0",
@@ -24,6 +25,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.23",
+    "csv-parse": "^7.0.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.0.10",
     "postcss": "^8.5.6",

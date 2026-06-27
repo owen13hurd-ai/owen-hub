@@ -20,7 +20,7 @@ export type PokerRange = {
   stackDepth: StackDepth;
 };
 
-export type TrainingAction = "Fold" | "Call" | "Raise 2.5x" | "Raise 4x" | "Jam" | "Check" | "Bet 33%" | "Bet 75%";
+export type TrainingAction = string;
 
 export type TrainingSpot = {
   actionHistory: string[];
@@ -38,6 +38,9 @@ export type TrainingSpot = {
   potSize: string;
   previousAction: string;
   stackSize: string;
+  source?: string;
+  sourceNotes?: string;
+  sourceUrl?: string;
   title: string;
 };
 
@@ -105,4 +108,3 @@ export type PokerSettings = {
   preferredStack: StackDepth;
   preferredStakes: string;
 };
-
