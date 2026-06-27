@@ -1,6 +1,4 @@
-import { CompanyResearchBoard } from "@/components/career/CompanyResearchBoard";
-import { JobScout } from "@/components/career/JobScout";
-import { JobApplicationTracker } from "@/components/career/JobApplicationTracker";
+import { CareerHubClient } from "@/components/career/CareerHubClient";
 
 const latestResume = {
   modifiedAt: "September 4, 2025",
@@ -10,29 +8,24 @@ const latestResume = {
 
 export default function CareerHubPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section>
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-moss">
           Career Hub
         </p>
         <h1 className="mt-2 text-3xl font-bold text-ink">
-          Job Application Tracker
+          Career Agent
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          Track roles, application status, follow-ups, notes, and which resume
-          version you used.
+          Find strong matches, tune your search, and manage applications in one place.
         </p>
       </section>
 
-      <JobScout />
-
-      <JobApplicationTracker
+      <CareerHubClient
         resumeModifiedAt={latestResume.modifiedAt}
         resumeName={latestResume.name}
         resumePath={latestResume.path}
       />
-
-      <CompanyResearchBoard />
     </div>
   );
 }

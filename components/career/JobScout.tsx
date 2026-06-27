@@ -10,19 +10,8 @@ import {
   saveApplications,
   type JobApplication,
 } from "@/lib/career/applications";
-
-type ScoutJob = {
-  company: string;
-  id: string;
-  location: string;
-  postedAt: string | null;
-  reason: string;
-  score: number;
-  source: string;
-  tags: string[];
-  title: string;
-  url: string;
-};
+import { getJobPreferencesFromStorage } from "@/lib/career/preferences";
+import type { ScoutJob } from "@/lib/career/types";
 
 type ScoutSource = {
   count: number;
@@ -73,15 +62,19 @@ function buildApplicationFromJob(job: ScoutJob): JobApplication {
     company: job.company,
     followUpDate: "",
     id: `job-scout-${Date.now()}-${job.id}`,
+    interviewNotes: "",
     jobUrl: job.url,
-    notes: `${job.reason}. Location: ${job.location}. Tags: ${
+    notes: `${job.reasons.join(". ")}. Location: ${job.location}. Tags: ${
       job.tags.join(", ") || "none listed"
     }.`,
     priority: job.score >= 75 ? "High" : job.score >= 60 ? "Medium" : "Low",
+    rating: 0,
+    recruiterContact: "",
     resumeVersion: defaultResumeName,
     role: job.title,
     source: job.source,
     status: "Interested",
+    salary: "",
   };
 }
 
@@ -90,12 +83,21 @@ export function JobScout() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedJobKeys, setSavedJobKeys] = useState(getSavedJobKeys);
+  const [sortBy, setSortBy] = useState<"score" | "company" | "date" | "location">("score");
 
   const savedCount = useMemo(() => {
     return data?.jobs.filter((job) =>
       savedJobKeys.has(`${job.company.toLowerCase()}-${job.title.toLowerCase()}`),
     ).length;
   }, [data, savedJobKeys]);
+
+  const visibleJobs = useMemo(() => {
+    const jobs = [...(data?.jobs ?? [])];
+    if (sortBy === "company") return jobs.sort((a, b) => a.company.localeCompare(b.company));
+    if (sortBy === "location") return jobs.sort((a, b) => a.location.localeCompare(b.location));
+    if (sortBy === "date") return jobs.sort((a, b) => (b.postedAt ?? "").localeCompare(a.postedAt ?? ""));
+    return jobs.sort((a, b) => b.score - a.score);
+  }, [data, sortBy]);
 
   async function runScout() {
     setIsLoading(true);
@@ -104,6 +106,9 @@ export function JobScout() {
     try {
       const response = await fetch("/api/career/job-scout", {
         cache: "no-store",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferences: getJobPreferencesFromStorage() }),
       });
 
       if (!response.ok) {
@@ -160,9 +165,8 @@ export function JobScout() {
             </div>
           </div>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-ink/60">
-            This first version checks public job feeds, dedupes roles, gives each
-            lead a rough fit score, and lets you save strong matches into the
-            tracker below.
+            Searches public feeds, removes duplicates, and scores every role
+            against your saved preferences.
           </p>
         </div>
 
@@ -223,8 +227,21 @@ export function JobScout() {
         </p>
       ) : null}
 
-      <div className="mt-4 grid gap-3">
-        {data?.jobs.map((job) => {
+      {data ? (
+        <div className="mt-4 flex justify-end">
+          <label className="flex items-center gap-2 text-xs font-bold text-ink/50">
+            Sort
+            <select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)}
+              className="h-9 rounded-md border border-ink/10 bg-mist px-2 text-sm font-semibold text-ink">
+              <option value="score">Match %</option><option value="company">Company</option>
+              <option value="date">Date posted</option><option value="location">Location</option>
+            </select>
+          </label>
+        </div>
+      ) : null}
+
+      <div className="mt-3 grid gap-3">
+        {visibleJobs.map((job) => {
           const jobKey = `${job.company.toLowerCase()}-${job.title.toLowerCase()}`;
           const isSaved = savedJobKeys.has(jobKey);
 
@@ -239,7 +256,7 @@ export function JobScout() {
                         getScoreClass(job.score),
                       )}
                     >
-                      Fit {job.score}
+                      Match {job.score}%
                     </span>
                     <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-ink/55">
                       {job.source}
@@ -252,9 +269,9 @@ export function JobScout() {
                   <p className="mt-1 text-sm font-semibold text-ink/60">
                     {job.company}
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-ink/55">
-                    {job.reason}
-                  </p>
+                  <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink/55">
+                    {job.reasons.map((reason) => <li key={reason}>• {reason}</li>)}
+                  </ul>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -297,8 +314,7 @@ export function JobScout() {
 
       {!data && !error ? (
         <div className="mt-4 rounded-lg border border-dashed border-ink/20 bg-mist p-6 text-sm text-ink/55">
-          Run the scout to pull a first batch of leads. Next pass can add your
-          exact title, salary, location, and target-company filters.
+          Save your preferences, then run the scout to see personalized matches.
         </div>
       ) : null}
     </section>

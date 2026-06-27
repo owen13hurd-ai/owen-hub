@@ -11,13 +11,17 @@ export type JobApplication = {
   company: string;
   followUpDate: string;
   id: string;
+  interviewNotes: string;
   jobUrl: string;
   notes: string;
   priority: "High" | "Medium" | "Low";
+  rating: number;
+  recruiterContact: string;
   resumeVersion: string;
   role: string;
   source: string;
   status: ApplicationStatus;
+  salary: string;
 };
 
 export const jobApplicationsStorageKey = "owen-hub-job-applications";
@@ -38,13 +42,17 @@ export const emptyApplication: Omit<JobApplication, "id"> = {
   appliedDate: "",
   company: "",
   followUpDate: "",
+  interviewNotes: "",
   jobUrl: "",
   notes: "",
   priority: "Medium",
+  rating: 0,
+  recruiterContact: "",
   resumeVersion: defaultResumeName,
   role: "",
   source: "",
   status: "Interested",
+  salary: "",
 };
 
 export function getApplicationsFromStorage() {
@@ -58,7 +66,13 @@ export function getApplicationsFromStorage() {
       ? (JSON.parse(savedValue) as JobApplication[])
       : [];
 
-    return Array.isArray(parsedApplications) ? parsedApplications : [];
+    return Array.isArray(parsedApplications)
+      ? parsedApplications.map((application) => ({
+          ...emptyApplication,
+          ...application,
+          id: application.id,
+        }))
+      : [];
   } catch {
     return [];
   }
@@ -70,4 +84,6 @@ export function saveApplications(applications: JobApplication[]) {
     JSON.stringify(applications),
   );
   window.dispatchEvent(new CustomEvent(jobApplicationsChangedEvent));
+  void saveCareerApplicationsToCloud(applications);
 }
+import { saveCareerApplicationsToCloud } from "@/lib/career/cloud";

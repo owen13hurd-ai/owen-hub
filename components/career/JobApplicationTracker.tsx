@@ -13,6 +13,7 @@ import {
   type ApplicationStatus,
   type JobApplication,
 } from "@/lib/career/applications";
+import { loadCareerApplicationsFromCloud } from "@/lib/career/cloud";
 
 function getStatusClass(status: ApplicationStatus) {
   if (status === "Offer") {
@@ -74,6 +75,11 @@ export function JobApplicationTracker({
     }
 
     window.addEventListener(jobApplicationsChangedEvent, refreshApplications);
+    void loadCareerApplicationsFromCloud().then((cloudApplications) => {
+      if (cloudApplications && cloudApplications.length > 0) {
+        saveApplications(cloudApplications);
+      }
+    });
 
     return () => {
       window.removeEventListener(jobApplicationsChangedEvent, refreshApplications);
@@ -454,6 +460,31 @@ export function JobApplicationTracker({
                 placeholder="Notes"
                 className="mt-3 min-h-16 w-full rounded-md border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-moss"
               />
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
+                <label className="text-xs font-bold text-ink/50">Recruiter contact
+                  <input value={application.recruiterContact}
+                    onChange={(event) => updateApplication(application.id, { recruiterContact: event.target.value })}
+                    placeholder="Name, email, or phone"
+                    className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-3 text-sm font-normal text-ink outline-none focus:border-moss" />
+                </label>
+                <label className="text-xs font-bold text-ink/50">Salary
+                  <input value={application.salary}
+                    onChange={(event) => updateApplication(application.id, { salary: event.target.value })}
+                    placeholder="$70,000 - $85,000"
+                    className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-3 text-sm font-normal text-ink outline-none focus:border-moss" />
+                </label>
+                <label className="text-xs font-bold text-ink/50">Rating
+                  <select value={application.rating}
+                    onChange={(event) => updateApplication(application.id, { rating: Number(event.target.value) })}
+                    className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-white px-3 text-sm font-normal text-ink outline-none focus:border-moss">
+                    <option value={0}>Not rated</option>{[1, 2, 3, 4, 5].map((rating) => <option key={rating} value={rating}>{rating} / 5</option>)}
+                  </select>
+                </label>
+              </div>
+              <textarea value={application.interviewNotes}
+                onChange={(event) => updateApplication(application.id, { interviewNotes: event.target.value })}
+                placeholder="Interview notes"
+                className="mt-3 min-h-16 w-full rounded-md border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-moss" />
             </article>
           ))}
 
