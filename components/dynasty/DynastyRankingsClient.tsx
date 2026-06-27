@@ -85,6 +85,12 @@ function formatDelta(delta: number | null) {
   return delta > 0 ? `+${delta}` : `${delta}`;
 }
 
+function formatRankAsRookiePick(rank: number) {
+  const round = Math.floor((rank - 1) / 12) + 1;
+  const pick = ((rank - 1) % 12) + 1;
+  return `${round}.${String(pick).padStart(2, "0")}`;
+}
+
 function getSignalClass(signal: string) {
   if (signal.toLowerCase().includes("buy")) {
     return "bg-emerald-50 text-emerald-700 ring-emerald-200";
@@ -318,6 +324,7 @@ function PlayerDetailDrawer({
   ownership,
   ranking,
   rank,
+  rookiePick,
 }: {
   assignedTier: AssignedTier | undefined;
   heatMapSignal: HeatMapSignal | undefined;
@@ -326,6 +333,7 @@ function PlayerDetailDrawer({
   ownership: DynastyOwnershipSummary | undefined;
   ranking: DynastyRanking;
   rank: number | undefined;
+  rookiePick: string;
 }) {
   return (
     <div className="fixed inset-0 z-40 bg-ink/30 p-3 sm:p-6" role="dialog" aria-modal="true">
@@ -354,7 +362,7 @@ function PlayerDetailDrawer({
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-md bg-mist p-3">
-              <p className="text-xs text-ink/50">Your rank</p>
+              <p className="text-xs text-ink/50">Your rank · {rookiePick}</p>
               <p className="mt-1 text-xl font-bold text-ink">
                 #{rank ?? ranking.overallRank}
               </p>
@@ -417,7 +425,7 @@ function PlayerDetailDrawer({
                 </span>
               </p>
               <p className="rounded-md bg-mist px-3 py-2 text-sm text-ink/70">
-                Pick value:{" "}
+                Value tier:{" "}
                 <span className="font-bold text-ink">
                   {assignedTier?.pickValueLabel ?? ranking.importedTier}
                 </span>
@@ -762,6 +770,40 @@ export function DynastyRankingsClient({
     );
   }, [overallPlayerRows]);
 
+  const positionRankByPlayerId = useMemo(() => {
+    const ranks = new Map<string, number>();
+
+    (["QB", "RB", "WR", "TE"] as const).forEach((scope) => {
+      rowsByScope[scope]
+        .filter((row) => row.type === "player")
+        .forEach((row, index) => ranks.set(row.playerId, index + 1));
+    });
+
+    return ranks;
+  }, [rowsByScope]);
+
+  const rookiePickByPlayerId = useMemo(() => {
+    return new Map(
+      Array.from(overallRankByPlayerId, ([playerId, rank]) => [
+        playerId,
+        formatRankAsRookiePick(rank),
+      ]),
+    );
+  }, [overallRankByPlayerId]);
+
+  const ktcDeltaByPlayerId = useMemo(() => {
+    return new Map(
+      initialRankings.map((ranking) => {
+        const currentRank =
+          overallRankByPlayerId.get(ranking.id) ?? ranking.overallRank;
+        return [
+          ranking.id,
+          ranking.ktcRank === null ? null : ranking.ktcRank - currentRank,
+        ];
+      }),
+    );
+  }, [initialRankings, overallRankByPlayerId]);
+
   const marketSignalByPlayerId = useMemo(() => {
     const signals = new Map<string, MarketSignal>();
 
@@ -950,6 +992,10 @@ export function DynastyRankingsClient({
           ownership={ownershipByPlayerId?.[selectedRanking.id]}
           ranking={selectedRanking}
           rank={overallRankByPlayerId.get(selectedRanking.id)}
+          rookiePick={
+            rookiePickByPlayerId.get(selectedRanking.id) ??
+            selectedRanking.rookiePick
+          }
         />
       ) : null}
 
@@ -1136,7 +1182,7 @@ export function DynastyRankingsClient({
                   <th className="px-3 py-3">FantasyCalc</th>
                   <th className="px-3 py-3">Delta</th>
                   <th className="px-3 py-3">Signal</th>
-                  <th className="px-3 py-3">Pick value</th>
+                  <th className="px-3 py-3">Value tier</th>
                   <th className="px-3 py-3">RBV</th>
                 </tr>
               </thead>
@@ -1230,13 +1276,15 @@ export function DynastyRankingsClient({
                             {ranking.player}
                           </button>
                           <p className="text-xs text-ink/45">
-                            {ranking.rookiePick}
+                            {rookiePickByPlayerId.get(ranking.id) ??
+                              ranking.rookiePick}
                           </p>
                         </div>
                       </td>
                       <td className="px-3 py-3">
                         <span className="rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink">
-                          {ranking.positionRank}
+                          {ranking.position}
+                          {positionRankByPlayerId.get(ranking.id) ?? "-"}
                         </span>
                       </td>
                       <td className="px-3 py-3 text-ink/70">
@@ -1291,8 +1339,12 @@ export function DynastyRankingsClient({
                       </td>
                       <td className="px-3 py-3">
                         <span className="inline-flex items-center gap-1 font-semibold text-ink">
-                          {getDeltaIcon(ranking.ktcDelta)}
-                          {formatDelta(ranking.ktcDelta)}
+                          {getDeltaIcon(
+                            ktcDeltaByPlayerId.get(ranking.id) ?? null,
+                          )}
+                          {formatDelta(
+                            ktcDeltaByPlayerId.get(ranking.id) ?? null,
+                          )}
                         </span>
                       </td>
                       <td className="px-3 py-3">
