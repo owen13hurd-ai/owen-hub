@@ -4,6 +4,7 @@ import {
   Map,
   Newspaper,
   Shield,
+  Spade,
   Sparkles,
 } from "lucide-react";
 
@@ -32,6 +33,12 @@ export const hubs: Hub[] = [
     href: "/dashboard/pokemon",
     description: "Team-building tools, type coverage, and saved strategy notes.",
     icon: Sparkles,
+  },
+  {
+    label: "Poker Hub",
+    href: "/dashboard/poker",
+    description: "Ranges, hand training, concepts, and personal study tracking.",
+    icon: Spade,
   },
   {
     label: "Career Hub",
