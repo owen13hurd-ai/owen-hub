@@ -2,6 +2,7 @@ import {
   BriefcaseBusiness,
   FileText,
   Map,
+  Newspaper,
   Shield,
   Sparkles,
 } from "lucide-react";
@@ -14,6 +15,12 @@ export type Hub = {
 };
 
 export const hubs: Hub[] = [
+  {
+    label: "Daily Briefing",
+    href: "/dashboard/briefing",
+    description: "News, videos, podcasts, and updates across your interests.",
+    icon: Newspaper,
+  },
   {
     label: "Dynasty Hub",
     href: "/dashboard/dynasty",
