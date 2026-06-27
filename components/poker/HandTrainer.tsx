@@ -9,13 +9,45 @@ import type { TrainingAction, TrainingSpot } from "@/lib/poker/types";
 
 const dailySpotIndex = Math.floor(new Date().getTime() / 86400000) % trainingSpots.length;
 
-function PlayingCards({ cards }: { cards: string[] }) {
-  if (!cards.length) return <span className="text-sm text-ink/40">Preflop</span>;
-  return <div className="flex gap-2">{cards.map((card) => <span key={card} className="inline-flex h-12 min-w-10 items-center justify-center rounded-md border border-ink/10 bg-white px-2 text-lg font-black shadow-sm">{card}</span>)}</div>;
+function CardFace({ card, empty = false }: { card?: string; empty?: boolean }) {
+  const isRed = card?.includes("♥") || card?.includes("♦");
+
+  return (
+    <span
+      aria-label={card || "Community card not dealt"}
+      className={clsx(
+        "inline-flex h-16 w-12 shrink-0 items-center justify-center rounded-md border text-xl font-black shadow-sm sm:h-20 sm:w-14 sm:text-2xl",
+        empty
+          ? "border-dashed border-white/30 bg-white/5 text-white/30 shadow-none"
+          : "border-zinc-200 bg-white",
+        !empty && (isRed ? "text-rose-600" : "text-zinc-950"),
+      )}
+    >
+      {card || "?"}
+    </span>
+  );
+}
+
+function HeroCards({ cards }: { cards: string[] }) {
+  return <div className="flex gap-2">{cards.map((card) => <CardFace key={card} card={card} />)}</div>;
+}
+
+function CommunityCards({ cards }: { cards: string[] }) {
+  const board = Array.from({ length: 5 }, (_, index) => cards[index]);
+  return (
+    <div>
+      <div className="flex gap-1.5 sm:gap-2">
+        {board.map((card, index) => <CardFace key={`${index}-${card ?? "empty"}`} card={card} empty={!card} />)}
+      </div>
+      <p className="mt-2 text-xs font-semibold text-white/55">
+        {cards.length === 0 ? "Preflop · board not dealt" : cards.length === 3 ? "Flop · turn and river to come" : cards.length === 4 ? "Turn · river to come" : "River"}
+      </p>
+    </div>
+  );
 }
 
 export function HandTrainer({ daily = false, onAnswer }: { daily?: boolean; onAnswer: (spot: TrainingSpot, correct: boolean) => void }) {
-  const [spotIndex, setSpotIndex] = useState(daily ? dailySpotIndex : 0);
+  const [spotIndex, setSpotIndex] = useState(daily ? dailySpotIndex : 4);
   const [answer, setAnswer] = useState<TrainingAction | null>(null);
   const spot = trainingSpots[spotIndex];
 
@@ -39,9 +71,15 @@ export function HandTrainer({ daily = false, onAnswer }: { daily?: boolean; onAn
       </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="rounded-lg bg-emerald-900 p-5 text-white shadow-soft">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div><p className="text-xs font-bold uppercase text-white/60">Hero cards</p><div className="mt-2"><PlayingCards cards={spot.heroCards} /></div></div>
-            <div className="text-right"><p className="text-xs font-bold uppercase text-white/60">Board</p><div className="mt-2"><PlayingCards cards={spot.board} /></div></div>
+          <div className="space-y-6">
+            <div>
+              <p className="text-xs font-bold uppercase text-white/60">Community cards</p>
+              <div className="mt-2 overflow-x-auto pb-1"><CommunityCards cards={spot.board} /></div>
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase text-white/60">Your hand</p>
+              <div className="mt-2"><HeroCards cards={spot.heroCards} /></div>
+            </div>
           </div>
           <div className="mt-8 grid gap-3 border-t border-white/15 pt-4 sm:grid-cols-3">
             <div><p className="text-xs text-white/55">To act</p><p className="font-bold">{spot.playerToAct}</p></div>
