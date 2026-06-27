@@ -18,6 +18,25 @@ type MuseJob = {
   refs?: { landing_page?: string };
   tags?: string[];
 };
+type GreenhouseJob = {
+  absolute_url?: string;
+  content?: string;
+  departments?: { name?: string }[];
+  id?: number;
+  location?: { name?: string };
+  offices?: { name?: string }[];
+  title?: string;
+  updated_at?: string;
+};
+
+const greenhouseBoards = [
+  { company: "Flexport", label: "Flexport Careers", token: "flexport" },
+  { company: "FanDuel", label: "FanDuel Careers", token: "fanduel" },
+  { company: "PrizePicks", label: "PrizePicks Careers", token: "prizepicks" },
+  { company: "OneTrust", label: "OneTrust Careers", token: "onetrust" },
+  { company: "Salesloft", label: "Salesloft Careers", token: "salesloft" },
+  { company: "Roadie", label: "Roadie Careers", token: "roadie" },
+] as const;
 
 function normalize(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -30,7 +49,7 @@ function plainText(value = "") {
 function dedupeJobs(jobs: RawJob[]) {
   const seen = new Set<string>();
   return jobs.filter((job) => {
-    const key = normalize(`${job.company} ${job.title} ${job.location}`);
+    const key = normalize(`${job.company} ${job.title}`);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -68,22 +87,55 @@ async function fetchMuseJobs(): Promise<RawJob[]> {
   }));
 }
 
+async function fetchGreenhouseJobs(board: (typeof greenhouseBoards)[number]): Promise<RawJob[]> {
+  const response = await fetch(
+    `https://boards-api.greenhouse.io/v1/boards/${board.token}/jobs?content=true`,
+    { next: { revalidate: 60 * 30 } },
+  );
+  if (!response.ok) throw new Error(`${board.label} returned ${response.status}`);
+  const payload = (await response.json()) as { jobs?: GreenhouseJob[] };
+
+  return (payload.jobs ?? []).map((job) => ({
+    company: board.company,
+    description: plainText(job.content),
+    id: `greenhouse-${board.token}-${job.id ?? job.absolute_url ?? job.title}`,
+    location: job.location?.name ?? "Unknown",
+    postedAt: job.updated_at ?? null,
+    salaryMaximum: null,
+    salaryMinimum: null,
+    source: board.label,
+    tags: [
+      ...(job.departments ?? []).map((department) => department.name),
+      ...(job.offices ?? []).map((office) => office.name),
+    ].filter((tag): tag is string => Boolean(tag)),
+    title: job.title ?? "Untitled role",
+    url: job.absolute_url ?? `https://boards.greenhouse.io/${board.token}`,
+  }));
+}
+
 async function runScout(preferences: JobPreferences) {
   const sources: SourceResult[] = [];
   const jobs: RawJob[] = [];
-  for (const source of [
+  const sourceLoaders = [
     { label: "The Muse", load: fetchMuseJobs },
-  ]) {
+    ...greenhouseBoards.map((board) => ({
+      label: board.label,
+      load: () => fetchGreenhouseJobs(board),
+    })),
+  ];
+
+  for (const source of sourceLoaders) {
     try {
       const sourceJobs = await source.load();
-      jobs.push(...sourceJobs);
-      sources.push({ count: sourceJobs.length, label: source.label, ok: true });
+      const georgiaJobs = sourceJobs.filter(isInAtlantaOrGeorgia);
+      jobs.push(...georgiaJobs);
+      sources.push({ count: georgiaJobs.length, label: source.label, ok: true });
     } catch {
       sources.push({ count: 0, label: source.label, ok: false });
     }
   }
 
-  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).filter(isInAtlantaOrGeorgia).map((job) => {
+  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).map((job) => {
     const match = scoreJob(job, preferences);
     return { ...job, matchBreakdown: match.breakdown, reasons: match.reasons, score: match.score };
   });
