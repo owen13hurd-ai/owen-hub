@@ -1,6 +1,6 @@
 "use client";
 
-import { BriefcaseBusiness, Building2, ListChecks, Search, Settings2 } from "lucide-react";
+import { BriefcaseBusiness, Building2, Inbox, ListChecks, Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
 
@@ -9,10 +9,12 @@ import { CompanyWatchlist } from "@/components/career/CompanyWatchlist";
 import { JobApplicationTracker } from "@/components/career/JobApplicationTracker";
 import { JobPreferencesPanel } from "@/components/career/JobPreferences";
 import { JobScout } from "@/components/career/JobScout";
+import { MorningJobInbox } from "@/components/career/MorningJobInbox";
 
-type CareerView = "Scout" | "Watchlist" | "Applications" | "Preferences" | "Companies";
+type CareerView = "Inbox" | "Scout" | "Watchlist" | "Applications" | "Preferences" | "Companies";
 
 const views = [
+  { icon: Inbox, label: "Inbox" as const },
   { icon: Search, label: "Scout" as const },
   { icon: ListChecks, label: "Watchlist" as const },
   { icon: BriefcaseBusiness, label: "Applications" as const },
@@ -25,7 +27,7 @@ export function CareerHubClient({ resumeModifiedAt, resumeName, resumePath }: {
   resumeName: string;
   resumePath: string;
 }) {
-  const [view, setView] = useState<CareerView>("Scout");
+  const [view, setView] = useState<CareerView>("Inbox");
 
   return (
     <div>
@@ -46,6 +48,7 @@ export function CareerHubClient({ resumeModifiedAt, resumeName, resumePath }: {
           <aside><JobPreferencesPanel /></aside>
         </div>
       ) : null}
+      {view === "Inbox" ? <MorningJobInbox /> : null}
       {view === "Applications" ? (
         <JobApplicationTracker resumeModifiedAt={resumeModifiedAt} resumeName={resumeName} resumePath={resumePath} />
       ) : null}

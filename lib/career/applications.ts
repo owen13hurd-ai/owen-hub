@@ -55,6 +55,19 @@ export const emptyApplication: Omit<JobApplication, "id"> = {
   salary: "",
 };
 
+export function buildApplicationFromScoutJob(job: ScoutJob): JobApplication {
+  return {
+    ...emptyApplication,
+    company: job.company,
+    id: `career-${Date.now()}-${job.id}`,
+    jobUrl: job.url,
+    notes: `${job.reasons.join(". ")}. Location: ${job.location}. Tags: ${job.tags.join(", ") || "none listed"}.`,
+    priority: job.score >= 75 ? "High" : job.score >= 60 ? "Medium" : "Low",
+    role: job.title,
+    source: job.source,
+  };
+}
+
 export function getApplicationsFromStorage() {
   if (typeof window === "undefined") {
     return [];
@@ -87,3 +100,4 @@ export function saveApplications(applications: JobApplication[]) {
   void saveCareerApplicationsToCloud(applications);
 }
 import { saveCareerApplicationsToCloud } from "@/lib/career/cloud";
+import type { ScoutJob } from "@/lib/career/types";

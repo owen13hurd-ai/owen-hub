@@ -5,10 +5,9 @@ import { useMemo, useState } from "react";
 import clsx from "clsx";
 
 import {
-  defaultResumeName,
+  buildApplicationFromScoutJob,
   getApplicationsFromStorage,
   saveApplications,
-  type JobApplication,
 } from "@/lib/career/applications";
 import { getJobPreferencesFromStorage } from "@/lib/career/preferences";
 import type { ScoutJob } from "@/lib/career/types";
@@ -54,28 +53,6 @@ function formatRunTime(value: string | null) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
-}
-
-function buildApplicationFromJob(job: ScoutJob): JobApplication {
-  return {
-    appliedDate: "",
-    company: job.company,
-    followUpDate: "",
-    id: `job-scout-${Date.now()}-${job.id}`,
-    interviewNotes: "",
-    jobUrl: job.url,
-    notes: `${job.reasons.join(". ")}. Location: ${job.location}. Tags: ${
-      job.tags.join(", ") || "none listed"
-    }.`,
-    priority: job.score >= 75 ? "High" : job.score >= 60 ? "Medium" : "Low",
-    rating: 0,
-    recruiterContact: "",
-    resumeVersion: defaultResumeName,
-    role: job.title,
-    source: job.source,
-    status: "Interested",
-    salary: "",
-  };
 }
 
 export function JobScout() {
@@ -152,7 +129,7 @@ export function JobScout() {
       return;
     }
 
-    saveApplications([buildApplicationFromJob(job), ...currentApplications]);
+    saveApplications([buildApplicationFromScoutJob(job), ...currentApplications]);
     setSavedJobKeys(new Set([...Array.from(savedJobKeys), key]));
   }
 
