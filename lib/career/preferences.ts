@@ -16,6 +16,7 @@ const requiredTargetRoles = [
 const requiredPositiveKeywords = ["Transportation Coordinator", "Freight", "SDR", "BDR", "SaaS"];
 
 export const defaultJobPreferences: JobPreferences = {
+  blockedCompanies: [],
   targetRoles: [
     "Transportation Coordinator",
     "Logistics Coordinator",
@@ -78,6 +79,7 @@ export const defaultJobPreferences: JobPreferences = {
 export function enforceGeorgiaPreferences(preferences: JobPreferences): JobPreferences {
   return {
     ...preferences,
+    blockedCompanies: preferences.blockedCompanies ?? [],
     targetRoles: Array.from(new Set([...requiredTargetRoles, ...(preferences.targetRoles ?? [])])),
     positiveKeywords: Array.from(new Set([...requiredPositiveKeywords, ...(preferences.positiveKeywords ?? [])])),
     preferredCities: ["Atlanta"],

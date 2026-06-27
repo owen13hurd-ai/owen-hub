@@ -1,6 +1,7 @@
 export type WorkMode = "Remote" | "Hybrid" | "On-site";
 
 export type JobPreferences = {
+  blockedCompanies: string[];
   targetRoles: string[];
   seniority: string[];
   industries: string[];
@@ -41,4 +42,3 @@ export type ScoutJob = {
   title: string;
   url: string;
 };
-
