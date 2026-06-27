@@ -41,6 +41,8 @@ export type DynastyRanking = {
   fantasyCalcRank: number | null;
   fantasyCalcValue: number | null;
   fantasyCalcTrend30Day: number | null;
+  isRookie?: boolean;
+  yearsExperience?: number | null;
 };
 
 export type DynastyTier = {

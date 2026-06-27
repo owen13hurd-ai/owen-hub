@@ -1,13 +1,16 @@
 import { normalizePlayerName } from "@/lib/dynasty/sources/nameMatch";
 
 export type FantasyCalcMarketValue = {
+  age: number | null;
   name: string;
   position: string;
+  positionRank: number | null;
   team: string;
   rank: number | null;
   value: number | null;
   trend30Day: number | null;
   tier: number | null;
+  yearsExperience: number | null;
 };
 
 type FantasyCalcApiPlayer = {
@@ -15,8 +18,11 @@ type FantasyCalcApiPlayer = {
     name?: string;
     position?: string;
     maybeTeam?: string;
+    maybeAge?: number;
+    maybeYoe?: number;
   };
   overallRank?: number;
+  positionRank?: number;
   value?: number;
   trend30Day?: number;
   maybeTier?: number;
@@ -46,13 +52,16 @@ export async function getFantasyCalcValues() {
       }
 
       values.set(normalizePlayerName(name), {
+        age: item.player?.maybeAge ?? null,
         name,
         position: item.player?.position ?? "",
+        positionRank: item.positionRank ?? null,
         team: item.player?.maybeTeam ?? "",
         rank: item.overallRank ?? null,
         value: item.value ?? null,
         trend30Day: item.trend30Day ?? null,
         tier: item.maybeTier ?? null,
+        yearsExperience: item.player?.maybeYoe ?? null,
       });
     });
 

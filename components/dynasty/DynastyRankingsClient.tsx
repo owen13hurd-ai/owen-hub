@@ -1278,6 +1278,7 @@ export function DynastyRankingsClient({
                           <p className="text-xs text-ink/45">
                             {rookiePickByPlayerId.get(ranking.id) ??
                               ranking.rookiePick}
+                            {ranking.isRookie ? " · Rookie" : ""}
                           </p>
                         </div>
                       </td>

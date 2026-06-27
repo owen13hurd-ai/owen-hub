@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
 import type { DynastyRowsByScope, Position } from "@/types/dynasty";
 
-const boardKey = "owen-main";
+// Version 2 starts from the refreshed FantasyCalc player pool and market order.
+const boardKey = "owen-main-v2";
 const positions: Position[] = ["ALL", "QB", "RB", "WR", "TE"];
 
 function isSavedRowsByScope(value: unknown): value is DynastyRowsByScope {
@@ -96,4 +97,3 @@ export async function saveDynastyBoard(rowsByScope: DynastyRowsByScope) {
     message: "Saved",
   };
 }
-
