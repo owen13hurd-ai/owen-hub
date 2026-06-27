@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ExternalLink, RefreshCcw } from "lucide-react";
 
 import { PokemonHubTabs } from "@/components/pokemon/PokemonHubTabs";
+import { BattleJournal } from "@/components/pokemon/BattleJournal";
 import { PokemonMatchupPrep } from "@/components/pokemon/PokemonMatchupPrep";
 import { PokemonSpeedTiers } from "@/components/pokemon/PokemonSpeedTiers";
 import { PokemonTeamBuilder } from "@/components/pokemon/PokemonTeamBuilder";
@@ -45,6 +46,7 @@ export default async function PokemonHubPage() {
       </section>
 
       <PokemonHubTabs
+        battleJournal={<BattleJournal pokemonNames={builderData.pokemon.map((pokemon) => pokemon.name)} />}
         builder={<PokemonTeamBuilder data={builderData} />}
         matchupPrep={<PokemonMatchupPrep />}
         speedTiers={<PokemonSpeedTiers data={builderData} />}

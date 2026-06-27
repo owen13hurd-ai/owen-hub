@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 type PokemonHubTabsProps = {
+  battleJournal: React.ReactNode;
   builder: React.ReactNode;
   matchupPrep: React.ReactNode;
   speedTiers: React.ReactNode;
@@ -10,18 +11,30 @@ type PokemonHubTabsProps = {
 };
 
 export function PokemonHubTabs({
+  battleJournal,
   builder,
   matchupPrep,
   speedTiers,
   teams,
 }: PokemonHubTabsProps) {
   const [activeTab, setActiveTab] = useState<
-    "builder" | "matchups" | "speed" | "teams"
+    "battles" | "builder" | "matchups" | "speed" | "teams"
   >("builder");
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2 rounded-lg border border-ink/10 bg-white p-2 shadow-soft">
+        <button
+          type="button"
+          onClick={() => setActiveTab("battles")}
+          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
+            activeTab === "battles"
+              ? "bg-ink text-white"
+              : "bg-mist text-ink hover:bg-skyglass"
+          }`}
+        >
+          Battle Journal
+        </button>
         <button
           type="button"
           onClick={() => setActiveTab("builder")}
@@ -68,6 +81,7 @@ export function PokemonHubTabs({
         </button>
       </div>
 
+      <div hidden={activeTab !== "battles"}>{battleJournal}</div>
       <div hidden={activeTab !== "builder"}>{builder}</div>
       <div hidden={activeTab !== "speed"}>{speedTiers}</div>
       <div hidden={activeTab !== "matchups"}>{matchupPrep}</div>
