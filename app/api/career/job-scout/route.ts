@@ -61,19 +61,20 @@ function isInAtlantaOrGeorgia(job: RawJob) {
   return location.includes("atlanta") || location.includes("georgia") || /(^| )ga($| )/.test(location);
 }
 
-function isLikelyEarlyCareer(job: RawJob) {
-  const title = normalize(job.title);
-  return !/(^| )(senior|sr|director|principal|vice president|vp|manager|head of)( |$)/.test(title);
-}
-
 async function fetchMuseJobs(): Promise<RawJob[]> {
-  const response = await fetch(
-    "https://www.themuse.com/api/public/jobs?location=Atlanta%2C%20GA&page=1",
-    { next: { revalidate: 60 * 30 } },
+  const pages = await Promise.all(
+    Array.from({ length: 5 }, async (_, index) => {
+      const response = await fetch(
+        `https://www.themuse.com/api/public/jobs?location=Atlanta%2C%20GA&page=${index + 1}`,
+        { next: { revalidate: 60 * 30 } },
+      );
+      if (!response.ok) throw new Error(`The Muse returned ${response.status}`);
+      const payload = (await response.json()) as { results?: MuseJob[] };
+      return payload.results ?? [];
+    }),
   );
-  if (!response.ok) throw new Error(`The Muse returned ${response.status}`);
-  const payload = (await response.json()) as { results?: MuseJob[] };
-  return (payload.results ?? []).map((job) => ({
+
+  return pages.flat().map((job) => ({
     company: job.company?.name ?? "Unknown company",
     description: plainText(job.contents),
     id: `muse-${job.id ?? job.refs?.landing_page ?? job.name}`,
@@ -140,13 +141,13 @@ async function runScout(preferences: JobPreferences) {
     }
   }
 
-  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).filter(isLikelyEarlyCareer).map((job) => {
+  const scoredJobs: ScoutJob[] = dedupeJobs(jobs).map((job) => {
     const match = scoreJob(job, preferences);
     return { ...job, matchBreakdown: match.breakdown, reasons: match.reasons, score: match.score };
   });
 
   return {
-    jobs: scoredJobs.sort((first, second) => second.score - first.score).slice(0, 40),
+    jobs: scoredJobs.sort((first, second) => second.score - first.score).slice(0, 200),
     ranAt: new Date().toISOString(),
     sources,
   };

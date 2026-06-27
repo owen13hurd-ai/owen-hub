@@ -84,6 +84,9 @@ export function JobScout() {
   const [error, setError] = useState<string | null>(null);
   const [savedJobKeys, setSavedJobKeys] = useState(getSavedJobKeys);
   const [sortBy, setSortBy] = useState<"score" | "company" | "date" | "location">("score");
+  const [query, setQuery] = useState("");
+  const [minimumScore, setMinimumScore] = useState(0);
+  const [hideSeniorRoles, setHideSeniorRoles] = useState(true);
 
   const savedCount = useMemo(() => {
     return data?.jobs.filter((job) =>
@@ -92,12 +95,18 @@ export function JobScout() {
   }, [data, savedJobKeys]);
 
   const visibleJobs = useMemo(() => {
-    const jobs = [...(data?.jobs ?? [])];
+    const normalizedQuery = query.trim().toLowerCase();
+    const seniorTitle = /(^|\s)(senior|sr\.?|director|principal|vice president|vp|manager|head of)(\s|$)/i;
+    const jobs = (data?.jobs ?? []).filter((job) => {
+      const matchesQuery = !normalizedQuery ||
+        `${job.title} ${job.company} ${job.tags.join(" ")}`.toLowerCase().includes(normalizedQuery);
+      return matchesQuery && job.score >= minimumScore && (!hideSeniorRoles || !seniorTitle.test(job.title));
+    });
     if (sortBy === "company") return jobs.sort((a, b) => a.company.localeCompare(b.company));
     if (sortBy === "location") return jobs.sort((a, b) => a.location.localeCompare(b.location));
     if (sortBy === "date") return jobs.sort((a, b) => (b.postedAt ?? "").localeCompare(a.postedAt ?? ""));
     return jobs.sort((a, b) => b.score - a.score);
-  }, [data, sortBy]);
+  }, [data, hideSeniorRoles, minimumScore, query, sortBy]);
 
   async function runScout() {
     setIsLoading(true);
@@ -228,7 +237,23 @@ export function JobScout() {
       ) : null}
 
       {data ? (
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 grid gap-3 rounded-lg border border-ink/10 bg-mist p-3 md:grid-cols-[minmax(180px,1fr)_auto_auto_auto] md:items-center">
+          <input value={query} onChange={(event) => setQuery(event.target.value)}
+            placeholder="Filter title, company, or tag"
+            className="h-9 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none focus:border-moss" />
+          <label className="flex items-center gap-2 text-xs font-bold text-ink/60">
+            Minimum
+            <select value={minimumScore} onChange={(event) => setMinimumScore(Number(event.target.value))}
+              className="h-9 rounded-md border border-ink/10 bg-white px-2 text-sm font-semibold text-ink">
+              <option value={0}>Any match</option><option value={40}>40%+</option>
+              <option value={60}>60%+</option><option value={75}>75%+</option>
+            </select>
+          </label>
+          <label className="flex h-9 items-center gap-2 text-xs font-bold text-ink/60">
+            <input type="checkbox" checked={hideSeniorRoles}
+              onChange={(event) => setHideSeniorRoles(event.target.checked)} className="h-4 w-4 accent-ink" />
+            Hide senior roles
+          </label>
           <label className="flex items-center gap-2 text-xs font-bold text-ink/50">
             Sort
             <select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)}
@@ -237,6 +262,7 @@ export function JobScout() {
               <option value="date">Date posted</option><option value="location">Location</option>
             </select>
           </label>
+          <p className="text-xs font-bold text-moss md:col-span-4">Showing {visibleJobs.length} of {data.jobs.length} Atlanta-area jobs</p>
         </div>
       ) : null}
 
