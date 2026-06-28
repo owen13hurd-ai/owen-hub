@@ -2,22 +2,24 @@
 
 import {
   BarChart3, BookOpen, Brain, CalendarCheck, FileSearch, Library, NotebookPen,
-  Search, Settings2, Spade, Star, Trash2,
+  PlayCircle, Search, Settings2, Spade, Star, Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import clsx from "clsx";
 
 import { HandTrainer } from "@/components/poker/HandTrainer";
+import { HandReplayer } from "@/components/poker/HandReplayer";
 import { OpeningRangeViewer } from "@/components/poker/OpeningRangeViewer";
 import { defaultPokerSettings, pokerConcepts } from "@/lib/poker/data";
 import { loadPokerData, pokerStorageKeys, savePokerData } from "@/lib/poker/storage";
 import type { HandHistory, PokerNote, PokerSettings, SolverSolution, StudySession, TrainingSpot } from "@/lib/poker/types";
 
-type View = "Home" | "Ranges" | "Trainer" | "Daily" | "Concepts" | "Solver" | "Hands" | "Notes" | "Progress" | "Settings";
+type View = "Home" | "Ranges" | "Trainer" | "Daily" | "Replay" | "Concepts" | "Solver" | "Hands" | "Notes" | "Progress" | "Settings";
 
 const views = [
   { icon: Spade, label: "Home" as const }, { icon: BookOpen, label: "Ranges" as const },
   { icon: Brain, label: "Trainer" as const }, { icon: CalendarCheck, label: "Daily" as const },
+  { icon: PlayCircle, label: "Replay" as const },
   { icon: Library, label: "Concepts" as const }, { icon: FileSearch, label: "Solver" as const },
   { icon: FileSearch, label: "Hands" as const }, { icon: NotebookPen, label: "Notes" as const },
   { icon: BarChart3, label: "Progress" as const }, { icon: Settings2, label: "Settings" as const },
@@ -71,6 +73,7 @@ export function PokerHub() {
       {view === "Ranges" ? <div className={panelClass}><OpeningRangeViewer onStudy={() => record("Range", "starter-range")} /></div> : null}
       {view === "Trainer" ? <div className={panelClass}><HandTrainer onAnswer={(spot, correct) => answer("Hand Trainer", spot, correct)} /></div> : null}
       {view === "Daily" ? <div className={panelClass}><HandTrainer daily onAnswer={(spot, correct) => answer("Daily Spot", spot, correct)} /></div> : null}
+      {view === "Replay" ? <HandReplayer /> : null}
       {view === "Concepts" ? <ConceptLibrary onLearn={(conceptId) => record("Concept", conceptId)} /> : null}
       {view === "Solver" ? <SolverLibrary items={solutions} setItems={(next) => { setSolutions(next); savePokerData(pokerStorageKeys.solutions, next); }} /> : null}
       {view === "Hands" ? <HandLibrary items={hands} setItems={(next) => { setHands(next); savePokerData(pokerStorageKeys.hands, next); }} /> : null}
@@ -87,7 +90,8 @@ function Dashboard({ sessions, dailyGoal, open }: { sessions: StudySession[]; da
   const modules = [
     ["Ranges", "Study position-by-position preflop decisions", BookOpen], ["Trainer", "Practice decisions and receive instant feedback", Brain],
     ["Daily", "Complete today's hand and keep your streak", CalendarCheck], ["Concepts", "Build a searchable poker fundamentals library", Library],
-    ["Hands", "Save difficult hands for deliberate review", FileSearch], ["Notes", "Keep strategy ideas organized and searchable", NotebookPen],
+    ["Replay", "Rebuild hands street by street in PokerKit format", PlayCircle], ["Hands", "Save difficult hands for deliberate review", FileSearch],
+    ["Notes", "Keep strategy ideas organized and searchable", NotebookPen],
   ] as const;
   return <div className="space-y-5"><div className="grid gap-4 lg:grid-cols-[1fr_300px]"><div><p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">Poker Hub</p><h2 className="mt-1 text-2xl font-bold text-ink">Your poker study desk</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">Study ranges, test decisions, and build a review library that gets more useful with every session.</p></div><div className="rounded-lg bg-ink p-4 text-white"><p className="text-xs font-bold uppercase text-white/55">Daily goal</p><p className="mt-1 text-2xl font-black">{todayCount} / {dailyGoal}</p><div className="mt-3 h-2 overflow-hidden rounded bg-white/15"><div className="h-full bg-emerald-400" style={{ width: `${Math.min(100, todayCount / dailyGoal * 100)}%` }} /></div></div></div><div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{modules.map(([label, description, Icon]) => <button key={label} type="button" onClick={() => open(label)} className={`${panelClass} text-left transition hover:border-moss`}><Icon className="h-5 w-5 text-moss" /><h3 className="mt-4 font-bold text-ink">{label}</h3><p className="mt-1 text-sm leading-5 text-ink/55">{description}</p></button>)}</div></div>;
 }
