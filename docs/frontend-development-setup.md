@@ -21,9 +21,12 @@ Restart Codex after the setup commit is pulled so the new Taste skill is discove
 - `shadcn@^4.12.0`
 - `sonner@^2.0.7`
 - `tailwind-merge@^3.6.0`
-- `tw-animate-css@^1.4.0`
 - `vaul@^1.1.2`
 - `zod@^4.4.3`
+
+Development dependency:
+
+- `tailwindcss-animate@^1.0.7`
 
 ## Files created
 
