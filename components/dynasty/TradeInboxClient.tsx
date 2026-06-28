@@ -5,7 +5,7 @@ import { Bell, ExternalLink, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import clsx from "clsx";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import type {
   SleeperPendingTrade,
   SleeperTradeInboxAsset,
@@ -157,7 +157,7 @@ function TradeCard({
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button asChild variant="secondary">
+          <Button asChild variant="outline">
             <Link href={trade.tradeUrl} target="_blank">
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               Open Sleeper

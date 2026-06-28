@@ -10,7 +10,7 @@ import { PokemonSpeedTiers } from "@/components/pokemon/PokemonSpeedTiers";
 import { PokemonTeamBuilder } from "@/components/pokemon/PokemonTeamBuilder";
 import { PokemonTeamsClient } from "@/components/pokemon/PokemonTeamsClient";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { getPokemonBuilderData } from "@/lib/pokemon/team-builder";
 import { getChampionsMbTeams } from "@/lib/pokemon/vgc-pastes";
 
@@ -26,13 +26,13 @@ export default async function PokemonHubPage() {
         description="Build teams, prepare matchups, calculate damage, and review your battles."
         actions={
           <>
-          <Button asChild variant="secondary">
+          <Button asChild variant="outline">
             <Link href={data.sourceUrl} target="_blank">
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               Open source sheet
             </Link>
           </Button>
-          <Button asChild variant="secondary">
+          <Button asChild variant="outline">
             <Link href="/dashboard/pokemon">
               <RefreshCcw className="h-4 w-4" aria-hidden="true" />
               Refresh view

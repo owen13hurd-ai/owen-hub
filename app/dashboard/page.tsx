@@ -1,5 +1,6 @@
 import { HubCard } from "@/components/hubs/HubCard";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { BlurFade } from "@/components/ui/blur-fade";
 import { hubs } from "@/lib/navigation";
 
 export default function DashboardPage() {
@@ -10,8 +11,10 @@ export default function DashboardPage() {
       <section>
         <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-bold text-ink">Workspaces</h2><span className="text-xs font-semibold text-ink/40">{hubs.length} active</span></div>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {hubs.map((hub) => (
-          <HubCard key={hub.href} hub={hub} />
+        {hubs.map((hub, index) => (
+          <BlurFade key={hub.href} delay={index * 0.035} duration={0.25} blur="3px" className="h-full">
+            <HubCard hub={hub} />
+          </BlurFade>
         ))}
         </div>
       </section>

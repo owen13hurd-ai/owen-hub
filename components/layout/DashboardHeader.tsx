@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 
 import { signOut } from "@/app/auth/login/actions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { hasSupabaseConfig, shouldRequireAuth } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -26,7 +26,7 @@ export async function DashboardHeader() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" aria-label="Search">
+          <Button variant="outline" size="icon" aria-label="Search">
             <Search className="h-4 w-4" aria-hidden="true" />
           </Button>
           {email ? (

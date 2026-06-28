@@ -1,7 +1,7 @@
 import { RefreshCcw, Rows3, Star } from "lucide-react";
 import clsx from "clsx";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { getSleeperLeagueRosterBoard } from "@/lib/dynasty/sleeper";
 import { personalSettings } from "@/lib/personal-settings";

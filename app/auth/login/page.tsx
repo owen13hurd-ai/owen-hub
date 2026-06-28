@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { signInWithEmail } from "@/app/auth/login/actions";
 
 export default async function LoginPage({
@@ -51,7 +51,7 @@ export default async function LoginPage({
           <Button asChild>
             <Link href="/dashboard">View dashboard</Link>
           </Button>
-          <Button asChild variant="secondary">
+          <Button asChild variant="outline">
             <Link href="/">Home</Link>
           </Button>
         </div>

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { PokemonSprite } from "@/components/pokemon/PokemonSprite";
 import { PokemonMatchupMatrix } from "@/components/pokemon/PokemonMatchupMatrix";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { recommendBringFour } from "@/lib/pokemon/bring-four";
 import type { PokemonBuilderData, PokemonBuilderOption } from "@/lib/pokemon/team-builder";
 
@@ -139,7 +139,7 @@ export function PokemonBringFourAdvisor({ data }: { data: PokemonBuilderData }) 
             setOpponentNames(Array<string>(teamSize).fill(""));
           }}
           type="button"
-          variant="secondary"
+          variant="outline"
         >
           <RotateCcw className="h-4 w-4" aria-hidden="true" />
           Clear

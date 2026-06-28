@@ -9,7 +9,7 @@ export function HubCard({ hub }: { hub: Hub }) {
   return (
     <Link
       href={hub.href}
-      className="group rounded-md border border-ink/10 bg-white p-4 transition hover:border-moss/50 hover:shadow-soft"
+      className="group block h-full rounded-md border border-ink/10 bg-white p-4 transition hover:border-moss/50 hover:shadow-soft"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-md bg-skyglass text-ink">

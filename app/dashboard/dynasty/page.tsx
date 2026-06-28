@@ -3,7 +3,7 @@ import { RefreshCcw } from "lucide-react";
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { getDynastyRankings, getDynastyTiers } from "@/lib/dynasty/rankings";
 import { getSleeperPortfolio } from "@/lib/dynasty/sleeper";
 import { enrichRankingsWithMarketSources } from "@/lib/dynasty/sources/marketSources";

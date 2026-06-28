@@ -2,7 +2,7 @@ import { RefreshCcw } from "lucide-react";
 
 import { SleeperPortfolioClient } from "@/components/dynasty/SleeperPortfolioClient";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { getSleeperPortfolio } from "@/lib/dynasty/sleeper";
 import { personalSettings } from "@/lib/personal-settings";
 

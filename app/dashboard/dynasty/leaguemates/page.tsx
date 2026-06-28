@@ -2,7 +2,7 @@ import { RefreshCcw, Search, Users } from "lucide-react";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   getSleeperLeaguemateInsights,
   getSleeperLeaguemateSearchOptions,
