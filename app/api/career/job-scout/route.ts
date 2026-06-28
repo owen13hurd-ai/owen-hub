@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { defaultJobPreferences } from "@/lib/career/preferences";
 import { scoreJob } from "@/lib/career/scoring";
+import { fetchOpenJobs } from "@/lib/career/sources/openjobs";
 import type { JobPreferences, ScoutJob } from "@/lib/career/types";
 
 type SourceResult = { count: number; label: string; ok: boolean };
@@ -124,22 +125,33 @@ async function runScout(preferences: JobPreferences) {
   const jobs: RawJob[] = [];
   const sourceLoaders = [
     { label: "The Muse", load: fetchMuseJobs },
+    { label: "OpenJobs", load: fetchOpenJobs },
     ...greenhouseBoards.map((board) => ({
       label: board.label,
       load: () => fetchGreenhouseJobs(board),
     })),
   ];
 
-  for (const source of sourceLoaders) {
+  const sourceResults = await Promise.all(sourceLoaders.map(async (source) => {
     try {
       const sourceJobs = await source.load();
       const georgiaJobs = sourceJobs.filter(isInAtlantaOrGeorgia);
-      jobs.push(...georgiaJobs);
-      sources.push({ count: georgiaJobs.length, label: source.label, ok: true });
+      return {
+        jobs: georgiaJobs,
+        status: { count: georgiaJobs.length, label: source.label, ok: true },
+      };
     } catch {
-      sources.push({ count: 0, label: source.label, ok: false });
+      return {
+        jobs: [] as RawJob[],
+        status: { count: 0, label: source.label, ok: false },
+      };
     }
-  }
+  }));
+
+  sourceResults.forEach((result) => {
+    jobs.push(...result.jobs);
+    sources.push(result.status);
+  });
 
   const scoredJobs: ScoutJob[] = dedupeJobs(jobs).map((job) => {
     const match = scoreJob(job, preferences);
