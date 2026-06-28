@@ -6,15 +6,18 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 
-import { HandTrainer } from "@/components/poker/HandTrainer";
-import { HandReplayer } from "@/components/poker/HandReplayer";
-import { OpeningRangeViewer } from "@/components/poker/OpeningRangeViewer";
 import { defaultPokerSettings, pokerConcepts } from "@/lib/poker/data";
 import { loadPokerData, pokerStorageKeys, savePokerData } from "@/lib/poker/storage";
 import type { HandHistory, PokerNote, PokerSettings, SolverSolution, StudySession, TrainingSpot } from "@/lib/poker/types";
 
 type View = "Home" | "Ranges" | "Trainer" | "Daily" | "Replay" | "Concepts" | "Solver" | "Hands" | "Notes" | "Progress" | "Settings";
+
+const moduleLoading = () => <div className="flex min-h-64 items-center justify-center rounded-lg border border-ink/10 bg-white"><span className="text-sm font-bold text-ink/45">Loading workspace...</span></div>;
+const HandTrainer = dynamic(() => import("@/components/poker/HandTrainer").then((module) => module.HandTrainer), { loading: moduleLoading });
+const HandReplayer = dynamic(() => import("@/components/poker/HandReplayer").then((module) => module.HandReplayer), { loading: moduleLoading });
+const OpeningRangeViewer = dynamic(() => import("@/components/poker/OpeningRangeViewer").then((module) => module.OpeningRangeViewer), { loading: moduleLoading });
 
 const views = [
   { icon: Spade, label: "Home" as const }, { icon: BookOpen, label: "Ranges" as const },

@@ -24,13 +24,19 @@ export function PokemonHubTabs({
   const [activeTab, setActiveTab] = useState<
     "battles" | "bring" | "builder" | "damage" | "matchups" | "speed" | "teams"
   >("builder");
+  const [mountedTabs, setMountedTabs] = useState(() => new Set(["builder"]));
+
+  function openTab(tab: "battles" | "bring" | "builder" | "damage" | "matchups" | "speed" | "teams") {
+    setActiveTab(tab);
+    setMountedTabs((current) => new Set(current).add(tab));
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2 rounded-lg border border-ink/10 bg-white p-2 shadow-soft">
         <button
           type="button"
-          onClick={() => setActiveTab("bring")}
+          onClick={() => openTab("bring")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "bring"
               ? "bg-ink text-white"
@@ -41,7 +47,7 @@ export function PokemonHubTabs({
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab("damage")}
+          onClick={() => openTab("damage")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "damage"
               ? "bg-ink text-white"
@@ -52,7 +58,7 @@ export function PokemonHubTabs({
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab("battles")}
+          onClick={() => openTab("battles")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "battles"
               ? "bg-ink text-white"
@@ -63,7 +69,7 @@ export function PokemonHubTabs({
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab("builder")}
+          onClick={() => openTab("builder")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "builder"
               ? "bg-ink text-white"
@@ -74,7 +80,7 @@ export function PokemonHubTabs({
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab("speed")}
+          onClick={() => openTab("speed")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "speed"
               ? "bg-ink text-white"
@@ -85,7 +91,7 @@ export function PokemonHubTabs({
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab("matchups")}
+          onClick={() => openTab("matchups")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "matchups"
               ? "bg-ink text-white"
@@ -96,7 +102,7 @@ export function PokemonHubTabs({
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab("teams")}
+          onClick={() => openTab("teams")}
           className={`h-10 rounded-md px-4 text-sm font-bold transition ${
             activeTab === "teams"
               ? "bg-ink text-white"
@@ -107,13 +113,13 @@ export function PokemonHubTabs({
         </button>
       </div>
 
-      <div hidden={activeTab !== "battles"}>{battleJournal}</div>
-      <div hidden={activeTab !== "bring"}>{bringFour}</div>
-      <div hidden={activeTab !== "builder"}>{builder}</div>
-      <div hidden={activeTab !== "damage"}>{damageCalc}</div>
-      <div hidden={activeTab !== "speed"}>{speedTiers}</div>
-      <div hidden={activeTab !== "matchups"}>{matchupPrep}</div>
-      <div hidden={activeTab !== "teams"}>{teams}</div>
+      {mountedTabs.has("battles") && <div hidden={activeTab !== "battles"}>{battleJournal}</div>}
+      {mountedTabs.has("bring") && <div hidden={activeTab !== "bring"}>{bringFour}</div>}
+      {mountedTabs.has("builder") && <div hidden={activeTab !== "builder"}>{builder}</div>}
+      {mountedTabs.has("damage") && <div hidden={activeTab !== "damage"}>{damageCalc}</div>}
+      {mountedTabs.has("speed") && <div hidden={activeTab !== "speed"}>{speedTiers}</div>}
+      {mountedTabs.has("matchups") && <div hidden={activeTab !== "matchups"}>{matchupPrep}</div>}
+      {mountedTabs.has("teams") && <div hidden={activeTab !== "teams"}>{teams}</div>}
     </div>
   );
 }

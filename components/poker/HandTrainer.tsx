@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, ExternalLink, Loader2, RotateCcw, XCircle } from "lucide-react";
+import { CheckCircle2, ExternalLink, Loader2, RotateCcw, Shuffle, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 
@@ -52,15 +52,33 @@ export function HandTrainer({ daily = false, onAnswer }: { daily?: boolean; onAn
   const [spotIndex, setSpotIndex] = useState(daily ? dayNumber % trainingSpots.length : 4);
   const [answer, setAnswer] = useState<TrainingAction | null>(null);
   const [libraryStatus, setLibraryStatus] = useState<"loading" | "ready" | "fallback">("loading");
+  const [position, setPosition] = useState("All");
+  const [street, setStreet] = useState("All");
+  const [shuffleKey, setShuffleKey] = useState(0);
+  const [total, setTotal] = useState(0);
   const spot = spots[spotIndex];
 
   useEffect(() => {
     let cancelled = false;
-    void loadPokerBench()
+    void loadPokerBench({
+      dailySeed: daily ? dayNumber : undefined,
+      position,
+      shuffle: shuffleKey > 0,
+      street,
+    })
       .then((library) => {
-        if (cancelled || library.spots.length === 0) return;
+        if (cancelled) return;
+        if (library.spots.length === 0) {
+          setSpots(trainingSpots);
+          setSpotIndex(0);
+          setTotal(0);
+          setAnswer(null);
+          setLibraryStatus("fallback");
+          return;
+        }
         setSpots(library.spots);
-        setSpotIndex(daily ? dayNumber % library.spots.length : 0);
+        setSpotIndex(0);
+        setTotal(library.total ?? library.spots.length);
         setAnswer(null);
         setLibraryStatus("ready");
       })
@@ -68,7 +86,7 @@ export function HandTrainer({ daily = false, onAnswer }: { daily?: boolean; onAn
         if (!cancelled) setLibraryStatus("fallback");
       });
     return () => { cancelled = true; };
-  }, [daily]);
+  }, [daily, position, shuffleKey, street]);
 
   function choose(option: TrainingAction) {
     if (answer) return;
@@ -90,9 +108,14 @@ export function HandTrainer({ daily = false, onAnswer }: { daily?: boolean; onAn
           <span>{spot.gameType} · {spot.stackSize} · {spot.difficulty}</span>
           {libraryStatus === "loading" ? <span className="inline-flex items-center gap-1 rounded-md bg-mist px-2 py-1 text-xs font-bold"><Loader2 className="h-3 w-3 animate-spin" />Loading PokerBench</span> : null}
           {spot.sourceUrl ? <a href={spot.sourceUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink">{spot.source}<ExternalLink className="h-3 w-3" /></a> : null}
-          {libraryStatus === "ready" ? <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">11,000 verified labels</span> : null}
+          {libraryStatus === "ready" ? <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">{total.toLocaleString()} matching spots</span> : null}
           {libraryStatus === "fallback" ? <span className="rounded-md bg-amber-50 px-2 py-1 text-xs font-bold text-amber-800">Starter examples</span> : null}
         </div>
+        {!daily ? <div className="mt-4 flex flex-wrap gap-2">
+          <select aria-label="Filter by street" value={street} onChange={(event) => { const nextStreet = event.target.value; setLibraryStatus("loading"); setStreet(nextStreet); if (nextStreet !== "All" && nextStreet !== "Preflop" && !["All", "BTN", "BB"].includes(position)) setPosition("All"); }} className="h-10 rounded-md border border-ink/10 bg-white px-3 text-sm font-bold text-ink outline-none focus:border-moss"><option>All</option><option>Preflop</option><option>Flop</option><option>Turn</option><option>River</option></select>
+          <select aria-label="Filter by position" value={position} onChange={(event) => { setLibraryStatus("loading"); setPosition(event.target.value); }} className="h-10 rounded-md border border-ink/10 bg-white px-3 text-sm font-bold text-ink outline-none focus:border-moss"><option>All</option><option>UTG</option><option>HJ</option><option>CO</option><option>BTN</option><option>SB</option><option>BB</option></select>
+          <button type="button" onClick={() => { setLibraryStatus("loading"); setShuffleKey((value) => value + 1); }} className="inline-flex h-10 items-center gap-2 rounded-md border border-ink/10 bg-white px-3 text-sm font-bold text-ink"><Shuffle className="h-4 w-4" />Shuffle</button>
+        </div> : null}
       </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="rounded-lg bg-emerald-900 p-5 text-white shadow-soft">
