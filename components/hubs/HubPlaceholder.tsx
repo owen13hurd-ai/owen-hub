@@ -1,4 +1,5 @@
 import { CheckCircle2 } from "lucide-react";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export function HubPlaceholder({
   title,
@@ -10,18 +11,10 @@ export function HubPlaceholder({
   plannedFeatures: string[];
 }) {
   return (
-    <div className="space-y-8">
-      <section>
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Placeholder hub
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">{title}</h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          {description}
-        </p>
-      </section>
+    <div className="space-y-6">
+      <PageHeader eyebrow="Workspace" title={title} description={description} />
 
-      <section className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft">
+      <section className="rounded-md border border-ink/10 bg-white p-5">
         <h2 className="text-lg font-semibold text-ink">Planned features</h2>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {plannedFeatures.map((feature) => (

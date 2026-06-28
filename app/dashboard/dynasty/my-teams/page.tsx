@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { ArrowLeft, CalendarDays, RefreshCcw, Star } from "lucide-react";
+import { CalendarDays, RefreshCcw, Star } from "lucide-react";
 import clsx from "clsx";
 
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { getSleeperMyTeamsBoard } from "@/lib/dynasty/sleeper";
 import { personalSettings } from "@/lib/personal-settings";
 import type {
@@ -134,23 +134,8 @@ export default async function DynastyMyTeamsPage({
   const data = hasError ? null : myTeamsBoard;
 
   return (
-    <div className="space-y-8">
-      <section>
-        <Button asChild variant="secondary">
-          <Link href="/dashboard/dynasty">
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Rankings
-          </Link>
-        </Button>
-        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Dynasty Hub
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">My Teams</h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          Review only your Sleeper rosters, labeled by team direction and
-          organized around the starters your personal rankings prefer.
-        </p>
-      </section>
+    <div className="space-y-6">
+      <PageHeader eyebrow="Dynasty Hub" title="My Teams" description="Review your rosters, team direction, starters, and depth through your rankings." />
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">

@@ -9,10 +9,10 @@ export function HubCard({ hub }: { hub: Hub }) {
   return (
     <Link
       href={hub.href}
-      className="group rounded-lg border border-ink/10 bg-white p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-moss/40"
+      className="group rounded-md border border-ink/10 bg-white p-4 transition hover:border-moss/50 hover:shadow-soft"
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-skyglass text-ink">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-skyglass text-ink">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
         <ArrowRight
@@ -20,8 +20,8 @@ export function HubCard({ hub }: { hub: Hub }) {
           aria-hidden="true"
         />
       </div>
-      <h2 className="mt-5 text-lg font-semibold text-ink">{hub.label}</h2>
-      <p className="mt-2 text-sm leading-6 text-ink/65">{hub.description}</p>
+      <h2 className="mt-4 text-base font-bold text-ink">{hub.label}</h2>
+      <p className="mt-1 text-sm leading-5 text-ink/55">{hub.description}</p>
     </Link>
   );
 }

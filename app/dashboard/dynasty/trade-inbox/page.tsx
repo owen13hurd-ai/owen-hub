@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { ArrowLeft, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 
 import { TradeInboxClient } from "@/components/dynasty/TradeInboxClient";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { getSleeperTradeInbox } from "@/lib/dynasty/sleeper";
 import { personalSettings } from "@/lib/personal-settings";
@@ -23,23 +23,8 @@ export default async function DynastyTradeInboxPage({
   const inbox = hasError ? null : data;
 
   return (
-    <div className="space-y-8">
-      <section>
-        <Button asChild variant="secondary">
-          <Link href="/dashboard/dynasty">
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Rankings
-          </Link>
-        </Button>
-        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Dynasty Hub
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">Trade Inbox</h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          Pending Sleeper trade offers across your leagues. This checks the
-          authenticated trade endpoint and sends you back to Sleeper to act.
-        </p>
-      </section>
+    <div className="space-y-6">
+      <PageHeader eyebrow="Dynasty Hub" title="Trade Inbox" description="Review and value pending Sleeper offers across your leagues." />
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">

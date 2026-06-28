@@ -1,25 +1,19 @@
 import { HubCard } from "@/components/hubs/HubCard";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { hubs } from "@/lib/navigation";
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
-      <section>
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Dashboard
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">Welcome back, Owen</h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          This first version gives each major interest a dedicated home. The
-          pages are simple now, but the structure is ready for real tools and
-          data once we add them.
-        </p>
-      </section>
+    <div className="space-y-7">
+      <PageHeader eyebrow="Overview" title="Welcome back, Owen" description="Choose a workspace and pick up where you left off." />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <section>
+        <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-bold text-ink">Workspaces</h2><span className="text-xs font-semibold text-ink/40">{hubs.length} active</span></div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {hubs.map((hub) => (
           <HubCard key={hub.href} hub={hub} />
         ))}
+        </div>
       </section>
     </div>
   );

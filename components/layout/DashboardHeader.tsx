@@ -17,12 +17,12 @@ export async function DashboardHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-ink/10 bg-mist/95 px-5 py-4 backdrop-blur sm:px-8">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+    <header className="sticky top-0 z-20 border-b border-ink/10 bg-white/90 px-4 py-3 backdrop-blur sm:px-7 lg:px-8">
+      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-ink/60">Owen&apos;s Hub</p>
-          <p className="text-xs text-ink/45">
-            {email ? `Signed in as ${email}` : "First foundation build"}
+          <p className="text-sm font-bold text-ink">Personal command center</p>
+          <p className="text-xs text-ink/40">
+            {email ? email : "Private workspace"}
           </p>
         </div>
         <div className="flex items-center gap-2">

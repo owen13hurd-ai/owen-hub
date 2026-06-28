@@ -1,6 +1,8 @@
 "use client";
 
+import { BookOpen, Calculator, Gauge, Search, ShieldCheck, Swords, Users } from "lucide-react";
 import { useState } from "react";
+import clsx from "clsx";
 
 type PokemonHubTabsProps = {
   battleJournal: React.ReactNode;
@@ -11,6 +13,16 @@ type PokemonHubTabsProps = {
   speedTiers: React.ReactNode;
   teams: React.ReactNode;
 };
+
+const tabs = [
+  { icon: ShieldCheck, id: "builder", label: "Teambuilder" },
+  { icon: Swords, id: "bring", label: "Bring 4" },
+  { icon: Calculator, id: "damage", label: "Damage Calc" },
+  { icon: Gauge, id: "speed", label: "Speed Tiers" },
+  { icon: Search, id: "matchups", label: "Matchups" },
+  { icon: BookOpen, id: "battles", label: "Battle Journal" },
+  { icon: Users, id: "teams", label: "M-B Teams" },
+] as const;
 
 export function PokemonHubTabs({
   battleJournal,
@@ -33,85 +45,16 @@ export function PokemonHubTabs({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2 rounded-lg border border-ink/10 bg-white p-2 shadow-soft">
-        <button
-          type="button"
-          onClick={() => openTab("bring")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "bring"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          Bring 4
-        </button>
-        <button
-          type="button"
-          onClick={() => openTab("damage")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "damage"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          Damage Calc
-        </button>
-        <button
-          type="button"
-          onClick={() => openTab("battles")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "battles"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          Battle Journal
-        </button>
-        <button
-          type="button"
-          onClick={() => openTab("builder")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "builder"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          Teambuilder
-        </button>
-        <button
-          type="button"
-          onClick={() => openTab("speed")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "speed"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          Speed Tiers
-        </button>
-        <button
-          type="button"
-          onClick={() => openTab("matchups")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "matchups"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          Matchups
-        </button>
-        <button
-          type="button"
-          onClick={() => openTab("teams")}
-          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
-            activeTab === "teams"
-              ? "bg-ink text-white"
-              : "bg-mist text-ink hover:bg-skyglass"
-          }`}
-        >
-          M-B Teams
-        </button>
-      </div>
+      <nav aria-label="Pokémon Hub sections" className="flex gap-1 overflow-x-auto border-b border-ink/10">
+        {tabs.map(({ icon: Icon, id, label }) => (
+          <button key={id} type="button" onClick={() => openTab(id)}
+            className={clsx("inline-flex h-12 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-semibold transition",
+              activeTab === id ? "border-ember text-ink" : "border-transparent text-ink/45 hover:border-ink/20 hover:text-ink")}
+          >
+            <Icon className="h-4 w-4" aria-hidden="true" />{label}
+          </button>
+        ))}
+      </nav>
 
       {mountedTabs.has("battles") && <div hidden={activeTab !== "battles"}>{battleJournal}</div>}
       {mountedTabs.has("bring") && <div hidden={activeTab !== "bring"}>{bringFour}</div>}

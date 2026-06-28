@@ -31,11 +31,11 @@ export function CareerHubClient({ resumeModifiedAt, resumeName, resumePath }: {
 
   return (
     <div>
-      <nav aria-label="Career Hub sections" className="mb-5 flex gap-1 overflow-x-auto border-b border-ink/10">
+      <nav aria-label="Career Hub sections" className="mb-6 flex gap-1 overflow-x-auto border-b border-ink/10">
         {views.map(({ icon: Icon, label }) => (
           <button key={label} type="button" onClick={() => setView(label)}
-            className={clsx("inline-flex h-11 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-bold transition",
-              view === label ? "border-moss text-ink" : "border-transparent text-ink/50 hover:text-ink")}
+            className={clsx("inline-flex h-12 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-semibold transition",
+              view === label ? "border-ember text-ink" : "border-transparent text-ink/45 hover:border-ink/20 hover:text-ink")}
           >
             <Icon className="h-4 w-4" aria-hidden="true" />{label}
           </button>

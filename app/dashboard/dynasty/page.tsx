@@ -1,17 +1,8 @@
-import Link from "next/link";
-import {
-  BarChart3,
-  Bell,
-  ClipboardList,
-  RefreshCcw,
-  ShieldCheck,
-  TableProperties,
-  Users,
-} from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 
 import { DynastyRankingsClient } from "@/components/dynasty/DynastyRankingsClient";
-import { TradeIdeaNotebook } from "@/components/dynasty/TradeIdeaNotebook";
 import { getSavedDynastyBoard } from "@/app/dashboard/dynasty/actions";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { getDynastyRankings, getDynastyTiers } from "@/lib/dynasty/rankings";
 import { getSleeperPortfolio } from "@/lib/dynasty/sleeper";
@@ -68,69 +59,15 @@ export default async function DynastyHubPage({
       percent: leagueCount > 0 ? Math.round((exposure / leagueCount) * 100) : 0,
     };
   });
-  const portfolioHref =
-    season === personalSettings.dynastySeason
-      ? "/dashboard/dynasty/portfolio"
-      : `/dashboard/dynasty/portfolio?season=${encodeURIComponent(season)}`;
-
   return (
-    <div className="space-y-8">
-      <section>
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Dynasty Hub
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">
-          Dynasty Rankings
-        </h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          This is the first web version of your Dynasty Hub rankings. It starts
-          with your spreadsheet data, adds position filters and search, and
-          creates the foundation for saved custom rankings, market comparisons,
-          and trade tools.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Button asChild variant="secondary">
-            <Link href={portfolioHref}>
-              <BarChart3 className="h-4 w-4" aria-hidden="true" />
-              Portfolio exposure
-            </Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard/dynasty/leaguemates">
-              <Users className="h-4 w-4" aria-hidden="true" />
-              Leaguemate insights
-            </Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard/dynasty/trade-inbox">
-              <Bell className="h-4 w-4" aria-hidden="true" />
-              Trade inbox
-            </Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard/dynasty/leagues">
-              <TableProperties className="h-4 w-4" aria-hidden="true" />
-              Power rankings
-            </Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard/dynasty/my-teams">
-              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-              My teams
-            </Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/dashboard/dynasty/rookies">
-              <ClipboardList className="h-4 w-4" aria-hidden="true" />
-              Rookie draft
-            </Link>
-          </Button>
-        </div>
-      </section>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Dynasty Hub"
+        title="Player Rankings"
+        description="Your personal dynasty board, market comparison, tiers, and roster exposure."
+      />
 
-      <TradeIdeaNotebook rankings={rankings} />
-
-      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+      <section className="rounded-md border border-ink/10 bg-white p-4">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <p className="text-sm font-semibold text-ink">

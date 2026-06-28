@@ -62,14 +62,14 @@ export function PokerHub() {
 
   return (
     <div className={clsx("space-y-5", settings.darkMode && "rounded-lg bg-zinc-900 p-4 text-white [&_.bg-white]:bg-zinc-800 [&_.text-ink]:text-zinc-50 [&_.text-ink\/55]:text-zinc-400 [&_.text-ink\/60]:text-zinc-300 [&_.text-ink\/65]:text-zinc-300 [&_.border-ink\/10]:border-white/10")}>
-      <div className="relative">
+      <div className="relative max-w-2xl">
         <Search className="absolute left-3 top-3 h-4 w-4 text-ink/35" />
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search poker notes, concepts, hands, and solutions" className={`${inputClass} w-full pl-9`} />
         {searchResults.length ? <div className="absolute z-20 mt-1 w-full rounded-md border border-ink/10 bg-white p-2 shadow-xl">{searchResults.map((result, index) => <button key={`${result.kind}-${result.title}-${index}`} type="button" onClick={() => { setView(result.view); setQuery(""); }} className="block w-full rounded-md px-3 py-2 text-left hover:bg-mist"><span className="text-xs font-bold text-moss">{result.kind}</span><span className="ml-2 text-sm font-bold text-ink">{result.title}</span></button>)}</div> : null}
       </div>
 
       <nav aria-label="Poker Hub sections" className="flex gap-1 overflow-x-auto border-b border-ink/10">
-        {views.map(({ icon: Icon, label }) => <button key={label} type="button" onClick={() => setView(label)} className={clsx("inline-flex h-11 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-bold transition", view === label ? "border-moss text-ink" : "border-transparent text-ink/50 hover:text-ink")}><Icon className="h-4 w-4" />{label}</button>)}
+        {views.map(({ icon: Icon, label }) => <button key={label} type="button" onClick={() => setView(label)} className={clsx("inline-flex h-12 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-semibold transition", view === label ? "border-ember text-ink" : "border-transparent text-ink/45 hover:border-ink/20 hover:text-ink")}><Icon className="h-4 w-4" />{label}</button>)}
       </nav>
 
       {view === "Home" ? <Dashboard sessions={sessions} dailyGoal={settings.dailyGoal} open={setView} /> : null}

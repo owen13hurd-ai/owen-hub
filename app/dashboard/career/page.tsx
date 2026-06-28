@@ -1,4 +1,5 @@
 import { CareerHubClient } from "@/components/career/CareerHubClient";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 const latestResume = {
   modifiedAt: "September 4, 2025",
@@ -9,17 +10,11 @@ const latestResume = {
 export default function CareerHubPage() {
   return (
     <div className="space-y-6">
-      <section>
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Career Hub
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">
-          Career Agent
-        </h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          Find strong matches, tune your search, and manage applications in one place.
-        </p>
-      </section>
+      <PageHeader
+        eyebrow="Career Hub"
+        title="Career Agent"
+        description="Discover strong Atlanta matches and move each application forward."
+      />
 
       <CareerHubClient
         resumeModifiedAt={latestResume.modifiedAt}

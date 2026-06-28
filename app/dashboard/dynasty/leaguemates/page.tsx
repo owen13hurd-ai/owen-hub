@@ -1,6 +1,7 @@
+import { RefreshCcw, Search, Users } from "lucide-react";
 import Link from "next/link";
-import { ArrowLeft, RefreshCcw, Search, Users } from "lucide-react";
 
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import {
   getSleeperLeaguemateInsights,
@@ -76,26 +77,8 @@ export default async function LeaguemateInsightsPage({
   const hiddenMatches = data?.matches.slice(10) ?? [];
 
   return (
-    <div className="space-y-8">
-      <section>
-        <Button asChild variant="secondary">
-          <Link href="/dashboard/dynasty">
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Rankings
-          </Link>
-        </Button>
-        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.16em] text-moss">
-          Dynasty Hub
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">
-          Leaguemate Insights
-        </h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-ink/70">
-          Search a manager from your Sleeper leagues to see their repeated
-          players, roster profile, and trade tendencies. This is built for
-          finding negotiation angles before you send an offer.
-        </p>
-      </section>
+    <div className="space-y-6">
+      <PageHeader eyebrow="Dynasty Hub" title="Leaguemate Insights" description="Study roster preferences and trade tendencies before you make an offer." />
 
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
