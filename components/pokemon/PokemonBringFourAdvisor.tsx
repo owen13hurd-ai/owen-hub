@@ -4,6 +4,7 @@ import { RotateCcw, ShieldCheck, Sparkles, Swords } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { PokemonSprite } from "@/components/pokemon/PokemonSprite";
+import { PokemonMatchupMatrix } from "@/components/pokemon/PokemonMatchupMatrix";
 import { Button } from "@/components/ui/Button";
 import { recommendBringFour } from "@/lib/pokemon/bring-four";
 import type { PokemonBuilderData, PokemonBuilderOption } from "@/lib/pokemon/team-builder";
@@ -251,8 +252,10 @@ export function PokemonBringFourAdvisor({ data }: { data: PokemonBuilderData }) 
         </section>
       )}
 
+      <PokemonMatchupMatrix opponents={opponentTeam} team={myTeam} />
+
       <p className="text-xs leading-5 text-ink/45">
-        This is a fast type and STAB safety model, adapted from the MIT-licensed PokeCounter project. It does not yet account for movesets, items, speed, damage rolls, or battle strategy.
+        The Bring-4 recommendation is a fast type and STAB safety model, adapted from the MIT-licensed PokeCounter project. The matrix adds common moves and damage rolls, but the recommendation itself does not yet account for items, speed, or battle strategy.
       </p>
     </div>
   );
