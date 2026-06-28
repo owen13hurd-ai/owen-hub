@@ -4,6 +4,7 @@ import { useState } from "react";
 
 type PokemonHubTabsProps = {
   battleJournal: React.ReactNode;
+  bringFour: React.ReactNode;
   builder: React.ReactNode;
   damageCalc: React.ReactNode;
   matchupPrep: React.ReactNode;
@@ -13,6 +14,7 @@ type PokemonHubTabsProps = {
 
 export function PokemonHubTabs({
   battleJournal,
+  bringFour,
   builder,
   damageCalc,
   matchupPrep,
@@ -20,12 +22,23 @@ export function PokemonHubTabs({
   teams,
 }: PokemonHubTabsProps) {
   const [activeTab, setActiveTab] = useState<
-    "battles" | "builder" | "damage" | "matchups" | "speed" | "teams"
+    "battles" | "bring" | "builder" | "damage" | "matchups" | "speed" | "teams"
   >("builder");
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2 rounded-lg border border-ink/10 bg-white p-2 shadow-soft">
+        <button
+          type="button"
+          onClick={() => setActiveTab("bring")}
+          className={`h-10 rounded-md px-4 text-sm font-bold transition ${
+            activeTab === "bring"
+              ? "bg-ink text-white"
+              : "bg-mist text-ink hover:bg-skyglass"
+          }`}
+        >
+          Bring 4
+        </button>
         <button
           type="button"
           onClick={() => setActiveTab("damage")}
@@ -95,6 +108,7 @@ export function PokemonHubTabs({
       </div>
 
       <div hidden={activeTab !== "battles"}>{battleJournal}</div>
+      <div hidden={activeTab !== "bring"}>{bringFour}</div>
       <div hidden={activeTab !== "builder"}>{builder}</div>
       <div hidden={activeTab !== "damage"}>{damageCalc}</div>
       <div hidden={activeTab !== "speed"}>{speedTiers}</div>

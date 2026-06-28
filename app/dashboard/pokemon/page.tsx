@@ -3,6 +3,7 @@ import { ExternalLink, RefreshCcw } from "lucide-react";
 
 import { PokemonHubTabs } from "@/components/pokemon/PokemonHubTabs";
 import { BattleJournal } from "@/components/pokemon/BattleJournal";
+import { PokemonBringFourAdvisor } from "@/components/pokemon/PokemonBringFourAdvisor";
 import { PokemonDamageCalculator } from "@/components/pokemon/PokemonDamageCalculator";
 import { PokemonMatchupPrep } from "@/components/pokemon/PokemonMatchupPrep";
 import { PokemonSpeedTiers } from "@/components/pokemon/PokemonSpeedTiers";
@@ -48,6 +49,7 @@ export default async function PokemonHubPage() {
 
       <PokemonHubTabs
         battleJournal={<BattleJournal pokemonNames={builderData.pokemon.map((pokemon) => pokemon.name)} />}
+        bringFour={<PokemonBringFourAdvisor data={builderData} />}
         builder={<PokemonTeamBuilder data={builderData} />}
         damageCalc={<PokemonDamageCalculator data={builderData} />}
         matchupPrep={<PokemonMatchupPrep />}
