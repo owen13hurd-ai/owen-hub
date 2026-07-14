@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { getPokemonBuilderData } from "@/lib/pokemon/team-builder";
 import { getChampionsMbTeams } from "@/lib/pokemon/vgc-pastes";
 
+export const revalidate = 300;
+
 export default async function PokemonHubPage() {
   const data = await getChampionsMbTeams();
   const builderData = await getPokemonBuilderData(data);

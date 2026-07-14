@@ -20,6 +20,7 @@ export type PokemonUsage = {
 
 export type VgcPastesData = {
   lastCheckedAt: string;
+  newestTeam: VgcPasteTeam | null;
   sheetName: string;
   sourceUrl: string;
   teams: VgcPasteTeam[];
@@ -108,6 +109,12 @@ function buildUsage(teams: VgcPasteTeam[]) {
     .slice(0, 12);
 }
 
+function getTeamNumber(teamId: string) {
+  const match = teamId.match(/\d+/);
+
+  return match ? Number(match[0]) : 0;
+}
+
 export async function getChampionsMbTeams(): Promise<VgcPastesData> {
   const csvUrl = `https://docs.google.com/spreadsheets/d/${championsMbSheetId}/export?format=csv&gid=${championsMbGid}`;
   const response = await fetch(csvUrl, {
@@ -171,13 +178,17 @@ export async function getChampionsMbTeams(): Promise<VgcPastesData> {
         sourceUrl: getCell(row, sourceIndex),
       } satisfies VgcPasteTeam;
     })
-    .filter((team): team is VgcPasteTeam => team !== null);
+    .filter((team): team is VgcPasteTeam => team !== null)
+    .sort((firstTeam, secondTeam) => {
+      return getTeamNumber(secondTeam.id) - getTeamNumber(firstTeam.id);
+    });
 
   return {
     lastCheckedAt: new Date().toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit",
     }),
+    newestTeam: teams[0] ?? null,
     sheetName: "Champions M-B",
     sourceUrl: championsMbSourceUrl,
     teams,

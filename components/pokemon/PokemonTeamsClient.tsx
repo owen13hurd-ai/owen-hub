@@ -378,7 +378,7 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
 
   return (
     <>
-      <section className="grid gap-4 md:grid-cols-4">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <p className="text-sm text-ink/55">Sheet</p>
           <p className="mt-1 text-2xl font-bold text-ink">{data.sheetName}</p>
@@ -390,15 +390,27 @@ export function PokemonTeamsClient({ data }: { data: VgcPastesData }) {
           </p>
         </div>
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-          <p className="text-sm text-ink/55">Visible teams</p>
-          <p className="mt-1 text-2xl font-bold text-ink">
-            {visibleTeams.length}
-          </p>
+          <p className="text-sm text-ink/55">Newest team</p>
+          {data.newestTeam ? (
+            <>
+              <p className="mt-1 text-2xl font-bold text-ink">
+                {data.newestTeam.id}
+              </p>
+              <p className="mt-1 truncate text-sm font-semibold text-ink/55">
+                {data.newestTeam.dateShared || "Date not listed"}
+              </p>
+            </>
+          ) : (
+            <p className="mt-1 text-2xl font-bold text-ink">-</p>
+          )}
         </div>
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <p className="text-sm text-ink/55">Last checked</p>
           <p className="mt-1 text-2xl font-bold text-ink">
             {data.lastCheckedAt}
+          </p>
+          <p className="mt-1 text-sm font-semibold text-ink/55">
+            {visibleTeams.length} visible
           </p>
         </div>
       </section>
