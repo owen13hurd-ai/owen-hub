@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { RookiePlayerEditorClient } from "@/components/dynasty/RookiePlayerEditorClient";
-import { getRookiePlayerDetail } from "@/lib/dynasty/rookie-model/repository";
+import { RookieSnapshotsClient } from "@/components/dynasty/RookieSnapshotsClient";
+import { getRookiePlayerDetail, getRookieSources } from "@/lib/dynasty/rookie-model/repository";
 
 function score(value: number | null) {
   return value === null ? "-" : value.toFixed(1);
@@ -12,7 +13,7 @@ function score(value: number | null) {
 
 export default async function RookiePlayerPage({ params }: { params: Promise<{ playerId: string }> }) {
   const { playerId } = await params;
-  const player = await getRookiePlayerDetail(playerId);
+  const [player, sources] = await Promise.all([getRookiePlayerDetail(playerId), getRookieSources()]);
   if (!player) notFound();
 
   const available = player.components.filter((component) => !component.missing);
@@ -34,6 +35,7 @@ export default async function RookiePlayerPage({ params }: { params: Promise<{ p
       </section>
 
       <RookiePlayerEditorClient player={player} />
+      <RookieSnapshotsClient player={player} sources={sources} />
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
         <div className="rounded-lg border border-ink/10 bg-white shadow-soft">
