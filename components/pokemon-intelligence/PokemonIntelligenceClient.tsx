@@ -62,6 +62,43 @@ export function PokemonIntelligenceClient() {
 
   const totalCollectionValue = snapshot.collectionItems.reduce((sum, item) => sum + ((item.estimated_value ?? 0) * item.quantity), 0);
   const totalSpend = snapshot.purchases.reduce((sum, purchase) => sum + purchase.total_cost, 0);
+  const activeWatchlist = snapshot.watchlist.filter((item) => item.enabled);
+  const buyZoneMatches = opportunityMatches.filter((match) => match.status === "buy-zone");
+  const staleSignals = opportunityMatches.filter((match) => match.status === "stale");
+  const upcomingReleases = releaseRadar.filter((item) => item.status === "upcoming");
+  const missingValueItems = snapshot.collectionItems.filter((item) => item.estimated_value === null || item.estimated_value === 0);
+  const missingReleaseDates = snapshot.products.filter((product) => !product.release_date).length + snapshot.sets.filter((set) => !set.release_date).length;
+  const nextRelease = upcomingReleases[0] ?? null;
+  const priorityActions = [
+    buyZoneMatches.length ? { detail: `${buyZoneMatches.length} watchlist match${buyZoneMatches.length === 1 ? "" : "es"} at or below target.`, label: "Review buy-zone signals", tone: "emerald" } : null,
+    unwatchedUpcoming.length ? { detail: `${unwatchedUpcoming.length} upcoming release${unwatchedUpcoming.length === 1 ? "" : "s"} missing watchlist coverage.`, label: "Add release watches", tone: "amber" } : null,
+    duplicateWarnings.length ? { detail: `${duplicateWarnings.length} duplicate group${duplicateWarnings.length === 1 ? "" : "s"} may be inflating counts.`, label: "Clean collection rows", tone: "amber" } : null,
+    missingValueItems.length ? { detail: `${missingValueItems.length} collection row${missingValueItems.length === 1 ? "" : "s"} need estimated values.`, label: "Fill value gaps", tone: "slate" } : null,
+    staleSignals.length ? { detail: `${staleSignals.length} signal${staleSignals.length === 1 ? "" : "s"} older than 14 days.`, label: "Refresh stale prices", tone: "slate" } : null,
+  ].filter((item): item is { detail: string; label: string; tone: string } => Boolean(item));
+  const recentActivity = [
+    ...snapshot.purchases.slice(0, 4).map((purchase) => ({
+      date: purchase.purchase_date,
+      detail: `${purchase.retailer ?? "Purchase"} - ${formatMoney(purchase.total_cost)}`,
+      id: `purchase-${purchase.id}`,
+      label: purchase.product_name,
+      type: "Purchase",
+    })),
+    ...snapshot.restockObservations.slice(0, 4).map((observation) => ({
+      date: observation.observed_at,
+      detail: `${observation.retailer} - ${observation.stock_status.replaceAll("-", " ")}`,
+      id: `restock-${observation.id}`,
+      label: observation.product_name,
+      type: "Restock",
+    })),
+    ...snapshot.priceObservations.slice(0, 4).map((observation) => ({
+      date: observation.observed_at,
+      detail: `${observation.source} - ${formatMoney(observation.price + observation.shipping)}`,
+      id: `price-${observation.id}`,
+      label: observation.product_name,
+      type: "Price",
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
 
   async function refresh() {
     try {
@@ -306,7 +343,87 @@ export function PokemonIntelligenceClient() {
       ) : null}
 
       <TabsContent value="overview" className="space-y-5">
-        <section className="grid gap-3 md:grid-cols-5">
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-md border border-ink/10 bg-white p-4 shadow-[0_12px_35px_rgba(23,33,31,0.04)]">
+            <p className="text-xs font-bold text-ink/45">COLLECTION VALUE</p>
+            <p className="mt-2 text-2xl font-bold text-ink">{formatMoney(totalCollectionValue)}</p>
+            <p className="mt-1 text-sm text-ink/50">{portfolioSummary.quantity} items across {portfolioSummary.itemCount} rows</p>
+          </div>
+          <div className="rounded-md border border-ink/10 bg-white p-4 shadow-[0_12px_35px_rgba(23,33,31,0.04)]">
+            <p className="text-xs font-bold text-ink/45">TRACKED SPEND</p>
+            <p className="mt-2 text-2xl font-bold text-ink">{formatMoney(totalSpend)}</p>
+            <p className={cn("mt-1 text-sm font-semibold", portfolioSummary.profitLoss >= 0 ? "text-emerald-700" : "text-red-700")}>
+              {formatMoney(portfolioSummary.profitLoss)} / {formatPercent(portfolioSummary.profitLossPercent)}
+            </p>
+          </div>
+          <div className="rounded-md border border-ink/10 bg-white p-4 shadow-[0_12px_35px_rgba(23,33,31,0.04)]">
+            <p className="text-xs font-bold text-ink/45">BUY ZONE</p>
+            <p className="mt-2 text-2xl font-bold text-emerald-700">{buyZoneMatches.length}</p>
+            <p className="mt-1 text-sm text-ink/50">{activeWatchlist.length} active watches</p>
+          </div>
+          <div className="rounded-md border border-ink/10 bg-white p-4 shadow-[0_12px_35px_rgba(23,33,31,0.04)]">
+            <p className="text-xs font-bold text-ink/45">NEXT RELEASE</p>
+            <p className="mt-2 truncate text-lg font-bold text-ink">{nextRelease?.name ?? "No dated release"}</p>
+            <p className="mt-1 text-sm text-ink/50">
+              {nextRelease?.daysUntil === null || !nextRelease ? `${missingReleaseDates} missing dates` : `${nextRelease.daysUntil} days - ${nextRelease.releaseDate}`}
+            </p>
+          </div>
+        </section>
+
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
+          <Card>
+            <CardHeader className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+              <div>
+                <CardTitle>Priority Board</CardTitle>
+                <p className="text-sm text-ink/55">The fastest path to making the tracker cleaner and more actionable.</p>
+              </div>
+              <Button variant="outline" onClick={refresh} disabled={isPending}><RefreshCcw className={cn(isPending && "animate-spin")} />Refresh</Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {priorityActions.map((action) => (
+                <div
+                  key={action.label}
+                  className={cn(
+                    "rounded-md border p-3",
+                    action.tone === "emerald" && "border-emerald-200 bg-emerald-50 text-emerald-950",
+                    action.tone === "amber" && "border-amber-200 bg-amber-50 text-amber-950",
+                    action.tone === "slate" && "border-ink/10 bg-mist text-ink",
+                  )}
+                >
+                  <p className="font-bold">{action.label}</p>
+                  <p className="mt-1 text-sm opacity-75">{action.detail}</p>
+                </div>
+              ))}
+              {!priorityActions.length ? (
+                <div className="rounded-md border border-emerald-200 bg-emerald-50 p-4 text-emerald-950">
+                  <p className="font-bold">Clean board</p>
+                  <p className="mt-1 text-sm">No urgent watchlist, release, duplicate, stale-price, or value cleanup items right now.</p>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <p className="text-sm text-ink/55">Latest purchases, prices, and restock observations.</p>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {recentActivity.map((item) => (
+                <div key={item.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-md border border-ink/10 p-3">
+                  <Badge variant="outline">{item.type}</Badge>
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-ink">{item.label}</p>
+                    <p className="truncate text-sm text-ink/55">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
+              {!recentActivity.length ? <p className="text-sm text-ink/55">Add a purchase, price observation, or restock observation to start the activity feed.</p> : null}
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="grid gap-3 md:grid-cols-4">
           <div className="rounded-md border border-ink/10 bg-white p-4">
             <p className="text-xs font-bold text-ink/45">SETS</p>
             <p className="mt-2 text-2xl font-bold text-ink">{snapshot.sets.length}</p>
@@ -316,45 +433,14 @@ export function PokemonIntelligenceClient() {
             <p className="mt-2 text-2xl font-bold text-ink">{snapshot.products.length}</p>
           </div>
           <div className="rounded-md border border-ink/10 bg-white p-4">
-            <p className="text-xs font-bold text-ink/45">COLLECTION VALUE</p>
-            <p className="mt-2 text-2xl font-bold text-ink">{formatMoney(totalCollectionValue)}</p>
+            <p className="text-xs font-bold text-ink/45">UNWATCHED RELEASES</p>
+            <p className="mt-2 text-2xl font-bold text-amber-700">{unwatchedUpcoming.length}</p>
           </div>
           <div className="rounded-md border border-ink/10 bg-white p-4">
-            <p className="text-xs font-bold text-ink/45">TOTAL SPEND</p>
-            <p className="mt-2 text-2xl font-bold text-ink">{formatMoney(totalSpend)}</p>
-          </div>
-          <div className="rounded-md border border-ink/10 bg-white p-4">
-            <p className="text-xs font-bold text-ink/45">WATCHING</p>
-            <p className="mt-2 text-2xl font-bold text-ink">{snapshot.watchlist.filter((item) => item.enabled).length}</p>
+            <p className="text-xs font-bold text-ink/45">VALUE GAPS</p>
+            <p className="mt-2 text-2xl font-bold text-ink">{missingValueItems.length}</p>
           </div>
         </section>
-
-        <Card>
-          <CardHeader className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-            <div>
-              <CardTitle>Recent Signals</CardTitle>
-              <p className="text-sm text-ink/55">Manual restocks, prices, purchases, and collection records.</p>
-            </div>
-            <Button variant="outline" onClick={refresh} disabled={isPending}><RefreshCcw className={cn(isPending && "animate-spin")} />Refresh</Button>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-3 lg:grid-cols-3">
-              {snapshot.purchases.slice(0, 3).map((purchase) => (
-                <div key={purchase.id} className="rounded-md border border-ink/10 p-3">
-                  <p className="font-semibold text-ink">{purchase.product_name}</p>
-                  <p className="mt-1 text-sm text-ink/55">{purchase.retailer ?? "Purchase"} · {formatMoney(purchase.total_cost)}</p>
-                </div>
-              ))}
-              {snapshot.restockObservations.slice(0, 3).map((observation) => (
-                <div key={observation.id} className="rounded-md border border-ink/10 p-3">
-                  <p className="font-semibold text-ink">{observation.product_name}</p>
-                  <p className="mt-1 text-sm text-ink/55">{observation.retailer} · {observation.stock_status.replaceAll("-", " ")}</p>
-                </div>
-              ))}
-              {!snapshot.purchases.length && !snapshot.restockObservations.length ? <p className="text-sm text-ink/55">Add your first product, purchase, or restock observation to start building history.</p> : null}
-            </div>
-          </CardContent>
-        </Card>
       </TabsContent>
 
       <TabsContent value="portfolio" className="space-y-5">
