@@ -17,6 +17,8 @@ The rookie engine extends the existing Dynasty Hub at `/dashboard/dynasty/rookie
 - Player aliases participate in deterministic import matching after external IDs and before exact class/position/name matching; the engine never performs an automatic fuzzy merge.
 - CSV preview requires an approved source and propagates it to committed player and metric records.
 - Close same-cohort names enter an explicit duplicate-resolution queue. Pending rows block the entire batch until Owen chooses an existing player or approves creation of a new internal identity.
+- Player profiles accept sourced college-season, athletic-test, situation-context, and market snapshots with observation dates.
+- Score execution selects the latest dated metric, context, and market observations. Situation is the mean of available 0–100 context dimensions; the MVP market score uses an explicitly stored 0–100 provider value. Neither changes Prospect Score.
 - Player comparison aligns the latest immutable score components, raw values, normalized values, contributions, coverage, and missing states.
 - Legacy Google Sheet tiers are not converted into production or athletic metrics.
 
@@ -44,5 +46,5 @@ Missing metrics receive no neutral value. Available weights are renormalized wit
 
 1. Apply migration `0008` to the connected Supabase project.
 2. Import verified 2025-2026 RB/WR source data.
-3. Add structured season, athletic-test, context, and market snapshot editors.
+3. Add draft-capital/context derivation explanations and richer snapshot-history views.
 4. Add historical reference cohorts and rolling-origin backtests before presenting calibrated hit probabilities.

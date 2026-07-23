@@ -447,8 +447,10 @@ export async function scoreAndPersistRookieClass(userId: string) {
   const playerIds = players.map((player) => player.id);
   const { data: metrics, error: metricError } = await supabase
     .from("rookie_player_metrics")
-    .select("player_id,metric_key,value,source_id")
-    .in("player_id", playerIds);
+    .select("player_id,metric_key,value,source_id,as_of_date,created_at")
+    .in("player_id", playerIds)
+    .order("as_of_date", { ascending: false })
+    .order("created_at", { ascending: false });
   if (metricError) throw metricError;
   const [{ data: contexts, error: contextError }, { data: markets, error: marketError }] = await Promise.all([
     supabase.from("rookie_context_snapshots").select("player_id,observed_at,landing_spot_score,coaching_score,quarterback_score,offensive_line_score,depth_chart_score").in("player_id", playerIds).order("observed_at", { ascending: false }),
@@ -510,6 +512,7 @@ export async function scoreAndPersistRookieClass(userId: string) {
   const inputsByPlayer = new Map<string, Array<{ key: string; sourceId: string | null; value: number | null }>>();
   metrics?.forEach((metric) => {
     const current = inputsByPlayer.get(metric.player_id) ?? [];
+    if (current.some((entry) => entry.key === metric.metric_key)) return;
     current.push({ key: metric.metric_key, sourceId: metric.source_id, value: metric.value });
     inputsByPlayer.set(metric.player_id, current);
   });
