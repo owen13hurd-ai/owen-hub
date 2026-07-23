@@ -26,6 +26,11 @@ async function getAuthenticatedClient() {
   return { supabase, userId: data.user.id };
 }
 
+async function requireOwnedRookieSource(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, sourceId: string) {
+  const { data } = await supabase.from("rookie_sources").select("id").eq("id", sourceId).eq("user_id", userId).maybeSingle();
+  if (!data) throw new Error("Choose a valid source from the Source Library.");
+}
+
 export async function previewRookieImport(
   _state: RookieImportActionState,
   formData: FormData,
@@ -543,4 +548,54 @@ export async function resolveRookieDuplicate(importRowId: string, playerId: stri
   } catch (error) {
     return { message: error instanceof Error ? error.message : "The duplicate could not be resolved.", ok: false };
   }
+}
+
+export async function saveRookieSeason(input: { games: number | null; playerId: string; receivingYards: number | null; receptions: number | null; rushingYards: number | null; season: number; sourceId: string; targetShare: number | null }) {
+  try {
+    const { supabase, userId } = await getAuthenticatedClient();
+    await requireOwnedRookieSource(supabase, userId, input.sourceId);
+    if (input.season < 2010 || input.season > 2030) throw new Error("Enter a valid college season.");
+    const { error } = await supabase.from("rookie_seasons").upsert({ games: input.games, player_id: input.playerId, receiving_yards: input.receivingYards, receptions: input.receptions, rushing_yards: input.rushingYards, season: input.season, source_id: input.sourceId, target_share: input.targetShare, user_id: userId }, { onConflict: "player_id,season" });
+    if (error) throw error;
+    revalidatePath(`/dashboard/dynasty/rookies/${input.playerId}`);
+    return { message: `${input.season} college season saved with provenance.`, ok: true };
+  } catch (error) { return { message: error instanceof Error ? error.message : "The season could not be saved.", ok: false }; }
+}
+
+export async function saveRookieAthleticTest(input: { eventDate: string | null; eventType: "combine" | "pro_day" | "other"; fortySeconds: number | null; playerId: string; ras: number | null; sourceId: string; speedScore: number | null }) {
+  try {
+    const { supabase, userId } = await getAuthenticatedClient();
+    await requireOwnedRookieSource(supabase, userId, input.sourceId);
+    if (input.ras !== null && (input.ras < 0 || input.ras > 10)) throw new Error("RAS must be between 0 and 10.");
+    const { error } = await supabase.from("rookie_athletic_tests").insert({ event_date: input.eventDate, event_type: input.eventType, forty_seconds: input.fortySeconds, player_id: input.playerId, ras: input.ras, source_id: input.sourceId, speed_score: input.speedScore, user_id: userId });
+    if (error) throw error;
+    revalidatePath(`/dashboard/dynasty/rookies/${input.playerId}`);
+    return { message: "Athletic test snapshot saved. Add derived metrics separately before scoring.", ok: true };
+  } catch (error) { return { message: error instanceof Error ? error.message : "The athletic test could not be saved.", ok: false }; }
+}
+
+export async function saveRookieContextSnapshot(input: { coachingScore: number | null; depthChartScore: number | null; landingSpotScore: number | null; nflTeam: string | null; observedAt: string; offensiveLineScore: number | null; playerId: string; quarterbackScore: number | null; sourceId: string }) {
+  try {
+    const { supabase, userId } = await getAuthenticatedClient();
+    await requireOwnedRookieSource(supabase, userId, input.sourceId);
+    const scores = [input.coachingScore, input.depthChartScore, input.landingSpotScore, input.offensiveLineScore, input.quarterbackScore];
+    if (scores.some((score) => score !== null && (score < 0 || score > 100))) throw new Error("Situation inputs must be between 0 and 100.");
+    const { error } = await supabase.from("rookie_context_snapshots").insert({ coaching_score: input.coachingScore, depth_chart_score: input.depthChartScore, landing_spot_score: input.landingSpotScore, nfl_team: input.nflTeam?.trim().toUpperCase() || null, observed_at: new Date(input.observedAt).toISOString(), offensive_line_score: input.offensiveLineScore, player_id: input.playerId, quarterback_score: input.quarterbackScore, source_id: input.sourceId, user_id: userId });
+    if (error) throw error;
+    revalidatePath(`/dashboard/dynasty/rookies/${input.playerId}`);
+    return { message: "Situation snapshot saved separately from Prospect Score.", ok: true };
+  } catch (error) { return { message: error instanceof Error ? error.message : "The situation snapshot could not be saved.", ok: false }; }
+}
+
+export async function saveRookieMarketSnapshot(input: { dynastyAdp: number | null; format: string; marketValue: number | null; observedAt: string; playerId: string; provider: string; rookieAdp: number | null; sourceId: string }) {
+  try {
+    const { supabase, userId } = await getAuthenticatedClient();
+    await requireOwnedRookieSource(supabase, userId, input.sourceId);
+    if (!input.provider.trim()) throw new Error("Market provider is required.");
+    if (input.marketValue !== null && (input.marketValue < 0 || input.marketValue > 100)) throw new Error("MVP market value must be a 0-100 score.");
+    const { error } = await supabase.from("rookie_market_snapshots").insert({ dynasty_adp: input.dynastyAdp, format: input.format.trim() || "12-team-superflex", market_value: input.marketValue, observed_at: new Date(input.observedAt).toISOString(), player_id: input.playerId, provider: input.provider.trim(), rookie_adp: input.rookieAdp, source_id: input.sourceId, user_id: userId });
+    if (error) throw error;
+    revalidatePath(`/dashboard/dynasty/rookies/${input.playerId}`);
+    return { message: "Market snapshot saved separately from Prospect Score.", ok: true };
+  } catch (error) { return { message: error instanceof Error ? error.message : "The market snapshot could not be saved.", ok: false }; }
 }
