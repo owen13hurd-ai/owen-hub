@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { defaultJobPreferences } from "@/lib/career/preferences";
+import { parseGmailJobEmails, type GmailJobEmail } from "@/lib/career/gmail-import";
+import { defaultJobPreferences, enforceGeorgiaPreferences } from "@/lib/career/preferences";
 import { scoreJob } from "@/lib/career/scoring";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import type { JobPreferences, ScoutJob } from "@/lib/career/types";
 
 const profileKey = "owen-main";
+const minimumInboxScore = 45;
 type IncomingJob = Partial<ScoutJob>;
+type IncomingBody = {
+  emails?: GmailJobEmail[];
+  jobs?: IncomingJob[];
+};
 type FeedbackStatus = "blocked_company" | "hidden" | "not_interested";
 type StoredPayload = ScoutJob & {
   feedback?: { status: FeedbackStatus; updatedAt: string };
@@ -19,6 +25,7 @@ function normalize(value: string) {
 
 function isGeorgiaLocation(location: string) {
   const value = normalize(location);
+  if (value.includes("remote")) return false;
   return value.includes("atlanta") || value.includes("georgia") || /(^| )ga($| )/.test(value);
 }
 
@@ -57,6 +64,11 @@ function normalizeJob(value: IncomingJob, preferences: JobPreferences): ScoutJob
 export async function GET() {
   if (!hasSupabaseConfig()) return NextResponse.json({ jobs: [] });
   const supabase = await createClient();
+  const { data: profile } = await supabase.from("career_profiles").select("preferences").eq("profile_key", profileKey).maybeSingle();
+  const preferences = enforceGeorgiaPreferences({
+    ...defaultJobPreferences,
+    ...((profile?.preferences ?? {}) as Partial<JobPreferences>),
+  });
   const { data, error } = await supabase
     .from("career_seen_jobs")
     .select("job_key,payload,first_seen_at,last_seen_at,closed_at")
@@ -65,14 +77,27 @@ export async function GET() {
     .limit(300);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({
-    jobs: data.map((row) => ({
-      ...(row.payload as ScoutJob),
+  const jobs = data.map((row) => {
+    const payload = row.payload as StoredPayload;
+    const match = scoreJob(payload, preferences);
+    return {
+      ...payload,
+      matchBreakdown: match.breakdown,
+      reasons: match.reasons,
+      score: match.score,
       closedAt: row.closed_at,
       firstSeenAt: row.first_seen_at,
       jobKey: row.job_key,
       lastSeenAt: row.last_seen_at,
-    })),
+    };
+  });
+
+  return NextResponse.json({
+    jobs: jobs
+      .filter((job) => job.feedback || job.score >= minimumInboxScore)
+      .sort((first, second) =>
+        second.score - first.score ||
+        new Date(second.firstSeenAt).getTime() - new Date(first.firstSeenAt).getTime()),
   });
 }
 
@@ -83,9 +108,9 @@ export async function POST(request: NextRequest) {
   }
   if (!hasSupabaseConfig()) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
 
-  let body: { jobs?: IncomingJob[] };
+  let body: IncomingBody;
   try {
-    body = (await request.json()) as { jobs?: IncomingJob[] };
+    body = (await request.json()) as IncomingBody;
   } catch {
     return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
   }
@@ -93,9 +118,16 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const now = new Date().toISOString();
   const { data: profile } = await supabase.from("career_profiles").select("preferences").eq("profile_key", profileKey).maybeSingle();
-  const preferences = { ...defaultJobPreferences, ...((profile?.preferences ?? {}) as Partial<JobPreferences>) };
-  const jobs = (body.jobs ?? []).map((job) => normalizeJob(job, preferences)).filter((job): job is ScoutJob => Boolean(job));
-  if (!jobs.length) return NextResponse.json({ accepted: 0, rejected: body.jobs?.length ?? 0 });
+  const preferences = enforceGeorgiaPreferences({
+    ...defaultJobPreferences,
+    ...((profile?.preferences ?? {}) as Partial<JobPreferences>),
+  });
+  const incomingJobs = [...(body.jobs ?? []), ...parseGmailJobEmails(body.emails ?? [])];
+  const normalizedJobs = incomingJobs.map((job) => normalizeJob(job, preferences)).filter((job): job is ScoutJob => Boolean(job));
+  const jobs = Array.from(
+    new Map(normalizedJobs.map((job) => [normalize(`${job.company}-${job.title}`), job])).values(),
+  ).filter((job) => job.score >= minimumInboxScore);
+  if (!jobs.length) return NextResponse.json({ accepted: 0, rejected: incomingJobs.length });
 
   await supabase.from("career_profiles").upsert({ profile_key: profileKey, preferences, updated_at: now });
   const jobKeys = jobs.map((job) => normalize(`${job.company}-${job.title}`));
@@ -123,7 +155,7 @@ export async function POST(request: NextRequest) {
   );
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ accepted: jobs.length, rejected: (body.jobs?.length ?? 0) - jobs.length });
+  return NextResponse.json({ accepted: jobs.length, rejected: incomingJobs.length - jobs.length });
 }
 
 export async function PATCH(request: NextRequest) {

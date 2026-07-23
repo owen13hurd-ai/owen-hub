@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink, RefreshCcw } from "lucide-react";
+import { Database, ExternalLink, RefreshCcw } from "lucide-react";
 
 import { PokemonHubTabs } from "@/components/pokemon/PokemonHubTabs";
 import { BattleJournal } from "@/components/pokemon/BattleJournal";
@@ -28,6 +28,12 @@ export default async function PokemonHubPage() {
         description="Build teams, prepare matchups, calculate damage, and review your battles."
         actions={
           <>
+          <Button asChild variant="outline">
+            <Link href="/dashboard/pokemon/intelligence">
+              <Database className="h-4 w-4" aria-hidden="true" />
+              Intelligence
+            </Link>
+          </Button>
           <Button asChild variant="outline">
             <Link href={data.sourceUrl} target="_blank">
               <ExternalLink className="h-4 w-4" aria-hidden="true" />

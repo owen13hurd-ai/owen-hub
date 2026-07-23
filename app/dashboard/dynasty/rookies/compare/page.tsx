@@ -1,0 +1,30 @@
+import { ArrowLeft, ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react";
+
+/* eslint-disable react/no-unescaped-entities */
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { getRookieEngineRankings, getRookiePlayerDetail } from "@/lib/dynasty/rookie-model/repository";
+
+export const dynamic = "force-dynamic";
+
+function display(value: number | null) { return value === null ? "-" : value.toFixed(1); }
+
+export default async function RookieComparePage({ searchParams }: { searchParams: Promise<{ first?: string; second?: string }> }) {
+  const query = await searchParams;
+  const rankings = await getRookieEngineRankings();
+  const firstId = query.first && rankings.some((player) => player.id === query.first) ? query.first : rankings[0]?.id;
+  const secondId = query.second && rankings.some((player) => player.id === query.second && player.id !== firstId) ? query.second : rankings.find((player) => player.id !== firstId)?.id;
+  const [first, second] = await Promise.all([firstId ? getRookiePlayerDetail(firstId) : null, secondId ? getRookiePlayerDetail(secondId) : null]);
+  const componentKeys = [...new Set([...(first?.components ?? []).map((component) => component.key), ...(second?.components ?? []).map((component) => component.key)])];
+  return <div className="space-y-6">
+    <Link href="/dashboard/dynasty/rookies" className="inline-flex items-center gap-2 text-sm font-semibold text-ink/60 hover:text-moss"><ArrowLeft className="h-4 w-4" />Rookie rankings</Link>
+    <PageHeader eyebrow="Explainable Rookie Engine" title="Compare prospects" description="Compare calculated output, coverage, and the underlying metric contributions without mixing in manual rank overrides." />
+    <form className="grid gap-3 rounded-lg border border-ink/10 bg-white p-4 shadow-soft sm:grid-cols-[1fr_1fr_auto] sm:items-end"><label className="grid gap-2 text-sm font-semibold text-ink">First prospect<select name="first" defaultValue={firstId} className="h-10 rounded-md border border-ink/15 px-3 font-normal">{rankings.map((player) => <option key={player.id} value={player.id}>{player.name} · {player.classYear} {player.position}</option>)}</select></label><label className="grid gap-2 text-sm font-semibold text-ink">Second prospect<select name="second" defaultValue={secondId} className="h-10 rounded-md border border-ink/15 px-3 font-normal">{rankings.map((player) => <option key={player.id} value={player.id}>{player.name} · {player.classYear} {player.position}</option>)}</select></label><Button type="submit">Compare<ArrowRight className="h-4 w-4" /></Button></form>
+    {!first || !second ? <section className="rounded-lg border border-ink/10 bg-white p-10 text-center text-sm text-ink/55">Import at least two prospects to use comparison.</section> : <>
+      <section className="grid gap-4 lg:grid-cols-2">{[first, second].map((player) => <article key={player.id} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft"><div className="flex items-start justify-between gap-3"><div><h2 className="text-xl font-bold text-ink">{player.name}</h2><p className="mt-1 text-sm text-ink/50">{player.classYear} {player.position} · {player.school ?? "School unknown"}</p></div><span className="rounded-full bg-mist px-3 py-1 text-xs font-bold text-ink">{player.manualTier ?? player.tier ?? "No tier"}</span></div><dl className="mt-5 grid grid-cols-3 gap-3"><div><dt className="text-xs text-ink/45">Prospect</dt><dd className="mt-1 text-2xl font-bold text-ink">{display(player.prospectScore)}</dd></div><div><dt className="text-xs text-ink/45">Overall</dt><dd className="mt-1 text-2xl font-bold text-moss">{display(player.overallScore)}</dd></div><div><dt className="text-xs text-ink/45">Coverage</dt><dd className="mt-1 text-2xl font-bold text-ink">{player.coverage === null ? "-" : `${player.coverage.toFixed(0)}%`}</dd></div></dl><p className="mt-4 text-xs text-ink/45">Model {player.modelVersion ?? "not scored"} · {player.normalization ?? "class-relative"}</p></article>)}</section>
+      <section className="rounded-lg border border-ink/10 bg-white shadow-soft"><div className="border-b border-ink/10 p-4"><h2 className="font-bold text-ink">Metric-by-metric explanation</h2><p className="mt-1 text-sm text-ink/55">Normalized values and effective point contributions come from each player's latest immutable run.</p></div>{componentKeys.length === 0 ? <p className="p-6 text-sm text-ink/55">Run the model for both players to compare score components.</p> : <div className="overflow-x-auto"><table className="min-w-full text-left text-sm"><thead className="bg-mist/70 text-xs font-bold uppercase tracking-wide text-ink/55"><tr><th className="px-4 py-3">Metric</th><th className="px-4 py-3">{first.name}</th><th className="px-4 py-3">Points</th><th className="px-4 py-3">{second.name}</th><th className="px-4 py-3">Points</th></tr></thead><tbody>{componentKeys.map((key) => { const firstMetric = first.components.find((component) => component.key === key); const secondMetric = second.components.find((component) => component.key === key); const label = firstMetric?.label ?? secondMetric?.label ?? key; return <tr key={key} className="border-t border-ink/8"><td className="px-4 py-3"><p className="font-semibold text-ink">{label}</p><p className="text-xs text-ink/45">{firstMetric?.familyKey ?? secondMetric?.familyKey}</p></td>{[firstMetric, secondMetric].map((metric, index) => <><td key={`${key}-${index}-value`} className="px-4 py-3">{!metric || metric.missing ? <span className="inline-flex items-center gap-1 text-amber-700"><AlertTriangle className="h-3.5 w-3.5" />Missing</span> : <span className="inline-flex items-center gap-1 font-semibold text-ink"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" />{display(metric.normalizedValue)}</span>}<p className="mt-0.5 text-xs text-ink/45">Raw {metric?.rawValue ?? "-"}</p></td><td key={`${key}-${index}-points`} className="px-4 py-3 font-bold text-moss">{display(metric?.contribution ?? null)}</td></>)}</tr>; })}</tbody></table></div>}</section>
+    </>}
+  </div>;
+}

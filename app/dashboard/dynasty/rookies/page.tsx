@@ -1,24 +1,18 @@
-import { ClipboardList } from "lucide-react";
-
-import { RookieDraftClient } from "@/components/dynasty/RookieDraftClient";
+import { RookieEngineClient } from "@/components/dynasty/RookieEngineClient";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { getImportedRookieProspects } from "@/lib/dynasty/rookie-sources";
-import { starterRookieProspects } from "@/lib/dynasty/rookies";
+import { getRookieEngineRankings, getRookieImportBatches, getRookieSources } from "@/lib/dynasty/rookie-model/repository";
 
 export default async function DynastyRookieDraftPage() {
-  const { prospects, sources } = await getImportedRookieProspects(
-    starterRookieProspects,
-  );
+  const [rankings, importBatches, sources] = await Promise.all([getRookieEngineRankings(), getRookieImportBatches(), getRookieSources()]);
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Dynasty Hub" title="Rookie Draft" description="Rank incoming prospects, track tiers, and compare model inputs." />
-        <div className="inline-flex items-center gap-2 rounded-md bg-skyglass px-3 py-2 text-sm font-semibold text-ink/65">
-          <ClipboardList className="h-4 w-4 text-moss" aria-hidden="true" />
-          Starter rows are placeholders until you add real prospects.
-        </div>
-
-      <RookieDraftClient initialProspects={prospects} sources={sources} />
+      <PageHeader
+        eyebrow="Dynasty Hub"
+        title="Rookie Prospect Engine"
+        description="Transparent RB and WR scoring with source-level explanations and immutable model history."
+      />
+      <RookieEngineClient importBatches={importBatches} rankings={rankings} sources={sources} />
     </div>
   );
 }

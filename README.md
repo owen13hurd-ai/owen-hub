@@ -1,19 +1,49 @@
 # Owen's Hub
 
-Owen's Hub is a personal web application that will grow into a central place for tools, interests, notes, and future AI assistants.
+Pokémon Restocks is available at `/dashboard/restocks`. Its technical documentation lives in [`docs/restocks`](./docs/restocks/README.md).
 
-## What exists now
+## Purpose
 
-- Next.js app using TypeScript
-- Tailwind CSS styling
-- Homepage
-- Dashboard layout
-- Left sidebar navigation
-- Placeholder pages for Dynasty, Pokémon, Career, Travel, and Notes
-- First Dynasty rankings page using the Dynasty Hub 2.0 rankings export
-- Supabase client/server setup files
+Owen's Hub is a personal web application that is growing into a central place for Owen's interests, tools, data, notes, and future AI assistants.
 
-## How the app is organized
+It currently supports Dynasty fantasy football workflows, Pokemon Champions tools, a Career Hub with job discovery, a Poker Hub, notes/travel placeholders, Supabase-backed persistence, and Vercel cloud deployment.
+
+## Quick Start
+
+Use these commands from the project folder:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Then open:
+
+```txt
+http://localhost:3000
+```
+
+Live production site:
+
+```txt
+https://owen-hub.vercel.app
+```
+
+## Major Features
+
+- Next.js app using TypeScript.
+- Tailwind CSS with shadcn/ui and selective Magic UI polish.
+- Dashboard layout with left sidebar navigation.
+- Dynasty Hub with rankings, tiers, portfolio exposure, leaguemate insights, power rankings, rookie modeling notes, and trade inbox work.
+- Pokemon Hub with tournament team browsing, sprites, filters, random team finder, team builder, speed chart, damage calculator, and Battle Journal planning.
+- Career Hub with application tracking, Gmail/job alert ingestion, company/job feed scouting, Supabase storage, and Vercel cron automation.
+- Poker Hub with training data import and trainer UI.
+- Notes, Travel, and Daily Briefing sections for future growth.
+- Supabase client/server setup.
+- Vercel production deployment and scheduled Career morning run.
+- Internal documentation system for human and AI continuity.
+
+## Folder Structure
 
 ```txt
 app/
@@ -30,32 +60,63 @@ data/
 
 types/
   Shared TypeScript types. Supabase database types will live here later.
+
+docs/
+  Focused technical notes and deeper feature docs.
+
+Applications/
+  Career application-specific resumes, cover letters, and notes.
 ```
 
-## Run the app
+## Documentation System
 
-Use these commands from the project folder:
+The root-level wiki files are part of the project. Start here:
 
-```bash
-pnpm install
-pnpm dev
-```
+- `Context.md` for current state.
+- `Roadmap.md` for priorities.
+- `Changelog.md` for completed work.
+- `Facts.md` for verified facts.
+- `Decisions.md` for why important choices were made.
+- `Playbook.md` for repeatable workflows.
+- `Agent Instructions.md` and `AGENTS.md` for future AI operating rules.
 
-Then open:
+Every significant task should update affected documentation before it is considered finished.
 
-```txt
-http://localhost:3000
-```
+## Recommended Structure
 
-## Supabase setup
+Keep this README focused on:
 
-Copy `.env.example` to `.env.local` and fill in your Supabase values:
+- Project purpose
+- Quick start
+- Major features
+- Folder structure
+- Environment/deployment basics
+- Links to deeper documentation
+
+Detailed notes should live in the dedicated wiki files or `docs/` folder.
+
+## Example Entries
+
+- `Major Features - Career Hub with Gmail-powered job discovery.`
+- `Folder Structure - Applications/ stores tailored career materials.`
+
+## Environment Setup
+
+Copy `.env.example` to `.env.local` and fill in local values:
 
 ```bash
 cp .env.example .env.local
 ```
 
 The real `.env.local` file should never be committed because it contains private project settings.
+
+## Supabase
+
+Supabase is used for persistent data such as Dynasty board saves and Career Hub discovered jobs. Relevant migrations live in `supabase/migrations/`.
+
+## Vercel
+
+The project is deployed at `https://owen-hub.vercel.app`. Vercel cron calls `/api/career/morning-run` daily for job discovery.
 
 ## Dynasty market sources
 
@@ -92,8 +153,19 @@ http://localhost:3000/dashboard/dynasty/portfolio
 Enter a Sleeper username and season, then use the league checkbox dropdown to
 include or exclude leagues from the exposure totals.
 
-## Next milestone
+## When To Update
 
-The next practical step is to run the Dynasty board migration in Supabase, test
-auto-save, and then decide whether to keep building rankings tools or return to
-authentication.
+Update this README only when the project changes significantly: major features, setup changes, folder structure changes, deployment changes, or documentation-system changes.
+
+## Maintenance Notes
+
+Do not turn this file into a full changelog or scratchpad. Keep it high-level and route detailed updates to the correct wiki file.
+
+## Related Files
+
+- `Context.md`
+- `Roadmap.md`
+- `Changelog.md`
+- `Playbook.md`
+- `docs/career-cloud-automation.md`
+- `docs/frontend-development-setup.md`

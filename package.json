@@ -4,7 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "setup:second-brain": "node scripts/setup-second-brain.mjs",
+    "setup:obsidian-plugins": "node scripts/install-obsidian-plugins.mjs",
+    "normalize:second-brain": "node scripts/normalize-second-brain.mjs",
     "import:pokerbench": "node scripts/import-pokerbench.mjs",
+    "test:pokemon-intelligence": "node --experimental-strip-types --test tests/pokemon-intelligence-*.test.mjs",
+    "test:rookie-model": "node --experimental-strip-types --test tests/rookie-model.test.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint ."

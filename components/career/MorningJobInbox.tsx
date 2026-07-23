@@ -69,12 +69,17 @@ export function MorningJobInbox() {
 
   const sources = useMemo(() => ["All", ...Array.from(new Set(jobs.map((job) => job.source))).sort()], [jobs]);
   const seniorTitle = /(^|\s)(senior|sr\.?|director|principal|vice president|vp|manager|head of)(\s|$)/i;
-  const visibleJobs = jobs.filter((job) =>
-    !job.closedAt &&
-    (view === "Active" ? !job.feedback : Boolean(job.feedback)) &&
-    (source === "All" || job.source === source) &&
-    (!hideSeniorRoles || !seniorTitle.test(job.title)),
-  );
+  const visibleJobs = jobs
+    .filter((job) =>
+      !job.closedAt &&
+      (view === "Active" ? !job.feedback : Boolean(job.feedback)) &&
+      (source === "All" || job.source === source) &&
+      (!hideSeniorRoles || !seniorTitle.test(job.title)),
+    )
+    .sort((first, second) =>
+      second.score - first.score ||
+      new Date(second.firstSeenAt).getTime() - new Date(first.firstSeenAt).getTime());
+  const activeCount = jobs.filter((job) => !job.closedAt && !job.feedback).length;
   const newCount = jobs.filter((job) => !job.closedAt && !job.feedback && isNewToday(job.firstSeenAt)).length;
 
   async function updateFeedback(job: DiscoveredJob, action: "block_company" | "hide" | "not_interested" | "restore" | "unblock_company") {
@@ -132,7 +137,7 @@ export function MorningJobInbox() {
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-lg bg-mist p-3"><p className="text-xs text-ink/50">Active discoveries</p><p className="mt-1 text-2xl font-bold text-ink">{jobs.filter((job) => !job.closedAt && !job.feedback).length}</p></div>
+        <div className="rounded-lg bg-mist p-3"><p className="text-xs text-ink/50">Relevant discoveries</p><p className="mt-1 text-2xl font-bold text-ink">{activeCount}</p></div>
         <div className="rounded-lg bg-mist p-3"><p className="text-xs text-ink/50">New today</p><p className="mt-1 text-2xl font-bold text-moss">{newCount}</p></div>
         <label className="rounded-lg bg-mist p-3 text-xs font-bold text-ink/50">Source
           <select value={source} onChange={(event) => setSource(event.target.value)} className="mt-1 h-8 w-full bg-transparent text-sm font-bold text-ink outline-none">

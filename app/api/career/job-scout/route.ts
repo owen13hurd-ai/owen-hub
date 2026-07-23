@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { defaultJobPreferences } from "@/lib/career/preferences";
+import { defaultJobPreferences, enforceGeorgiaPreferences } from "@/lib/career/preferences";
 import { scoreJob } from "@/lib/career/scoring";
 import { fetchOpenJobs } from "@/lib/career/sources/openjobs";
 import type { JobPreferences, ScoutJob } from "@/lib/career/types";
@@ -38,6 +38,7 @@ const greenhouseBoards = [
   { company: "Salesloft", label: "Salesloft Careers", token: "salesloft" },
   { company: "Roadie", label: "Roadie Careers", token: "roadie" },
 ] as const;
+const minimumScoutScore = 45;
 
 function normalize(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -159,14 +160,17 @@ async function runScout(preferences: JobPreferences) {
   });
 
   return {
-    jobs: scoredJobs.sort((first, second) => second.score - first.score).slice(0, 200),
+    jobs: scoredJobs
+      .filter((job) => job.score >= minimumScoutScore)
+      .sort((first, second) => second.score - first.score)
+      .slice(0, 200),
     ranAt: new Date().toISOString(),
     sources,
   };
 }
 
 export async function GET() {
-  return NextResponse.json(await runScout(defaultJobPreferences));
+  return NextResponse.json(await runScout(enforceGeorgiaPreferences(defaultJobPreferences)));
 }
 
 export async function POST(request: NextRequest) {
@@ -177,5 +181,5 @@ export async function POST(request: NextRequest) {
   } catch {
     // A malformed body safely falls back to Owen's defaults.
   }
-  return NextResponse.json(await runScout(preferences));
+  return NextResponse.json(await runScout(enforceGeorgiaPreferences(preferences)));
 }

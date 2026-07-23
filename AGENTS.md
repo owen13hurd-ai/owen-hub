@@ -32,3 +32,23 @@
 - Add Sonner toasts for meaningful asynchronous feedback, not routine decoration.
 - Run `pnpm exec tsc --noEmit`, `pnpm run lint`, and `pnpm run build` before shipping frontend changes.
 
+## Second Brain Protocol
+
+- The permanent knowledge vault is `/Users/hurd/Documents/Obsidian Vault`.
+- Before substantial work, read the related project note under `01 Projects` and any linked decision notes.
+- Meaningful work must update the related project status, relevant decisions or lessons, and the current append-only agent log.
+- Shared agent work is coordinated through `16 Agent Memory/Shared/Shared Task Queue.md`.
+- Follow `16 Agent Memory/Shared/Memory Protocol.md` for completion records and escalation.
+- Prefer canonical linked notes over duplicated summaries.
+- Never store credentials, authentication tokens, payment data, or private keys in the vault.
+- Never overwrite historical agent-log entries; append corrections as new entries.
+
+## Career Agent Protocol
+
+- Treat `Career Profile.md` as Owen's permanent career source of truth.
+- Before tailoring or modifying any resume, cover letter, or application material, read `Career Profile.md` and check the workspace for newer career evidence.
+- Never fabricate, exaggerate, or infer accomplishments. If a role, metric, tool, or responsibility is uncertain, ask Owen a concise clarifying question.
+- Update `Career Profile.md` before updating `Owens Resume` or creating tailored application materials.
+- Keep master resume work separate from application-specific copies.
+- Save tailored materials under `Applications/Company/` with filenames like `Resume - Company - Role.docx`, `Cover Letter - Company - Role.docx`, and `Resume Notes.md`.
+- Resume notes must include company, role, ATS estimate, keywords added, changes made, remaining gaps, interview talking points, and questions still worth asking.

@@ -11,14 +11,14 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-ink/10 bg-white px-4 py-3 lg:hidden">
-      <div className="flex gap-2 overflow-x-auto">
+    <nav className="border-b border-ink/10 bg-white/85 px-4 py-3 backdrop-blur-xl lg:hidden">
+      <div className="flex gap-2 overflow-x-auto pb-1">
         <Link
           href="/dashboard"
           className={clsx(
-            "inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium",
+            "inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-semibold transition",
             pathname === "/dashboard"
-              ? "bg-skyglass text-ink"
+              ? "bg-ink text-white"
               : "text-ink/65 hover:bg-mist hover:text-ink",
           )}
         >
@@ -36,9 +36,9 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={clsx(
-                "inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium",
+                "inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-semibold transition",
                 isActive
-                  ? "bg-skyglass text-ink"
+                  ? "bg-ink text-white"
                   : "text-ink/65 hover:bg-mist hover:text-ink",
               )}
             >
