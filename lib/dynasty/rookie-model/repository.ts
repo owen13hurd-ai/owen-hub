@@ -72,6 +72,10 @@ export type RookiePlayerDetail = RookieEngineRanking & {
     sourceLabel: string | null;
     value: number;
   }>;
+  athleticTests: Array<{ eventDate: string | null; eventType: string; fortySeconds: number | null; ras: number | null; sourceLabel: string | null; speedScore: number | null }>;
+  contextSnapshots: Array<{ nflTeam: string | null; observedAt: string; sourceLabel: string | null; situationScore: number | null }>;
+  marketSnapshots: Array<{ dynastyAdp: number | null; marketValue: number | null; observedAt: string; provider: string; rookieAdp: number | null; sourceLabel: string | null }>;
+  seasons: Array<{ games: number | null; playerSeason: number; receivingYards: number | null; receptions: number | null; rushingYards: number | null; sourceLabel: string | null; targetShare: number | null }>;
   notes: Array<{ body: string; createdAt: string; id: string }>;
   scoreHistory: Array<{
     asOfDate: string;
@@ -316,7 +320,7 @@ export async function getRookiePlayerDetail(playerId: string): Promise<RookiePla
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  const [{ data: components }, { data: notes }, { data: model }, { data: history }, { data: metricInputs }, { data: aliases }] = await Promise.all([
+  const [{ data: components }, { data: notes }, { data: model }, { data: history }, { data: metricInputs }, { data: aliases }, { data: seasons }, { data: athleticTests }, { data: contextSnapshots }, { data: marketSnapshots }] = await Promise.all([
     score
       ? supabase.from("rookie_score_components").select("metric_key,metric_label,family_key,raw_value,normalized_value,effective_weight,contribution,missing,explanation,rookie_sources(label,url)").eq("score_run_id", score.id)
       : Promise.resolve({ data: [] }),
@@ -344,6 +348,10 @@ export async function getRookiePlayerDetail(playerId: string): Promise<RookiePla
       .eq("player_id", playerId)
       .eq("user_id", userId)
       .order("alias"),
+    supabase.from("rookie_seasons").select("season,games,receptions,rushing_yards,receiving_yards,target_share,rookie_sources(label)").eq("player_id", playerId).eq("user_id", userId).order("season", { ascending: false }),
+    supabase.from("rookie_athletic_tests").select("event_type,event_date,forty_seconds,speed_score,ras,rookie_sources(label)").eq("player_id", playerId).eq("user_id", userId).order("event_date", { ascending: false }),
+    supabase.from("rookie_context_snapshots").select("observed_at,nfl_team,landing_spot_score,coaching_score,quarterback_score,offensive_line_score,depth_chart_score,rookie_sources(label)").eq("player_id", playerId).eq("user_id", userId).order("observed_at", { ascending: false }).limit(10),
+    supabase.from("rookie_market_snapshots").select("observed_at,provider,rookie_adp,dynasty_adp,market_value,rookie_sources(label)").eq("player_id", playerId).eq("user_id", userId).order("observed_at", { ascending: false }).limit(10),
   ]);
   const metricLabels = new Map(
     [rbModelConfiguration, wrModelConfiguration].flatMap((configuration) =>
@@ -363,10 +371,13 @@ export async function getRookiePlayerDetail(playerId: string): Promise<RookiePla
       value: metric.value,
     });
   });
+  const sourceLabel = (relation: { label: string } | Array<{ label: string }> | null) =>
+    (Array.isArray(relation) ? relation[0]?.label : relation?.label) ?? null;
 
   return {
     ...ranking,
     aliases: aliases ?? [],
+    athleticTests: (athleticTests ?? []).map((test) => ({ eventDate: test.event_date, eventType: test.event_type, fortySeconds: test.forty_seconds, ras: test.ras, sourceLabel: sourceLabel(test.rookie_sources), speedScore: test.speed_score })),
     bio: {
       ageAtDraft: playerRecord.age_at_draft,
       birthdate: playerRecord.birthdate,
@@ -395,9 +406,14 @@ export async function getRookiePlayerDetail(playerId: string): Promise<RookiePla
         weight: component.effective_weight,
       };
     }),
+    contextSnapshots: (contextSnapshots ?? []).map((snapshot) => {
+      const values = [snapshot.landing_spot_score, snapshot.coaching_score, snapshot.quarterback_score, snapshot.offensive_line_score, snapshot.depth_chart_score].filter((value): value is number => value !== null);
+      return { nflTeam: snapshot.nfl_team, observedAt: snapshot.observed_at, sourceLabel: sourceLabel(snapshot.rookie_sources), situationScore: values.length ? values.reduce((total, value) => total + value, 0) / values.length : null };
+    }),
     modelLabel: model?.label ?? null,
     modelVersion: model?.semantic_version ?? null,
     metricInputs: [...latestMetricInputs.values()].sort((first, second) => first.label.localeCompare(second.label)),
+    marketSnapshots: (marketSnapshots ?? []).map((snapshot) => ({ dynastyAdp: snapshot.dynasty_adp, marketValue: snapshot.market_value, observedAt: snapshot.observed_at, provider: snapshot.provider, rookieAdp: snapshot.rookie_adp, sourceLabel: sourceLabel(snapshot.rookie_sources) })),
     notes: (notes ?? []).map((note) => ({ body: note.body, createdAt: note.created_at, id: note.id })),
     scoreHistory: (history ?? []).map((entry) => {
       const historyModel = Array.isArray(entry.rookie_model_versions)
@@ -413,6 +429,7 @@ export async function getRookiePlayerDetail(playerId: string): Promise<RookiePla
         tier: entry.tier,
       };
     }),
+    seasons: (seasons ?? []).map((season) => ({ games: season.games, playerSeason: season.season, receivingYards: season.receiving_yards, receptions: season.receptions, rushingYards: season.rushing_yards, sourceLabel: sourceLabel(season.rookie_sources), targetShare: season.target_share })),
   };
 }
 
@@ -433,6 +450,22 @@ export async function scoreAndPersistRookieClass(userId: string) {
     .select("player_id,metric_key,value,source_id")
     .in("player_id", playerIds);
   if (metricError) throw metricError;
+  const [{ data: contexts, error: contextError }, { data: markets, error: marketError }] = await Promise.all([
+    supabase.from("rookie_context_snapshots").select("player_id,observed_at,landing_spot_score,coaching_score,quarterback_score,offensive_line_score,depth_chart_score").in("player_id", playerIds).order("observed_at", { ascending: false }),
+    supabase.from("rookie_market_snapshots").select("player_id,observed_at,market_value").in("player_id", playerIds).order("observed_at", { ascending: false }),
+  ]);
+  if (contextError) throw contextError;
+  if (marketError) throw marketError;
+  const latestSituation = new Map<string, number | null>();
+  contexts?.forEach((context) => {
+    if (latestSituation.has(context.player_id)) return;
+    const values = [context.landing_spot_score, context.coaching_score, context.quarterback_score, context.offensive_line_score, context.depth_chart_score].filter((value): value is number => value !== null);
+    latestSituation.set(context.player_id, values.length ? values.reduce((total, value) => total + value, 0) / values.length : null);
+  });
+  const latestMarket = new Map<string, number | null>();
+  markets?.forEach((market) => {
+    if (!latestMarket.has(market.player_id)) latestMarket.set(market.player_id, market.market_value);
+  });
 
   const defaultConfigurations = [rbModelConfiguration, wrModelConfiguration];
   const configurations: RookieModelConfiguration[] = [];
@@ -500,8 +533,8 @@ export async function scoreAndPersistRookieClass(userId: string) {
         player,
         result: calculateRookieScore(configuration, inputsByPlayer.get(player.id) ?? [], references, {
           draftCapital,
-          market: null,
-          situation: null,
+          market: latestMarket.get(player.id) ?? null,
+          situation: latestSituation.get(player.id) ?? null,
         }),
       };
     });
