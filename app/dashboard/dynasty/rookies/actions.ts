@@ -707,14 +707,15 @@ export async function importLegacyRookieSheetIdentities() {
     let skippedBatches = 0;
     for (const sheet of legacyRankingSheets) {
       const filename = `google-sheet-${sheet.classYear}-rookie-rankings.csv`;
-      const { data: existingBatch } = await supabase.from("rookie_import_batches").select("id").eq("user_id", userId).eq("filename", filename).eq("status", "committed").limit(1).maybeSingle();
-      if (existingBatch) { skippedBatches += 1; continue; }
       const url = `https://docs.google.com/spreadsheets/d/${sheet.id}/gviz/tq?tqx=out:csv`;
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error(`${sheet.classYear} Google Sheet returned ${response.status}.`);
       const csv = await response.text();
       const identities = parseGoogleSheetRookieIdentities(csv, sheet.classYear);
       if (!identities.length) throw new Error(`No RB/WR identities were found in the ${sheet.classYear} sheet.`);
+      const existingPlayers = await supabase.from("rookie_players").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("class_year", sheet.classYear).in("position", ["RB", "WR"]);
+      if (existingPlayers.error) throw existingPlayers.error;
+      if ((existingPlayers.count ?? 0) >= identities.length) { skippedBatches += 1; continue; }
       const sourceLookup = await supabase.from("rookie_sources").select("id").eq("user_id", userId).eq("label", sheet.label).limit(1).maybeSingle();
       let source = sourceLookup.data;
       const sourceError = sourceLookup.error;
