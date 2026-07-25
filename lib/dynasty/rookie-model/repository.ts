@@ -605,13 +605,12 @@ export async function scoreAndPersistRookieClass(
     });
     const ranked = [...scored].sort((first, second) => (second.result.overallScore ?? -1) - (first.result.overallScore ?? -1));
 
-    for (const entry of scored) {
-      const positionRank = ranked.findIndex((candidate) => candidate.player.id === entry.player.id) + 1;
-      const modelVersionId = modelIds.get(position);
-      if (!modelVersionId) throw new Error(`No model version ID is available for ${position}.`);
-      const { data: run, error: runError } = await supabase
-        .from("rookie_score_runs")
-        .insert({
+    const modelVersionId = modelIds.get(position);
+    if (!modelVersionId) throw new Error(`No model version ID is available for ${position}.`);
+    const { data: runs, error: runError } = await supabase
+      .from("rookie_score_runs")
+      .insert(
+        scored.map((entry) => ({
           as_of_date: asOfDate,
           data_coverage: entry.result.coverage,
           draft_capital_score: entry.result.draftCapitalScore,
@@ -620,18 +619,21 @@ export async function scoreAndPersistRookieClass(
           normalization: entry.result.normalization,
           overall_score: entry.result.overallScore,
           player_id: entry.player.id,
-          position_rank: positionRank,
+          position_rank: ranked.findIndex((candidate) => candidate.player.id === entry.player.id) + 1,
           prospect_score: entry.result.prospectScore,
           situation_score: entry.result.situationScore,
           tier: entry.result.tier,
           user_id: userId,
-        })
-        .select("id")
-        .single();
-      if (runError) throw runError;
+        })),
+      )
+      .select("id,player_id");
+    if (runError) throw runError;
 
-      const { error: componentError } = await supabase.from("rookie_score_components").insert(
-        entry.result.components.map((component) => ({
+    const runIds = new Map((runs ?? []).map((run) => [run.player_id, run.id]));
+    const componentRows = scored.flatMap((entry) => {
+      const scoreRunId = runIds.get(entry.player.id);
+      if (!scoreRunId) throw new Error(`Score run was not returned for player ${entry.player.id}.`);
+      return entry.result.components.map((component) => ({
           contribution: component.contribution,
           effective_weight: component.weight,
           explanation: component.explanation,
@@ -641,11 +643,13 @@ export async function scoreAndPersistRookieClass(
           missing: component.missing,
           normalized_value: component.normalizedValue,
           raw_value: component.rawValue,
-          score_run_id: run.id,
+          score_run_id: scoreRunId,
           source_id: component.sourceId,
           user_id: userId,
-        })),
-      );
+        }));
+    });
+    if (componentRows.length) {
+      const { error: componentError } = await supabase.from("rookie_score_components").insert(componentRows);
       if (componentError) throw componentError;
     }
   }

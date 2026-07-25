@@ -804,11 +804,20 @@ export async function importCfbdRookieSeasons() {
       // CFBD returns every college player. Persist only rows whose normalized
       // name appears in Owen's active rookie pool; unrelated players are not
       // import candidates and would needlessly exhaust serverless execution.
-      const rows = allRows.filter((row) =>
+      const relevantRows = allRows.filter((row) =>
         (byName.get(normalizedPlayerName(row.player)) ?? []).some(
           (player) => player.class_year === mapping.classYear,
         ),
       );
+      const rowsByName = new Map<string, (typeof relevantRows)[number]>();
+      for (const row of relevantRows) {
+        const key = normalizedPlayerName(row.player);
+        const current = rowsByName.get(key);
+        const volume = (row.rushingYards ?? 0) + (row.receivingYards ?? 0);
+        const currentVolume = current ? (current.rushingYards ?? 0) + (current.receivingYards ?? 0) : -1;
+        if (!current || volume > currentVolume) rowsByName.set(key, row);
+      }
+      const rows = [...rowsByName.values()];
       let batchImported = 0;
       const filename = `cfbd-player-stats-${mapping.season}-${accessedAt.slice(0, 10)}.json`;
       const batch = await supabase.from("rookie_import_batches").insert({ filename, invalid_row_count: 0, mapping: { classYear: mapping.classYear, strategy: "cfbd-player-season-v1" }, row_count: rows.length, source_id: sourceId, status: "previewed", user_id: userId, valid_row_count: rows.length }).select("id").single();
