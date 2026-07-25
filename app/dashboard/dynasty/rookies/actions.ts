@@ -789,7 +789,15 @@ export async function importCfbdRookieSeasons() {
     let imported = 0;
     let unmatched = 0;
     for (const mapping of [{ classYear: 2025, season: 2024 }, { classYear: 2026, season: 2025 }]) {
-      const rows = await fetchCfbdPlayerSeasons(apiKey, mapping.season);
+      const allRows = await fetchCfbdPlayerSeasons(apiKey, mapping.season);
+      // CFBD returns every college player. Persist only rows whose normalized
+      // name appears in Owen's active rookie pool; unrelated players are not
+      // import candidates and would needlessly exhaust serverless execution.
+      const rows = allRows.filter((row) =>
+        (byName.get(normalizedPlayerName(row.player)) ?? []).some(
+          (player) => player.class_year === mapping.classYear,
+        ),
+      );
       let batchImported = 0;
       const filename = `cfbd-player-stats-${mapping.season}-${accessedAt.slice(0, 10)}.json`;
       const batch = await supabase.from("rookie_import_batches").insert({ filename, invalid_row_count: 0, mapping: { classYear: mapping.classYear, strategy: "cfbd-player-season-v1" }, row_count: rows.length, source_id: sourceId, status: "previewed", user_id: userId, valid_row_count: rows.length }).select("id").single();
