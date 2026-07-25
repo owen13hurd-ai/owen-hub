@@ -137,7 +137,7 @@ export function RookieEngineClient({ importBatches, rankings, sources }: { impor
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/configuration"><Settings2 className="h-4 w-4" aria-hidden="true" />Configure</Link></Button>
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/compare"><GitCompareArrows className="h-4 w-4" aria-hidden="true" />Compare</Link></Button>
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/sources"><BookOpen className="h-4 w-4" aria-hidden="true" />Sources</Link></Button>
-            <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/imports"><FileSearch className="h-4 w-4" aria-hidden="true" />Resolve duplicates</Link></Button>
+            <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/imports"><FileSearch className="h-4 w-4" aria-hidden="true" />Imports &amp; public data</Link></Button>
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/validation"><TestTube2 className="h-4 w-4" aria-hidden="true" />Validate</Link></Button>
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/historical"><ArchiveRestore className="h-4 w-4" aria-hidden="true" />Historical cohorts</Link></Button>
             <Button type="button" onClick={() => setShowImport((current) => !current)} variant="outline">
