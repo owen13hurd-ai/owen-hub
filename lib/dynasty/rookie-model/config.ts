@@ -79,7 +79,7 @@ const shared = {
   normalization: "class-relative" as const,
   overallWeights: { draftCapital: 0.3, market: 0.15, prospect: 0.5, situation: 0.05 },
   tierThresholds,
-  version: "mvp-1",
+  version: "mvp-2",
   winsorization: { lower: 0.02, upper: 0.98 },
 };
 
@@ -96,7 +96,7 @@ export const wrModelConfiguration: RookieModelConfiguration = {
       metrics: [
         { key: "career_yprr", label: "Career YPRR", description: "Receiving yards per route run across the college career.", direction: "higher", family: "production", weight: 0.35 },
         { key: "best_yprr", label: "Best-season YPRR", description: "Best single-season receiving yards per route run.", direction: "higher", family: "production", weight: 0.25 },
-        { key: "target_share", label: "Target share", description: "Share of team pass targets earned.", direction: "higher", family: "production", weight: 0.2 },
+        { key: "pass_play_usage", label: "Pass-play usage", description: "CFBD share of team passing plays involving the player; retained separately from true target share.", direction: "higher", family: "production", weight: 0.2 },
         { key: "receiving_yard_share", label: "Receiving-yard share", description: "Share of team receiving yards produced.", direction: "higher", family: "production", weight: 0.2 },
       ],
     },
