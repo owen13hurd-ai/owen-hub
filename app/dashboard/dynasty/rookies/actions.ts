@@ -727,16 +727,26 @@ export async function importLegacyRookieSheetIdentities() {
       const batchResult = await supabase.from("rookie_import_batches").insert({ filename, invalid_row_count: 0, mapping: { strategy: "google-sheet-identity-tier-v1" }, row_count: identities.length, source_id: source.id, status: "previewed", user_id: userId, valid_row_count: identities.length }).select("id").single();
       if (batchResult.error) throw batchResult.error;
       const batchId = batchResult.data.id;
-      for (const identity of identities) {
-        const externalId = sheetExternalId(identity.classYear, identity.position, identity.name);
-        const playerResult = await supabase.from("rookie_players").upsert({ class_year: identity.classYear, external_id: externalId, import_batch_id: batchId, name: identity.name, position: identity.position, source_id: source.id, updated_at: new Date().toISOString(), user_id: userId }, { onConflict: "user_id,class_year,position,name" }).select("id").single();
-        if (playerResult.error) throw playerResult.error;
-        const { error: rankingError } = await supabase.from("rookie_manual_rankings").upsert({ format: "12-team-superflex", manual_rank: null, manual_tier: identity.tier, player_id: playerResult.data.id, updated_at: new Date().toISOString(), user_id: userId }, { onConflict: "user_id,player_id,format" });
-        if (rankingError) throw rankingError;
-        const { error: rowError } = await supabase.from("rookie_import_rows").insert({ batch_id: batchId, matched_player_id: playerResult.data.id, normalized_data: { classYear: identity.classYear, name: identity.name, position: identity.position, tier: identity.tier }, raw_data: { name: identity.name, sheet_score: identity.sheetScore, tier: identity.tier }, resolution_status: "matched", source_row: identity.sourceRow, user_id: userId, validation_errors: [] });
-        if (rowError) throw rowError;
-        imported += 1;
-      }
+      const updatedAt = new Date().toISOString();
+      const playerResult = await supabase.from("rookie_players").upsert(identities.map((identity) => ({
+        class_year: identity.classYear,
+        external_id: sheetExternalId(identity.classYear, identity.position, identity.name),
+        import_batch_id: batchId,
+        name: identity.name,
+        position: identity.position,
+        source_id: source.id,
+        updated_at: updatedAt,
+        user_id: userId,
+      })), { onConflict: "user_id,class_year,position,name" }).select("id,name,class_year,position");
+      if (playerResult.error) throw playerResult.error;
+      const playersByIdentity = new Map((playerResult.data ?? []).map((player) => [`${player.class_year}:${player.position}:${player.name}`, player.id]));
+      const resolved = identities.map((identity) => ({ identity, playerId: playersByIdentity.get(`${identity.classYear}:${identity.position}:${identity.name}`) })).filter((entry): entry is { identity: typeof identities[number]; playerId: string } => Boolean(entry.playerId));
+      if (resolved.length !== identities.length) throw new Error(`Only ${resolved.length} of ${identities.length} sheet identities were saved.`);
+      const { error: rankingError } = await supabase.from("rookie_manual_rankings").upsert(resolved.map(({ identity, playerId }) => ({ format: "12-team-superflex", manual_rank: null, manual_tier: identity.tier, player_id: playerId, updated_at: updatedAt, user_id: userId })), { onConflict: "user_id,player_id,format" });
+      if (rankingError) throw rankingError;
+      const { error: rowError } = await supabase.from("rookie_import_rows").insert(resolved.map(({ identity, playerId }) => ({ batch_id: batchId, matched_player_id: playerId, normalized_data: { classYear: identity.classYear, name: identity.name, position: identity.position, tier: identity.tier }, raw_data: { name: identity.name, sheet_score: identity.sheetScore, tier: identity.tier }, resolution_status: "matched" as const, source_row: identity.sourceRow, user_id: userId, validation_errors: [] })));
+      if (rowError) throw rowError;
+      imported += resolved.length;
       const { error: commitError } = await supabase.from("rookie_import_batches").update({ committed_at: new Date().toISOString(), status: "committed" }).eq("id", batchId).eq("user_id", userId);
       if (commitError) throw commitError;
     }
@@ -802,11 +812,13 @@ export async function importCfbdRookieSeasons() {
       const filename = `cfbd-player-stats-${mapping.season}-${accessedAt.slice(0, 10)}.json`;
       const batch = await supabase.from("rookie_import_batches").insert({ filename, invalid_row_count: 0, mapping: { classYear: mapping.classYear, strategy: "cfbd-player-season-v1" }, row_count: rows.length, source_id: sourceId, status: "previewed", user_id: userId, valid_row_count: rows.length }).select("id").single();
       if (batch.error) throw batch.error;
+      const importRows = [];
+      const seasonRows = [];
       for (const row of rows) {
         const candidates = (byName.get(normalizedPlayerName(row.player)) ?? []).filter((player) => player.class_year === mapping.classYear);
         const schoolMatches = candidates.filter((player) => player.school && normalizedPlayerName(player.school) === normalizedPlayerName(row.team));
         const match = schoolMatches.length === 1 ? schoolMatches[0] : candidates.length === 1 ? candidates[0] : null;
-        const { error: importRowError } = await supabase.from("rookie_import_rows").insert({
+        importRows.push({
           batch_id: batch.data.id,
           duplicate_candidates: candidates.map((candidate) => ({ id: candidate.id, name: candidate.name, school: candidate.school, similarity: 1 })),
           matched_player_id: match?.id ?? null,
@@ -817,9 +829,8 @@ export async function importCfbdRookieSeasons() {
           user_id: userId,
           validation_errors: match ? [] : ["No unique exact-name match in this rookie class."],
         });
-        if (importRowError) throw importRowError;
         if (!match) { unmatched += 1; continue; }
-        const { error: seasonError } = await supabase.from("rookie_seasons").upsert({
+        seasonRows.push({
           attempts: row.attempts,
           carries: row.carries,
           import_batch_id: batch.data.id,
@@ -831,10 +842,17 @@ export async function importCfbdRookieSeasons() {
           source_id: sourceId,
           touchdowns: row.touchdowns,
           user_id: userId,
-        }, { onConflict: "player_id,season" });
-        if (seasonError) throw seasonError;
+        });
         imported += 1;
         batchImported += 1;
+      }
+      if (importRows.length) {
+        const { error: importRowError } = await supabase.from("rookie_import_rows").insert(importRows);
+        if (importRowError) throw importRowError;
+      }
+      if (seasonRows.length) {
+        const { error: seasonError } = await supabase.from("rookie_seasons").upsert(seasonRows, { onConflict: "player_id,season" });
+        if (seasonError) throw seasonError;
       }
       const { error: commitError } = await supabase.from("rookie_import_batches").update({ committed_at: accessedAt, invalid_row_count: rows.length - batchImported, status: "committed", valid_row_count: batchImported }).eq("id", batch.data.id).eq("user_id", userId);
       if (commitError) throw commitError;
