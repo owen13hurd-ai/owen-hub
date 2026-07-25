@@ -59,6 +59,61 @@ for (const { player, row } of draftMatches) {
   }
 }
 
+const combineSource = await source("nflverse combine", { author: "nflverse", license: "CC-BY-4.0", methodology_class: "documented", publication: "nflverse-data", reliability: "high", summary: "Open NFL combine measurements and testing results.", url: "https://github.com/nflverse/nflverse-data/releases/tag/combine" });
+const combineResponse = await fetch("https://github.com/nflverse/nflverse-data/releases/download/combine/combine.csv");
+if (!combineResponse.ok) throw new Error(`nflverse combine returned ${combineResponse.status}.`);
+const combineRows = parse(await combineResponse.text(), { columns: true, skip_empty_lines: true }) as Array<Record<string, string>>;
+const combineMatches = combineRows.flatMap((row) => {
+  const player = byClassName.get(`${Number(row.season)}:${norm(row.player_name ?? "")}`);
+  return player ? [{ player, row }] : [];
+});
+for (const { player, row } of combineMatches) {
+  const heightParts = row.ht?.split("-").map(Number) ?? [];
+  const height = heightParts.length === 2 && heightParts.every(Number.isFinite) ? heightParts[0] * 12 + heightParts[1] : null;
+  const weight = Number(row.wt) || null;
+  const forty = Number(row.forty) || null;
+  const bmi = height && weight ? weight * 703 / (height * height) : null;
+  const speedScore = weight && forty ? weight * 200 / Math.pow(forty, 4) : null;
+  const updated = await supabase.from("rookie_players").update({ bmi, height_inches: height, weight_pounds: weight, updated_at: now }).eq("id", player.id);
+  if (updated.error) throw updated.error;
+  const existing = await supabase.from("rookie_athletic_tests").select("id").eq("player_id", player.id).eq("source_id", combineSource).limit(1).maybeSingle();
+  if (existing.error) throw existing.error;
+  const test = { bench_reps: Number(row.bench) || null, broad_inches: Number(row.broad_jump) || null, event_type: "combine" as const, forty_seconds: forty, player_id: player.id, source_id: combineSource, speed_score: speedScore, shuttle_seconds: Number(row.shuttle) || null, three_cone_seconds: Number(row.cone) || null, user_id: user.id, vertical_inches: Number(row.vertical) || null };
+  const savedTest = existing.data ? await supabase.from("rookie_athletic_tests").update(test).eq("id", existing.data.id) : await supabase.from("rookie_athletic_tests").insert(test);
+  if (savedTest.error) throw savedTest.error;
+  const values = [{ key: "bmi", value: bmi }, { key: "speed_score", value: speedScore }].filter((entry): entry is { key: string; value: number } => entry.value !== null);
+  if (values.length) {
+    const saved = await supabase.from("rookie_player_metrics").upsert(values.map((entry) => ({ as_of_date: `${player.class_year}-04-30`, confidence: "high", metric_key: entry.key, player_id: player.id, source_id: combineSource, user_id: user.id, value: entry.value })), { onConflict: "player_id,metric_key,as_of_date,source_id" });
+    if (saved.error) throw saved.error;
+  }
+}
+
+const recruitingSource = await source("CollegeFootballData recruiting", { author: "CollegeFootballData", license: "Provider terms apply", methodology_class: "documented", publication: "CollegeFootballData", reliability: "high", summary: "Documented high-school recruiting ratings and star classifications.", url: "https://collegefootballdata.com/" });
+const recruitingByName = new Map<string, { rating: number; stars: number; year: number }>();
+for (const recruitingYear of [2019, 2020, 2021, 2022, 2023, 2024]) {
+  const response = await fetch(`https://api.collegefootballdata.com/recruiting/players?year=${recruitingYear}`, { headers: { Authorization: `Bearer ${cfbdKey}` } });
+  if (!response.ok) throw new Error(`CFBD recruiting ${recruitingYear} returned ${response.status}.`);
+  const recruits = await response.json() as Array<{ name: string; rating?: number; stars?: number; year: number }>;
+  for (const recruit of recruits) {
+    if (recruit.rating == null) continue;
+    const key = norm(recruit.name);
+    const current = recruitingByName.get(key);
+    if (!current || recruit.rating > current.rating) recruitingByName.set(key, { rating: recruit.rating, stars: recruit.stars ?? 0, year: recruit.year });
+  }
+}
+const recruitingMatches = players.flatMap((player) => {
+  const recruit = recruitingByName.get(norm(player.name));
+  return recruit ? [{ player, recruit }] : [];
+});
+if (recruitingMatches.length) {
+  const saved = await supabase.from("rookie_player_metrics").upsert(recruitingMatches.map(({ player, recruit }) => ({ as_of_date: `${player.class_year}-04-30`, confidence: "high", metric_key: "recruiting_rating", player_id: player.id, source_id: recruitingSource, user_id: user.id, value: recruit.rating })), { onConflict: "player_id,metric_key,as_of_date,source_id" });
+  if (saved.error) throw saved.error;
+  for (const { player, recruit } of recruitingMatches) {
+    const updated = await supabase.from("rookie_players").update({ recruiting_rating: recruit.rating, updated_at: now }).eq("id", player.id);
+    if (updated.error) throw updated.error;
+  }
+}
+
 const cfbdSource = await source("CollegeFootballData API", { author: "CollegeFootballData", license: "Provider terms apply", methodology_class: "documented", publication: "CollegeFootballData", reliability: "high", summary: "Documented college production and usage API.", url: "https://collegefootballdata.com/" });
 let usageMatches = 0;
 for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classYear: 2026, season: 2025 }]) {
@@ -132,7 +187,8 @@ for (const configuration of configurations) {
   scoredCount += scored.length;
 }
 
-console.log(JSON.stringify({ draftMatches: draftMatches.length, marketMatches: marketMatches.length, players: players.length, scored: scoredCount, usageMatches }));
+const byYear = (matches: Array<{ player: { class_year: number } }>, year: number) => matches.filter(({ player }) => player.class_year === year).length;
+console.log(JSON.stringify({ byDraftYear: Object.fromEntries([2025, 2026].map((year) => [year, { combine: byYear(combineMatches, year), draft: byYear(draftMatches, year), market: byYear(marketMatches, year), players: players.filter((player) => player.class_year === year).length, recruiting: byYear(recruitingMatches, year) }])), scored: scoredCount, usageMatches }));
 }
 
 main().catch((error) => {
