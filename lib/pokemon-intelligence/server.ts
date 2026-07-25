@@ -355,6 +355,6 @@ export async function updatePokemonIntelligenceRecord(kind: EditableKind, id: st
     throw new Error("No editable fields were provided.");
   }
 
-  const { error } = await supabase.from(table).update(payload).eq("profile_key", profileKey).eq("id", id);
+  const { error } = await supabase.from(table).update(payload as never).eq("profile_key", profileKey).eq("id", id);
   if (error) throw new Error(error.message);
 }
