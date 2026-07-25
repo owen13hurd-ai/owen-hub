@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, BookOpen, FileSearch, FileUp, FlaskConical, GitCompareArrows, Save, Search, Settings2, ShieldCheck } from "lucide-react";
+import { ArchiveRestore, BarChart3, BookOpen, FileSearch, FileUp, FlaskConical, GitCompareArrows, Save, Search, Settings2, ShieldCheck, TestTube2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useMemo, useState, useTransition } from "react";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import {
   commitRookieImport,
+  importLegacyRookieSheetIdentities,
   previewRookieImport,
   runRookieModel,
   saveManualRookieRankings,
@@ -31,6 +32,7 @@ export function RookieEngineClient({ importBatches, rankings, sources }: { impor
   const [importState, importAction, importPending] = useActionState(previewRookieImport, initialImportState);
   const [isRunning, startRun] = useTransition();
   const [isCommitting, startCommit] = useTransition();
+  const [isSheetImporting, startSheetImport] = useTransition();
   const [isSavingRanks, startSaveRanks] = useTransition();
   const [manualEdits, setManualEdits] = useState<Record<string, { rank: string; tier: string }>>({});
 
@@ -73,6 +75,14 @@ export function RookieEngineClient({ importBatches, rankings, sources }: { impor
     if (!importState.batchId) return;
     startCommit(async () => {
       const result = await commitRookieImport(importState.batchId!);
+      if (result.ok) { toast.success(result.message); router.refresh(); }
+      else toast.error(result.message);
+    });
+  }
+
+  function handleSheetImport() {
+    startSheetImport(async () => {
+      const result = await importLegacyRookieSheetIdentities();
       if (result.ok) { toast.success(result.message); router.refresh(); }
       else toast.error(result.message);
     });
@@ -128,8 +138,13 @@ export function RookieEngineClient({ importBatches, rankings, sources }: { impor
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/compare"><GitCompareArrows className="h-4 w-4" aria-hidden="true" />Compare</Link></Button>
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/sources"><BookOpen className="h-4 w-4" aria-hidden="true" />Sources</Link></Button>
             <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/imports"><FileSearch className="h-4 w-4" aria-hidden="true" />Resolve duplicates</Link></Button>
+            <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/validation"><TestTube2 className="h-4 w-4" aria-hidden="true" />Validate</Link></Button>
+            <Button asChild variant="outline"><Link href="/dashboard/dynasty/rookies/historical"><ArchiveRestore className="h-4 w-4" aria-hidden="true" />Historical cohorts</Link></Button>
             <Button type="button" onClick={() => setShowImport((current) => !current)} variant="outline">
               <FileUp className="h-4 w-4" aria-hidden="true" /> Import CSV
+            </Button>
+            <Button type="button" onClick={handleSheetImport} variant="outline" disabled={isSheetImporting}>
+              <FileUp className="h-4 w-4" aria-hidden="true" /> {isSheetImporting ? "Importing sheets..." : "Import sheet identities"}
             </Button>
             <Button type="button" onClick={handleRun} disabled={isRunning || rankings.length === 0}>
               <FlaskConical className="h-4 w-4" aria-hidden="true" /> {isRunning ? "Scoring..." : "Run model"}

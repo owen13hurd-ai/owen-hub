@@ -34,6 +34,24 @@ export async function signInWithEmail(formData: FormData) {
   redirect("/auth/login?message=Check your email for your secure sign-in link.");
 }
 
+export async function signInWithPassword(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const password = String(formData.get("password") ?? "");
+
+  if (!email || !password) {
+    redirect("/auth/login?message=Enter both your email and password.");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    redirect(`/auth/login?message=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect("/dashboard/dynasty/rookies/imports");
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();

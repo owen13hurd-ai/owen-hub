@@ -39,7 +39,7 @@ function booleanOrNull(value: unknown) {
   return null;
 }
 
-export function previewRookieCsv(csv: string): RookieImportPreview {
+function previewCsv(csv: string, mode: "mvp" | "historical"): RookieImportPreview {
   const records = parse(csv, {
     bom: true,
     columns: (headers: string[]) => headers.map(normalizeHeader),
@@ -55,10 +55,20 @@ export function previewRookieCsv(csv: string): RookieImportPreview {
     const classYear = numberOrNull(record.class_year ?? record.draft_year);
     const ageAtDraft = numberOrNull(record.age_at_draft);
     const earlyDeclare = booleanOrNull(record.early_declare);
+    const draftRound = numberOrNull(record.draft_round);
+    const overallPick = numberOrNull(record.overall_pick);
+    const scoringDate = record.scoring_date?.trim() || null;
 
     if (!name) errors.push("Name is required.");
     if (!position) errors.push("Position must be RB or WR.");
-    if (classYear !== 2025 && classYear !== 2026) errors.push("Class year must be 2025 or 2026 for the MVP.");
+    if (overallPick !== null && (overallPick < 1 || overallPick > 257)) errors.push("Overall pick must be between 1 and 257.");
+    if (draftRound !== null && (draftRound < 1 || draftRound > 7)) errors.push("Draft round must be between 1 and 7.");
+    if (mode === "mvp" && classYear !== 2025 && classYear !== 2026) errors.push("Class year must be 2025 or 2026 for the MVP.");
+    if (mode === "historical" && (!classYear || classYear < 2010 || classYear > 2024)) errors.push("Historical class year must be between 2010 and 2024.");
+    if (mode === "historical") {
+      if (!scoringDate || !/^\d{4}-\d{2}-\d{2}$/.test(scoringDate)) errors.push("A YYYY-MM-DD scoring_date is required.");
+      else if (classYear && scoringDate > `${classYear}-09-01`) errors.push("Scoring date must be on or before September 1 of the draft year.");
+    }
 
     const metrics: RookieMetricInput[] = metricColumns.map((key) => ({
       key,
@@ -74,12 +84,16 @@ export function previewRookieCsv(csv: string): RookieImportPreview {
 
     return {
       ageAtDraft,
+      asOfDate: scoringDate ?? (classYear ? `${classYear}-04-30` : null),
       classYear: classYear ?? 0,
+      draftRound,
       earlyDeclare,
       errors,
       externalId: record.external_id?.trim() || null,
       metrics,
       name,
+      nflTeam: record.nfl_team?.trim().toUpperCase() || null,
+      overallPick,
       position,
       rawData: record,
       school: record.school?.trim() || null,
@@ -94,11 +108,23 @@ export function previewRookieCsv(csv: string): RookieImportPreview {
   };
 }
 
+export function previewRookieCsv(csv: string) {
+  return previewCsv(csv, "mvp");
+}
+
+export function previewHistoricalRookieCsv(csv: string) {
+  return previewCsv(csv, "historical");
+}
+
 export const rookieCsvTemplateHeaders = [
   "name",
   "position",
   "class_year",
   "school",
   "external_id",
+  "scoring_date",
+  "draft_round",
+  "overall_pick",
+  "nfl_team",
   ...metricColumns,
 ];

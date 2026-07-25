@@ -90,12 +90,16 @@ export type RookieScoreResult = {
 
 export type RookieImportRow = {
   ageAtDraft: number | null;
+  asOfDate: string | null;
   classYear: number;
+  draftRound: number | null;
   earlyDeclare: boolean | null;
   errors: string[];
   externalId: string | null;
   metrics: RookieMetricInput[];
   name: string;
+  nflTeam: string | null;
+  overallPick: number | null;
   position: RookieEnginePosition | null;
   rawData: Record<string, string>;
   school: string | null;

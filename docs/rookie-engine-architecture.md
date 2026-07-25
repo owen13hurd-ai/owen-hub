@@ -19,8 +19,17 @@ The rookie engine extends the existing Dynasty Hub at `/dashboard/dynasty/rookie
 - Close same-cohort names enter an explicit duplicate-resolution queue. Pending rows block the entire batch until Owen chooses an existing player or approves creation of a new internal identity.
 - Player profiles accept sourced college-season, athletic-test, situation-context, and market snapshots with observation dates.
 - Score execution selects the latest dated metric, context, and market observations. Situation is the mean of available 0–100 context dimensions; the MVP market score uses an explicitly stored 0–100 provider value. Neither changes Prospect Score.
+- Sourced seasonal NFL outcomes are validation-only records. The historical report exposes top-12 and top-24 finish rates, PPG, games, peak dynasty value, missing outcomes, and Spearman rank correlation for Prospect Score, draft capital, and market score.
+- Rolling-origin validation only admits scores dated on or before September 1 of the player's draft year. Later runs are counted as leakage exclusions, and small cohorts display an uncertainty warning.
+- Validation uses an explicit Prospect Score >= 65 rule for top-24 precision and recall, Wilson 95% intervals for finish rates, and observed top-24 rates across fixed score buckets. Buckets are descriptive cohort results, not individual probabilities.
+- Dated, sourced consensus ranks are stored in a separate benchmark table and compared to fantasy PPG without entering any model calculation.
 - Player comparison aligns the latest immutable score components, raw values, normalized values, contributions, coverage, and missing states.
 - Legacy Google Sheet tiers are not converted into production or athletic metrics.
+- `types/database.ts` is generated from the live Supabase schema and includes authoritative contracts and relationship metadata for the entire Hub. Shared browser and server clients use it directly.
+- `pnpm run check:rookie-migrations` verifies the migration chain and fails when a declared rookie table lacks a database contract.
+- Historical cohort imports accept sourced raw RB/WR inputs for classes 2010-2024, require one scoring date per class no later than September 1 of the draft year, reuse explicit duplicate resolution, and calculate full score components rather than accepting opaque Prospect Scores.
+- Historical scoring queries only metrics, market snapshots, and context snapshots observed on or before the requested scoring date.
+- The legacy 2025/2026 ranking-sheet adapter imports RB/WR identity and manual tier only. Embedded sheet scores remain in immutable raw import provenance and never populate metric or calculated score fields. Repeated committed batches are skipped.
 
 ## Score Boundaries
 
@@ -44,7 +53,7 @@ Missing metrics receive no neutral value. Available weights are renormalized wit
 
 ## Next Work
 
-1. Apply migration `0008` to the connected Supabase project.
-2. Import verified 2025-2026 RB/WR source data.
-3. Add draft-capital/context derivation explanations and richer snapshot-history views.
-4. Add historical reference cohorts and rolling-origin backtests before presenting calibrated hit probabilities.
+1. Run the signed-in Google Sheet identity/tier import, then import verified 2025-2026 RB/WR raw metrics.
+2. Inspect the first persisted model run and player explanation against its source rows.
+3. Load historical cohort CSVs with verified raw metrics, pre-draft dates, and approved outcome sources.
+4. Add provider-specific benchmark coverage, bootstrap rank-correlation intervals, and rolling multi-class summaries once sample sizes support them.

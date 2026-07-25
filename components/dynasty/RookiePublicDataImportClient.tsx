@@ -1,0 +1,26 @@
+"use client";
+
+import { DatabaseZap } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+
+import { importCfbdRookieSeasons } from "@/app/dashboard/dynasty/rookies/actions";
+import { Button } from "@/components/ui/button";
+
+export function RookiePublicDataImportClient() {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  return <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div><h2 className="font-bold text-ink">CollegeFootballData</h2><p className="mt-1 max-w-2xl text-sm text-ink/55">Import official 2024 and 2025 college rushing and receiving totals for the existing 2025–2026 RB/WR classes. This never invents routes, YPRR, shares, or scores.</p></div>
+      <Button type="button" disabled={pending} onClick={() => startTransition(async () => {
+        const result = await importCfbdRookieSeasons();
+        if (result.ok) toast.success(result.message);
+        else toast.error(result.message);
+        if (result.ok) router.refresh();
+      })}><DatabaseZap className="h-4 w-4" />{pending ? "Importing..." : "Import public data"}</Button>
+    </div>
+    <p className="mt-3 text-xs text-ink/45">Requires a private CFBD_API_KEY in the app environment. Unmatched names are recorded for review instead of being merged automatically.</p>
+  </section>;
+}

@@ -27,11 +27,13 @@ export default async function DynastyHubPage({
     await enrichRankingsWithMarketSources(importedRankings);
   const tiers = getDynastyTiers(rankings);
   const savedRowsByScope = await getSavedDynastyBoard();
-  const sleeperPortfolio = await getSleeperPortfolio({ season, username }).catch(
-    (error) => {
-      return error instanceof Error ? error : new Error("Sleeper failed.");
-    },
-  );
+  // Sleeper's complete NFL player directory is very large. Load it only after
+  // Owen explicitly requests ownership so the main Dynasty Hub opens quickly.
+  const sleeperPortfolio = params?.season
+    ? await getSleeperPortfolio({ season, username }).catch((error) => {
+        return error instanceof Error ? error : new Error("Sleeper failed.");
+      })
+    : null;
   const hasSleeperError = sleeperPortfolio instanceof Error;
   const sleeperData = hasSleeperError ? null : sleeperPortfolio;
   const leagueCount = sleeperData?.leagues.length ?? 0;
@@ -74,7 +76,7 @@ export default async function DynastyHubPage({
               Sleeper ownership
             </p>
             <p className="mt-1 text-sm text-ink/60">
-              Automatically loading teams for{" "}
+              Load teams on demand for{" "}
               <span className="font-semibold text-ink">{username}</span>.
             </p>
           </div>
