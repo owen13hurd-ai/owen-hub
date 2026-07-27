@@ -164,6 +164,15 @@ for (const { classYear, priorSeason } of [{ classYear: 2025, priorSeason: 2024 }
 const cfbdSource = await source("CollegeFootballData API", { author: "CollegeFootballData", license: "Provider terms apply", methodology_class: "documented", publication: "CollegeFootballData", reliability: "high", summary: "Documented college production and usage API.", url: "https://collegefootballdata.com/" });
 let usageMatches = 0;
 const efficiencyPlayerIds = new Set<string>();
+const playersByName = new Map<string, Player[]>();
+for (const player of players) playersByName.set(norm(player.name), [...(playersByName.get(norm(player.name)) ?? []), player]);
+type CareerHistory = { pass: number[]; rush: number[]; usage: number[] };
+const careerHistory = new Map<string, CareerHistory>();
+const historyFor = (playerId: string) => {
+  const history = careerHistory.get(playerId) ?? { pass: [], rush: [], usage: [] };
+  careerHistory.set(playerId, history);
+  return history;
+};
 for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classYear: 2026, season: 2025 }]) {
   const response = await fetchWithRetry(`https://api.collegefootballdata.com/player/usage?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } });
   if (!response.ok) throw new Error(`CFBD usage returned ${response.status}.`);
@@ -172,6 +181,7 @@ for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classY
     const player = byClassName.get(`${classYear}:${norm(row.name)}`);
     const value = row.usage?.pass;
     if (!player || player.position !== "WR" || value === null || value === undefined) return [];
+    historyFor(player.id).usage.push(value);
     usageMatches += 1;
     return [{ as_of_date: `${classYear}-04-30`, confidence: "high", metric_key: "pass_play_usage", player_id: player.id, source_id: cfbdSource, user_id: user.id, value }];
   });
@@ -192,6 +202,8 @@ for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classY
   const efficiencyMetrics = ppaRows.flatMap((row) => {
     const player = byClassName.get(`${classYear}:${norm(row.name)}`);
     if (!player) return [];
+    if (row.averagePPA?.pass !== null && row.averagePPA?.pass !== undefined) historyFor(player.id).pass.push(row.averagePPA.pass);
+    if (row.averagePPA?.rush !== null && row.averagePPA?.rush !== undefined) historyFor(player.id).rush.push(row.averagePPA.rush);
     const success = successByName.get(norm(row.name));
     const values = player.position === "WR"
       ? [{ key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }]
@@ -204,6 +216,42 @@ for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classY
     const saved = await supabase.from("rookie_player_metrics").upsert(efficiencyMetrics, { onConflict: "player_id,metric_key,as_of_date,source_id" });
     if (saved.error) throw saved.error;
   }
+}
+
+for (const season of [2020, 2021, 2022, 2023]) {
+  const [usageResponse, ppaResponse] = await Promise.all([
+    fetchWithRetry(`https://api.collegefootballdata.com/player/usage?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } }),
+    fetchWithRetry(`https://api.collegefootballdata.com/ppa/players/season?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } }),
+  ]);
+  if (!usageResponse.ok) throw new Error(`CFBD historical usage ${season} returned ${usageResponse.status}.`);
+  if (!ppaResponse.ok) throw new Error(`CFBD historical PPA ${season} returned ${ppaResponse.status}.`);
+  const usageRows = await usageResponse.json() as Array<{ name: string; usage?: { pass?: number | null } }>;
+  const ppaRows = await ppaResponse.json() as Array<{ name: string; averagePPA?: { pass?: number | null; rush?: number | null } }>;
+  for (const row of usageRows) {
+    const candidates = playersByName.get(norm(row.name)) ?? [];
+    if (candidates.length !== 1 || row.usage?.pass === null || row.usage?.pass === undefined) continue;
+    historyFor(candidates[0].id).usage.push(row.usage.pass);
+  }
+  for (const row of ppaRows) {
+    const candidates = playersByName.get(norm(row.name)) ?? [];
+    if (candidates.length !== 1) continue;
+    const history = historyFor(candidates[0].id);
+    if (row.averagePPA?.pass !== null && row.averagePPA?.pass !== undefined) history.pass.push(row.averagePPA.pass);
+    if (row.averagePPA?.rush !== null && row.averagePPA?.rush !== undefined) history.rush.push(row.averagePPA.rush);
+  }
+}
+const average = (values: number[]) => values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
+const best = (values: number[]) => values.length ? Math.max(...values) : null;
+const careerMetrics = players.flatMap((player) => {
+  const history = careerHistory.get(player.id) ?? { pass: [], rush: [], usage: [] };
+  const values = player.position === "WR"
+    ? [{ key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }, { key: "best_pass_play_usage", value: best(history.usage) }]
+    : [{ key: "career_rushing_ppa", value: average(history.rush) }, { key: "best_rushing_ppa", value: best(history.rush) }, { key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }];
+  return values.filter((entry): entry is { key: string; value: number } => entry.value !== null).map((entry) => ({ as_of_date: `${player.class_year}-04-30`, confidence: "high", metric_key: entry.key, player_id: player.id, source_id: cfbdSource, user_id: user.id, value: entry.value }));
+});
+if (careerMetrics.length) {
+  const saved = await supabase.from("rookie_player_metrics").upsert(careerMetrics, { onConflict: "player_id,metric_key,as_of_date,source_id" });
+  if (saved.error) throw saved.error;
 }
 
 const fantasyCalcSource = await source("FantasyCalc 12-team Superflex", { author: "FantasyCalc", license: "Public API; provider terms apply", methodology_class: "documented", publication: "FantasyCalc", reliability: "medium", summary: "Current 12-team Superflex half-PPR dynasty market values.", url: "https://fantasycalc.com/" });
