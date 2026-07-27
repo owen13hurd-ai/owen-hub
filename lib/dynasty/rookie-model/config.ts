@@ -79,7 +79,7 @@ const shared = {
   normalization: "class-relative" as const,
   overallWeights: { draftCapital: 0.3, market: 0.15, prospect: 0.5, situation: 0.05 },
   tierThresholds,
-  version: "mvp-2",
+  version: "mvp-3",
   winsorization: { lower: 0.02, upper: 0.98 },
 };
 
@@ -91,19 +91,20 @@ export const wrModelConfiguration: RookieModelConfiguration = {
     {
       key: "production",
       label: "Production and target earning",
-      minimumCoverage: 0.5,
+      minimumCoverage: 0.4,
       weight: 0.55,
       metrics: [
-        { key: "career_yprr", label: "Career YPRR", description: "Receiving yards per route run across the college career.", direction: "higher", family: "production", weight: 0.35 },
-        { key: "best_yprr", label: "Best-season YPRR", description: "Best single-season receiving yards per route run.", direction: "higher", family: "production", weight: 0.25 },
+        { key: "career_yprr", label: "Career YPRR", description: "Receiving yards per route run across the college career.", direction: "higher", family: "production", weight: 0.2 },
+        { key: "best_yprr", label: "Best-season YPRR", description: "Best single-season receiving yards per route run.", direction: "higher", family: "production", weight: 0.15 },
         { key: "pass_play_usage", label: "Pass-play usage", description: "CFBD share of team passing plays involving the player; retained separately from true target share.", direction: "higher", family: "production", weight: 0.2 },
-        { key: "receiving_yard_share", label: "Receiving-yard share", description: "Share of team receiving yards produced.", direction: "higher", family: "production", weight: 0.2 },
+        { key: "receiving_yard_share", label: "Receiving-yard share", description: "Share of team receiving yards produced.", direction: "higher", family: "production", weight: 0.25 },
+        { key: "receiving_ppa", label: "Receiving PPA", description: "Average predicted points added on CFBD passing plays involving the receiver.", direction: "higher", family: "production", weight: 0.2 },
       ],
     },
     {
       key: "age",
       label: "Age and declaration",
-      minimumCoverage: 0.5,
+      minimumCoverage: 0.4,
       weight: 0.2,
       metrics: [
         { key: "age_at_draft", label: "Age at draft", description: "Player age on draft day.", direction: "lower", family: "age", weight: 0.65 },
@@ -145,20 +146,22 @@ export const rbModelConfiguration: RookieModelConfiguration = {
       minimumCoverage: 0.5,
       weight: 0.45,
       metrics: [
-        { key: "scrimmage_yards_per_game", label: "Scrimmage yards per game", description: "Rushing and receiving yards normalized by games played.", direction: "higher", family: "production", weight: 0.35 },
-        { key: "rushing_yard_share", label: "Rushing-yard share", description: "Share of team rushing yards produced.", direction: "higher", family: "production", weight: 0.3 },
-        { key: "yards_after_contact_per_attempt", label: "YAC per attempt", description: "Rushing yards after contact per attempt when legally sourced.", direction: "higher", family: "production", weight: 0.2 },
-        { key: "missed_tackles_per_attempt", label: "Missed tackles per attempt", description: "Missed tackles forced per rushing attempt when legally sourced.", direction: "higher", family: "production", weight: 0.15 },
+        { key: "scrimmage_yards_per_game", label: "Scrimmage yards per game", description: "Rushing and receiving yards normalized by games played.", direction: "higher", family: "production", weight: 0.3 },
+        { key: "rushing_yard_share", label: "Rushing-yard share", description: "Share of team rushing yards produced.", direction: "higher", family: "production", weight: 0.25 },
+        { key: "yards_after_contact_per_attempt", label: "YAC per attempt", description: "Rushing yards after contact per attempt when legally sourced.", direction: "higher", family: "production", weight: 0.15 },
+        { key: "missed_tackles_per_attempt", label: "Missed tackles forced per attempt", description: "Missed tackles forced per rushing attempt when legally sourced.", direction: "higher", family: "production", weight: 0.1 },
+        { key: "rushing_ppa", label: "Rushing PPA", description: "Average predicted points added on CFBD rushing plays.", direction: "higher", family: "production", weight: 0.2 },
       ],
     },
     {
       key: "receiving",
       label: "Receiving profile",
-      minimumCoverage: 0.5,
+      minimumCoverage: 0.34,
       weight: 0.2,
       metrics: [
-        { key: "receptions_per_game", label: "Receptions per game", description: "College receptions normalized by games played.", direction: "higher", family: "receiving", weight: 0.5 },
-        { key: "receiving_yprr", label: "Receiving YPRR", description: "Receiving yards per route run.", direction: "higher", family: "receiving", weight: 0.5 },
+        { key: "receptions_per_game", label: "Receptions per game", description: "College receptions normalized by games played.", direction: "higher", family: "receiving", weight: 0.45 },
+        { key: "receiving_yprr", label: "Receiving YPRR", description: "Receiving yards per route run.", direction: "higher", family: "receiving", weight: 0.3 },
+        { key: "receiving_ppa", label: "Receiving PPA", description: "Average predicted points added on CFBD passing plays involving the back.", direction: "higher", family: "receiving", weight: 0.25 },
       ],
     },
     {

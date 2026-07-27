@@ -17,6 +17,21 @@ if (!user) throw new Error("No Supabase user found.");
 const norm = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 const now = new Date().toISOString();
 
+async function fetchWithRetry(input: string, init?: RequestInit) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(input, init);
+      if (response.ok || response.status < 500) return response;
+      lastError = new Error(`${input} returned ${response.status}.`);
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, attempt * 750));
+  }
+  throw lastError instanceof Error ? lastError : new Error(`Unable to fetch ${input}.`);
+}
+
 async function source(label: string, values: Record<string, unknown>) {
   const found = await supabase.from("rookie_sources").select("id").eq("user_id", user.id).eq("label", label).maybeSingle();
   if (found.error) throw found.error;
@@ -26,20 +41,26 @@ async function source(label: string, values: Record<string, unknown>) {
   return made.data.id;
 }
 
-const playersResult = await supabase.from("rookie_players").select("id,name,class_year,position,overall_pick").eq("user_id", user.id).in("class_year", [2025, 2026]).in("position", ["RB", "WR"]);
+const playersResult = await supabase.from("rookie_players").select("id,name,class_year,position,overall_pick,nfl_team").eq("user_id", user.id).in("class_year", [2025, 2026]).in("position", ["RB", "WR"]);
 if (playersResult.error) throw playersResult.error;
 const players = playersResult.data;
 const byClassName = new Map(players.map((player) => [`${player.class_year}:${norm(player.name)}`, player]));
+type Player = (typeof players)[number];
+let draftMatches: Array<{ player: Player; row: Record<string, string> }> = [];
+let combineMatches: Array<{ player: Player; row: Record<string, string> }> = [];
+let recruitingMatches: Array<{ player: Player; recruit: { rating: number; stars: number; year: number } }> = [];
+const situationByPlayer = new Map<string, number>();
 
+if (!process.env.ENRICH_DYNAMIC_ONLY) {
 const nflverseSource = await source("nflverse draft picks", {
   author: "nflverse", license: "CC-BY-4.0", methodology_class: "documented", publication: "nflverse-data",
   reliability: "high", summary: "Open NFL draft round, overall pick, team, college, and draft age.",
   url: "https://github.com/nflverse/nflverse-data/releases/tag/draft_picks",
 });
-const draftResponse = await fetch("https://github.com/nflverse/nflverse-data/releases/download/draft_picks/draft_picks.csv");
+const draftResponse = await fetchWithRetry("https://github.com/nflverse/nflverse-data/releases/download/draft_picks/draft_picks.csv");
 if (!draftResponse.ok) throw new Error(`nflverse returned ${draftResponse.status}.`);
 const drafts = parse(await draftResponse.text(), { columns: true, skip_empty_lines: true }) as Array<Record<string, string>>;
-const draftMatches = drafts.flatMap((row) => {
+draftMatches = drafts.flatMap((row) => {
   const classYear = Number(row.season);
   const player = byClassName.get(`${classYear}:${norm(row.pfr_player_name ?? "")}`);
   return player ? [{ player, row }] : [];
@@ -60,10 +81,10 @@ for (const { player, row } of draftMatches) {
 }
 
 const combineSource = await source("nflverse combine", { author: "nflverse", license: "CC-BY-4.0", methodology_class: "documented", publication: "nflverse-data", reliability: "high", summary: "Open NFL combine measurements and testing results.", url: "https://github.com/nflverse/nflverse-data/releases/tag/combine" });
-const combineResponse = await fetch("https://github.com/nflverse/nflverse-data/releases/download/combine/combine.csv");
+const combineResponse = await fetchWithRetry("https://github.com/nflverse/nflverse-data/releases/download/combine/combine.csv");
 if (!combineResponse.ok) throw new Error(`nflverse combine returned ${combineResponse.status}.`);
 const combineRows = parse(await combineResponse.text(), { columns: true, skip_empty_lines: true }) as Array<Record<string, string>>;
-const combineMatches = combineRows.flatMap((row) => {
+combineMatches = combineRows.flatMap((row) => {
   const player = byClassName.get(`${Number(row.season)}:${norm(row.player_name ?? "")}`);
   return player ? [{ player, row }] : [];
 });
@@ -91,7 +112,7 @@ for (const { player, row } of combineMatches) {
 const recruitingSource = await source("CollegeFootballData recruiting", { author: "CollegeFootballData", license: "Provider terms apply", methodology_class: "documented", publication: "CollegeFootballData", reliability: "high", summary: "Documented high-school recruiting ratings and star classifications.", url: "https://collegefootballdata.com/" });
 const recruitingByName = new Map<string, { rating: number; stars: number; year: number }>();
 for (const recruitingYear of [2019, 2020, 2021, 2022, 2023, 2024]) {
-  const response = await fetch(`https://api.collegefootballdata.com/recruiting/players?year=${recruitingYear}`, { headers: { Authorization: `Bearer ${cfbdKey}` } });
+  const response = await fetchWithRetry(`https://api.collegefootballdata.com/recruiting/players?year=${recruitingYear}`, { headers: { Authorization: `Bearer ${cfbdKey}` } });
   if (!response.ok) throw new Error(`CFBD recruiting ${recruitingYear} returned ${response.status}.`);
   const recruits = await response.json() as Array<{ name: string; rating?: number; stars?: number; year: number }>;
   for (const recruit of recruits) {
@@ -101,7 +122,7 @@ for (const recruitingYear of [2019, 2020, 2021, 2022, 2023, 2024]) {
     if (!current || recruit.rating > current.rating) recruitingByName.set(key, { rating: recruit.rating, stars: recruit.stars ?? 0, year: recruit.year });
   }
 }
-const recruitingMatches = players.flatMap((player) => {
+recruitingMatches = players.flatMap((player) => {
   const recruit = recruitingByName.get(norm(player.name));
   return recruit ? [{ player, recruit }] : [];
 });
@@ -113,11 +134,38 @@ if (recruitingMatches.length) {
     if (updated.error) throw updated.error;
   }
 }
+}
+
+const opportunitySource = await source("nflverse incumbent opportunity", { author: "nflverse", license: "CC-BY-4.0", methodology_class: "documented", publication: "nflverse-data", reliability: "high", summary: "Class-relative depth-chart opportunity calculated from prior-season incumbent PPR production at the drafted team and position.", url: "https://github.com/nflverse/nflverse-data/releases/tag/stats_player" });
+for (const { classYear, priorSeason } of [{ classYear: 2025, priorSeason: 2024 }, { classYear: 2026, priorSeason: 2025 }]) {
+  const response = await fetchWithRetry(`https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_reg_${priorSeason}.csv`);
+  if (!response.ok) throw new Error(`nflverse player stats ${priorSeason} returned ${response.status}.`);
+  const rows = parse(await response.text(), { columns: true, skip_empty_lines: true }) as Array<Record<string, string>>;
+  const competition = new Map<string, number>();
+  for (const row of rows) {
+    if (!['RB', 'WR'].includes(row.position)) continue;
+    const key = `${row.recent_team}:${row.position}`;
+    competition.set(key, Math.max(competition.get(key) ?? 0, Number(row.fantasy_points_ppr) || 0));
+  }
+  const cohort = players.filter((player) => player.class_year === classYear && player.nfl_team);
+  const values = cohort.map((player) => competition.get(`${player.nfl_team}:${player.position}`) ?? 0).sort((a, b) => a - b);
+  const score = (value: number) => values.length < 2 ? 50 : Number((100 - (values.indexOf(value) / (values.length - 1) * 100)).toFixed(2));
+  const snapshots = cohort.map((player) => {
+    const depthChartScore = score(competition.get(`${player.nfl_team}:${player.position}`) ?? 0);
+    situationByPlayer.set(player.id, depthChartScore);
+    return { depth_chart_score: depthChartScore, nfl_team: player.nfl_team, observed_at: `${classYear}-04-30T12:00:01Z`, player_id: player.id, source_id: opportunitySource, user_id: user.id };
+  });
+  if (snapshots.length) {
+    const saved = await supabase.from("rookie_context_snapshots").upsert(snapshots, { onConflict: "player_id,observed_at" });
+    if (saved.error) throw saved.error;
+  }
+}
 
 const cfbdSource = await source("CollegeFootballData API", { author: "CollegeFootballData", license: "Provider terms apply", methodology_class: "documented", publication: "CollegeFootballData", reliability: "high", summary: "Documented college production and usage API.", url: "https://collegefootballdata.com/" });
 let usageMatches = 0;
+const efficiencyPlayerIds = new Set<string>();
 for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classYear: 2026, season: 2025 }]) {
-  const response = await fetch(`https://api.collegefootballdata.com/player/usage?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } });
+  const response = await fetchWithRetry(`https://api.collegefootballdata.com/player/usage?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } });
   if (!response.ok) throw new Error(`CFBD usage returned ${response.status}.`);
   const rows = await response.json() as Array<{ name: string; position: string; usage?: { pass?: number } }>;
   const metrics = rows.flatMap((row) => {
@@ -131,10 +179,35 @@ for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classY
     const saved = await supabase.from("rookie_player_metrics").upsert(metrics, { onConflict: "player_id,metric_key,as_of_date,source_id" });
     if (saved.error) throw saved.error;
   }
+
+  const [ppaResponse, successResponse] = await Promise.all([
+    fetchWithRetry(`https://api.collegefootballdata.com/ppa/players/season?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } }),
+    fetchWithRetry(`https://api.collegefootballdata.com/stats/player/success?year=${season}`, { headers: { Authorization: `Bearer ${cfbdKey}` } }),
+  ]);
+  if (!ppaResponse.ok) throw new Error(`CFBD PPA returned ${ppaResponse.status}.`);
+  if (!successResponse.ok) throw new Error(`CFBD success rates returned ${successResponse.status}.`);
+  const ppaRows = await ppaResponse.json() as Array<{ name: string; averagePPA?: { pass?: number | null; rush?: number | null } }>;
+  const successRows = await successResponse.json() as Array<{ name: string; passing?: { successRate?: number | null }; rushing?: { successRate?: number | null } }>;
+  const successByName = new Map(successRows.map((row) => [norm(row.name), row]));
+  const efficiencyMetrics = ppaRows.flatMap((row) => {
+    const player = byClassName.get(`${classYear}:${norm(row.name)}`);
+    if (!player) return [];
+    const success = successByName.get(norm(row.name));
+    const values = player.position === "WR"
+      ? [{ key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }]
+      : [{ key: "rushing_ppa", value: row.averagePPA?.rush }, { key: "rushing_success_rate", value: success?.rushing?.successRate }, { key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }];
+    const available = values.filter((entry): entry is { key: string; value: number } => entry.value !== null && entry.value !== undefined && Number.isFinite(entry.value));
+    if (available.length) efficiencyPlayerIds.add(player.id);
+    return available.map((entry) => ({ as_of_date: `${classYear}-04-30`, confidence: "high", metric_key: entry.key, player_id: player.id, source_id: cfbdSource, user_id: user.id, value: entry.value }));
+  });
+  if (efficiencyMetrics.length) {
+    const saved = await supabase.from("rookie_player_metrics").upsert(efficiencyMetrics, { onConflict: "player_id,metric_key,as_of_date,source_id" });
+    if (saved.error) throw saved.error;
+  }
 }
 
 const fantasyCalcSource = await source("FantasyCalc 12-team Superflex", { author: "FantasyCalc", license: "Public API; provider terms apply", methodology_class: "documented", publication: "FantasyCalc", reliability: "medium", summary: "Current 12-team Superflex half-PPR dynasty market values.", url: "https://fantasycalc.com/" });
-const marketResponse = await fetch("https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=0.5");
+const marketResponse = await fetchWithRetry("https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=0.5");
 if (!marketResponse.ok) throw new Error(`FantasyCalc returned ${marketResponse.status}.`);
 const marketRows = await marketResponse.json() as Array<{ overallRank?: number; value?: number; player?: { name?: string; position?: string } }>;
 const marketMatches = marketRows.flatMap((row) => {
@@ -177,9 +250,9 @@ for (const configuration of configurations) {
   const positionPlayers = players.filter((player) => player.position === configuration.position);
   const keys = configuration.prospectFamilies.flatMap((family) => family.metrics.map((metric) => metric.key));
   const references: RookieMetricReference[] = keys.map((metricKey) => ({ key: metricKey, values: positionPlayers.flatMap((player) => { const value = inputs.get(player.id)?.find((metric) => metric.key === metricKey)?.value; return value == null ? [] : [value]; }) }));
-  const scored = positionPlayers.map((player) => ({ player, result: calculateRookieScore(configuration as RookieModelConfiguration, inputs.get(player.id) ?? [], references, { draftCapital: player.overall_pick ? Math.max(0, Math.min(100, 101 - ((player.overall_pick - 1) / 256) * 100)) : null, market: marketByPlayer.get(player.id) ?? null, situation: null }) }));
+  const scored = positionPlayers.map((player) => ({ player, result: calculateRookieScore(configuration as RookieModelConfiguration, inputs.get(player.id) ?? [], references, { draftCapital: player.overall_pick ? Math.max(0, Math.min(100, 101 - ((player.overall_pick - 1) / 256) * 100)) : null, market: marketByPlayer.get(player.id) ?? null, situation: situationByPlayer.get(player.id) ?? null }) }));
   const ranked = [...scored].sort((a, b) => (b.result.overallScore ?? -1) - (a.result.overallScore ?? -1));
-  const runs = await supabase.from("rookie_score_runs").insert(scored.map(({ player, result }) => ({ as_of_date: now.slice(0, 10), data_coverage: result.coverage, draft_capital_score: result.draftCapitalScore, market_score: result.marketScore, model_version_id: modelIds.get(configuration.position)!, normalization: result.normalization, overall_score: result.overallScore, player_id: player.id, position_rank: ranked.findIndex((entry) => entry.player.id === player.id) + 1, prospect_score: result.prospectScore, situation_score: null, tier: result.tier, user_id: user.id }))).select("id,player_id");
+  const runs = await supabase.from("rookie_score_runs").insert(scored.map(({ player, result }) => ({ as_of_date: now.slice(0, 10), data_coverage: result.coverage, draft_capital_score: result.draftCapitalScore, market_score: result.marketScore, model_version_id: modelIds.get(configuration.position)!, normalization: result.normalization, overall_score: result.overallScore, player_id: player.id, position_rank: ranked.findIndex((entry) => entry.player.id === player.id) + 1, prospect_score: result.prospectScore, situation_score: result.situationScore, tier: result.tier, user_id: user.id }))).select("id,player_id");
   if (runs.error) throw runs.error;
   const runIds = new Map(runs.data.map((run) => [run.player_id, run.id]));
   const components = scored.flatMap(({ player, result }) => result.components.map((component) => ({ contribution: component.contribution, effective_weight: component.weight, explanation: component.explanation, family_key: component.familyKey, metric_key: component.key, metric_label: component.label, missing: component.missing, normalized_value: component.normalizedValue, raw_value: component.rawValue, score_run_id: runIds.get(player.id)!, source_id: component.sourceId, user_id: user.id })));
@@ -188,7 +261,7 @@ for (const configuration of configurations) {
 }
 
 const byYear = (matches: Array<{ player: { class_year: number } }>, year: number) => matches.filter(({ player }) => player.class_year === year).length;
-console.log(JSON.stringify({ byDraftYear: Object.fromEntries([2025, 2026].map((year) => [year, { combine: byYear(combineMatches, year), draft: byYear(draftMatches, year), market: byYear(marketMatches, year), players: players.filter((player) => player.class_year === year).length, recruiting: byYear(recruitingMatches, year) }])), scored: scoredCount, usageMatches }));
+console.log(JSON.stringify({ byDraftYear: Object.fromEntries([2025, 2026].map((year) => [year, { combine: byYear(combineMatches, year), draft: byYear(draftMatches, year), efficiency: players.filter((player) => player.class_year === year && efficiencyPlayerIds.has(player.id)).length, market: byYear(marketMatches, year), players: players.filter((player) => player.class_year === year).length, recruiting: byYear(recruitingMatches, year) }])), scored: scoredCount, usageMatches }));
 }
 
 main().catch((error) => {

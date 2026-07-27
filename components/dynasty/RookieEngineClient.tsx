@@ -59,7 +59,19 @@ export function RookieEngineClient({ importBatches, rankings, sources }: { impor
       const coverage = scored.length
         ? scored.reduce((total, ranking) => total + (ranking.coverage ?? 0), 0) / scored.length
         : null;
-      return { average, coverage, count: cohort.length, scored: scored.length, year };
+      const overall = cohort.filter((ranking) => ranking.overallScore !== null);
+      const averageOverall = overall.length ? overall.reduce((total, ranking) => total + (ranking.overallScore ?? 0), 0) / overall.length : null;
+      return {
+        average,
+        averageOverall,
+        coverage,
+        count: cohort.length,
+        draft: cohort.filter((ranking) => ranking.draftCapitalScore !== null).length,
+        market: cohort.filter((ranking) => ranking.marketScore !== null).length,
+        overall: overall.length,
+        scored: scored.length,
+        year,
+      };
     });
   }, [rankings]);
 
@@ -230,9 +242,9 @@ export function RookieEngineClient({ importBatches, rankings, sources }: { impor
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
-        <div className="flex items-center gap-2"><BarChart3 className="h-5 w-5 text-moss" aria-hidden="true" /><h2 className="font-bold text-ink">Class comparison</h2></div>
-        <p className="mt-1 text-sm text-ink/55">Class-relative distributions are directional and are not historical hit probabilities.</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">{classComparison.map((cohort) => <article key={cohort.year} className="rounded-md border border-ink/10 bg-mist/35 p-4"><div className="flex items-center justify-between"><h3 className="text-lg font-bold text-ink">{cohort.year}</h3><span className="text-xs font-semibold text-ink/50">{cohort.scored}/{cohort.count} scored</span></div><dl className="mt-3 grid grid-cols-2 gap-3 text-sm"><div><dt className="text-ink/50">Average prospect</dt><dd className="mt-1 text-xl font-bold text-moss">{score(cohort.average)}</dd></div><div><dt className="text-ink/50">Average coverage</dt><dd className="mt-1 text-xl font-bold text-ink">{cohort.coverage === null ? "-" : `${cohort.coverage.toFixed(0)}%`}</dd></div></dl></article>)}</div>
+        <div className="flex items-center gap-2"><BarChart3 className="h-5 w-5 text-moss" aria-hidden="true" /><h2 className="font-bold text-ink">Central dataset by draft year</h2></div>
+        <p className="mt-1 text-sm text-ink/55">One joined view of prospect, draft, market, and overall coverage. Scores remain class-relative—not hit probabilities.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">{classComparison.map((cohort) => <article key={cohort.year} className="rounded-md border border-ink/10 bg-mist/35 p-4"><div className="flex items-center justify-between"><h3 className="text-lg font-bold text-ink">{cohort.year} draft class</h3><span className="text-xs font-semibold text-ink/50">{cohort.count} RB/WR</span></div><dl className="mt-3 grid grid-cols-2 gap-3 text-sm"><div><dt className="text-ink/50">Average prospect</dt><dd className="mt-1 text-xl font-bold text-moss">{score(cohort.average)}</dd></div><div><dt className="text-ink/50">Average overall</dt><dd className="mt-1 text-xl font-bold text-ink">{score(cohort.averageOverall)}</dd></div><div><dt className="text-ink/50">Input coverage</dt><dd className="mt-1 text-xl font-bold text-ink">{cohort.coverage === null ? "-" : `${cohort.coverage.toFixed(0)}%`}</dd></div><div><dt className="text-ink/50">Complete overall</dt><dd className="mt-1 text-xl font-bold text-ink">{cohort.overall}/{cohort.count}</dd></div></dl><div className="mt-4 grid grid-cols-3 gap-2 border-t border-ink/10 pt-3 text-center text-xs"><div><p className="font-bold text-ink">{cohort.scored}</p><p className="text-ink/50">Prospect</p></div><div><p className="font-bold text-ink">{cohort.draft}</p><p className="text-ink/50">Draft</p></div><div><p className="font-bold text-ink">{cohort.market}</p><p className="text-ink/50">Market</p></div></div></article>)}</div>
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white shadow-soft">
