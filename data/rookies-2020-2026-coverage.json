@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-22T19:59:18.527Z",
+  "generated_at": "2026-08-22T20:57:46.304Z",
   "cohort": {
     "end_year": 2026,
     "positions": [
@@ -10,10 +10,12 @@
   },
   "limitations": [
     "Cohort contains drafted RB/WR players plus undrafted NFL combine participants; non-combine undrafted prospects require another approved identity source.",
-    "RAS, YPRR, yards after contact, missed tackles, target share, and early-declare are null until an approved source is added.",
+    "RAS, YPRR, yards after contact, and missed tackles are null until an approved licensed source is added.",
     "Name-only CFBD joins are accepted only when exactly one eligible drafted player matches.",
     "Receiving and rushing shares use CFBD player-stat team totals for the final matched college season.",
-    "Per-game metrics prefer CFBD player game counts and fall back to the final college team's regular-season game count."
+    "Per-game metrics prefer CFBD player game counts and fall back to the final college team's regular-season game count.",
+    "Target share is final-season player targets divided by team targets from the cfbfastR ESPN receiving dataset.",
+    "Early-declare status is matched to the NFL's annual underclassmen and special-eligibility lists; an unavailable annual list remains null rather than inferred."
   ],
   "player_count": 375,
   "by_class": {
@@ -103,8 +105,8 @@
       "percent": 0
     },
     "target_share": {
-      "count": 0,
-      "percent": 0
+      "count": 329,
+      "percent": 87.7
     },
     "receiving_yard_share": {
       "count": 348,
@@ -115,8 +117,8 @@
       "percent": 95.7
     },
     "early_declare": {
-      "count": 0,
-      "percent": 0
+      "count": 375,
+      "percent": 100
     },
     "ras": {
       "count": 0,

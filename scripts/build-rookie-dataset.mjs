@@ -6,6 +6,16 @@ import { parse } from "csv-parse/sync";
 const CFBD_BASE = "https://api.collegefootballdata.com";
 const DRAFT_URL = "https://github.com/nflverse/nflverse-data/releases/download/draft_picks/draft_picks.csv";
 const COMBINE_URL = "https://github.com/nflverse/nflverse-data/releases/download/combine/combine.csv";
+const CFB_RECEIVING_URL = "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_cfb_receiving";
+const EARLY_ENTRY_URLS = new Map([
+  [2020, "https://www.nfl.com/news/list-of-underclassmen-granted-eligibility-for-2020-nfl-draft-0ap3000001098109"],
+  [2021, "https://www.nfl.com/news/2021-nfl-draft-underclassmen-tracker-who-intends-to-enter"],
+  [2022, "https://www.nfl.com/news/2022-nfl-draft-underclassmen-tracker-who-intends-to-enter"],
+  [2023, "https://www.nfl.com/news/list-of-underclassmen-granted-eligibility-for-2023-nfl-draft"],
+  [2024, "https://www.nfl.com/news/twenty-additional-players-granted-special-eligibility-for-2024-nfl-draft-for-total-of-54-players"],
+  [2025, "https://www.nfl.com/news/fifty-five-players-granted-special-eligibility-for-2025-nfl-draft"],
+  [2026, "https://www.nfl.com/news/forty-two-players-granted-special-eligibility-for-2026-nfl-draft"],
+]);
 const POSITIONS = new Set(["RB", "WR"]);
 const METRIC_FIELDS = [
   "pass_play_usage", "best_pass_play_usage", "receiving_ppa", "career_receiving_ppa",
@@ -29,8 +39,10 @@ const startYear = Number(argument("start", "2020"));
 const endYear = Number(argument("end", "2026"));
 const outputPath = resolve(argument("output", `data/rookies-${startYear}-${endYear}.csv`));
 const reportPath = resolve(argument("report", `data/rookies-${startYear}-${endYear}-coverage.json`));
+const enrichmentJsonPath = resolve(`data/rookie-enrichments-${startYear}-${endYear}.json`);
 const historicalOutputPath = resolve(`data/rookies-${startYear}-${Math.min(endYear, 2024)}-historical-import.csv`);
 const currentOutputPath = resolve(`data/rookies-${Math.max(startYear, 2025)}-${endYear}-current-import.csv`);
+const identityFields = ["name", "position", "class_year", "school", "external_id", "scoring_date"];
 const apiKey = process.env.CFBD_API_KEY?.trim();
 if (!apiKey) throw new Error("CFBD_API_KEY is required.");
 if (!Number.isInteger(startYear) || !Number.isInteger(endYear) || startYear > endYear) {
@@ -40,6 +52,11 @@ if (!Number.isInteger(startYear) || !Number.isInteger(endYear) || startYear > en
 function normalizeName(value) {
   return String(value ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/\b(jr|sr|ii|iii|iv)\b/g, "").replace(/[^a-z0-9]/g, "");
+}
+
+function decodeHtml(value) {
+  return value.replaceAll("&apos;", "'").replaceAll("&#x27;", "'").replaceAll("’", "'")
+    .replaceAll("&amp;", "&").replace(/<[^>]+>/g, " ");
 }
 
 function number(value) {
@@ -120,6 +137,20 @@ const players = draftRows.flatMap((row) => {
   }];
 });
 
+const earlyEntriesByYear = new Map();
+for (const [year, url] of EARLY_ENTRY_URLS) {
+  if (year < startYear || year > endYear) continue;
+  console.log(`Fetching NFL ${year} early-entry list...`);
+  try {
+    const html = decodeHtml(await fetchText(url));
+    const names = new Set();
+    for (const match of html.matchAll(/([A-Z][A-Za-z.'’\- ]{1,45}),\s*(?:RB|WR)(?:\b|\/)/g)) names.add(normalizeName(match[1]));
+    earlyEntriesByYear.set(year, names);
+  } catch (error) {
+    console.warn(`Skipping NFL early-entry list for ${year}: ${error instanceof Error ? error.message : error}`);
+  }
+}
+
 const draftedKeys = new Set(players.map((player) => `${player.class_year}:${player.position}:${normalizeName(player.name)}`));
 for (const row of combineRows) {
   const classYear = number(row.draft_year ?? row.season);
@@ -147,6 +178,7 @@ for (const row of combineRows) {
 const playersByName = new Map();
 const teamTotals = new Map();
 const teamGames = new Map();
+const receivingTargets = new Map();
 for (const player of players) {
   const key = normalizeName(player.name);
   playersByName.set(key, [...(playersByName.get(key) ?? []), player]);
@@ -208,6 +240,28 @@ for (let season = Math.max(2015, startYear - 5); season < endYear; season += 1) 
   }
 }
 
+for (let season = Math.max(2015, startYear - 5); season < endYear; season += 1) {
+  console.log(`Fetching cfbfastR ${season} receiving targets...`);
+  try {
+    const rows = parse(await fetchText(`${CFB_RECEIVING_URL}/cfb_receiving_${season}.csv`), { columns: true, skip_empty_lines: true });
+    const teamTargets = new Map();
+    for (const row of rows) {
+      const targets = number(row.targets);
+      if (targets === null) continue;
+      const teamKey = `${season}:${row.pos_team}`;
+      teamTargets.set(teamKey, (teamTargets.get(teamKey) ?? 0) + targets);
+    }
+    for (const row of rows) {
+      const targets = number(row.targets);
+      const total = teamTargets.get(`${season}:${row.pos_team}`) ?? 0;
+      if (targets === null || total <= 0) continue;
+      receivingTargets.set(`${season}:${row.pos_team}:${normalizeName(row.receiver_player_name)}`, targets / total);
+    }
+  } catch (error) {
+    console.warn(`Skipping cfbfastR receiving targets for ${season}: ${error instanceof Error ? error.message : error}`);
+  }
+}
+
 for (let recruitingYear = Math.max(2014, startYear - 7); recruitingYear <= endYear - 2; recruitingYear += 1) {
   console.log(`Fetching CFBD ${recruitingYear} recruiting...`);
   const recruits = await fetchCfbd(`/recruiting/players?year=${recruitingYear}`);
@@ -246,6 +300,7 @@ for (const player of players) {
   const teamReceiving = finalTeamTotals?.receiving ?? 0;
   const teamRushing = finalTeamTotals?.rushing ?? 0;
   player.receiving_yard_share = finalSeason?.receivingYards != null && teamReceiving ? finalSeason.receivingYards / teamReceiving : null;
+  player.target_share = finalSeason ? receivingTargets.get(`${finalSeason.season}:${finalSeason.team}:${normalizeName(player.name)}`) ?? null : null;
   player.rushing_yard_share = finalSeason?.rushingYards != null && teamRushing ? finalSeason.rushingYards / teamRushing : null;
   player.pass_play_usage = player._usage.at(-1) ?? null;
   player.best_pass_play_usage = maximum(player._usage);
@@ -256,6 +311,8 @@ for (const player of players) {
   player.career_rushing_ppa = mean(player._rushingPpa);
   player.best_rushing_ppa = maximum(player._rushingPpa);
   player.conference_strength = conferenceScore(player._conference);
+  const earlyEntries = earlyEntriesByYear.get(player.class_year);
+  player.early_declare = earlyEntries ? earlyEntries.has(normalizeName(player.name)) : null;
   if (finalSeason && player._games) {
     player.scrimmage_yards_per_game = ((finalSeason.rushingYards ?? 0) + (finalSeason.receivingYards ?? 0)) / player._games;
     player.receptions_per_game = finalSeason.receptions == null ? null : finalSeason.receptions / player._games;
@@ -264,6 +321,10 @@ for (const player of players) {
 
 players.sort((a, b) => a.class_year - b.class_year || a.position.localeCompare(b.position) || (a.overall_pick ?? 999) - (b.overall_pick ?? 999));
 const toCsv = (rows) => [OUTPUT_FIELDS.join(","), ...rows.map((player) => OUTPUT_FIELDS.map((field) => csvEscape(player[field])).join(","))].join("\n") + "\n";
+const enrichmentCsv = (rows, metric) => {
+  const fields = [...identityFields, metric];
+  return [fields.join(","), ...rows.map((player) => fields.map((field) => csvEscape(player[field])).join(","))].join("\n") + "\n";
+};
 const csv = toCsv(players);
 const coverage = Object.fromEntries(OUTPUT_FIELDS.map((field) => [field, {
   count: players.filter((player) => player[field] !== null && player[field] !== undefined && player[field] !== "").length,
@@ -273,10 +334,12 @@ const report = {
   generated_at: new Date().toISOString(), cohort: { end_year: endYear, positions: [...POSITIONS], start_year: startYear },
   limitations: [
     "Cohort contains drafted RB/WR players plus undrafted NFL combine participants; non-combine undrafted prospects require another approved identity source.",
-    "RAS, YPRR, yards after contact, missed tackles, target share, and early-declare are null until an approved source is added.",
+    "RAS, YPRR, yards after contact, and missed tackles are null until an approved licensed source is added.",
     "Name-only CFBD joins are accepted only when exactly one eligible drafted player matches.",
     "Receiving and rushing shares use CFBD player-stat team totals for the final matched college season.",
     "Per-game metrics prefer CFBD player game counts and fall back to the final college team's regular-season game count.",
+    "Target share is final-season player targets divided by team targets from the cfbfastR ESPN receiving dataset.",
+    "Early-declare status is matched to the NFL's annual underclassmen and special-eligibility lists; an unavailable annual list remains null rather than inferred.",
   ],
   player_count: players.length, by_class: Object.fromEntries(Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index).map((year) => [year, players.filter((player) => player.class_year === year).length])), coverage,
 };
@@ -285,5 +348,17 @@ await mkdir(dirname(reportPath), { recursive: true });
 await writeFile(outputPath, csv);
 if (startYear <= 2024) await writeFile(historicalOutputPath, toCsv(players.filter((player) => player.class_year <= 2024)));
 if (endYear >= 2025) await writeFile(currentOutputPath, toCsv(players.filter((player) => player.class_year >= 2025)));
+for (const metric of ["target_share", "early_declare"]) {
+  if (startYear <= 2024) await writeFile(resolve(`data/rookies-${startYear}-${Math.min(endYear, 2024)}-${metric}-import.csv`), enrichmentCsv(players.filter((player) => player.class_year <= 2024), metric));
+  if (endYear >= 2025) await writeFile(resolve(`data/rookies-${Math.max(startYear, 2025)}-${endYear}-${metric}-import.csv`), enrichmentCsv(players.filter((player) => player.class_year >= 2025), metric));
+}
 await writeFile(reportPath, JSON.stringify(report, null, 2) + "\n");
+await writeFile(enrichmentJsonPath, JSON.stringify(players.map((player) => ({
+  classYear: player.class_year,
+  earlyDeclare: player.early_declare ?? null,
+  externalId: player.external_id,
+  name: player.name,
+  position: player.position,
+  targetShare: player.target_share ?? null,
+})), null, 2) + "\n");
 console.log(JSON.stringify({ outputPath, historicalOutputPath, currentOutputPath, reportPath, players: players.length, byClass: report.by_class }, null, 2));

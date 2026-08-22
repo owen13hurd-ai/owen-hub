@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import rookieEnrichments from "@/data/rookie-enrichments-2020-2026.json";
+import rookieOutcomes from "@/data/rookie-outcomes-2020-2025.json";
 import { previewHistoricalRookieCsv, previewRookieCsv } from "@/lib/dynasty/rookie-model/import";
 import { findRookieDuplicateCandidates } from "@/lib/dynasty/rookie-model/matching";
 import { parseGoogleSheetRookieIdentities } from "@/lib/dynasty/rookie-model/google-sheet-adapter";
@@ -43,6 +45,64 @@ async function getAuthenticatedClient() {
 async function requireOwnedRookieSource(supabase: Awaited<ReturnType<typeof createRookieClient>>, userId: string, sourceId: string) {
   const { data } = await supabase.from("rookie_sources").select("id").eq("id", sourceId).eq("user_id", userId).maybeSingle();
   if (!data) throw new Error("Choose a valid source from the Source Library.");
+}
+
+export async function importOpenRookieEnrichments(): Promise<RookieImportActionState> {
+  try {
+    const { supabase, userId } = await getAuthenticatedClient();
+    const { data: sources, error: sourceError } = await supabase.from("rookie_sources").select("id,label").eq("user_id", userId).in("label", ["cfbfastR ESPN receiving targets", "NFL underclassmen eligibility lists", "nflverse player outcomes"]);
+    if (sourceError) throw sourceError;
+    const sourceIds = new Map((sources ?? []).map((source) => [source.label, source.id]));
+    if (!sourceIds.has("nflverse player outcomes")) {
+      const created = await supabase.from("rookie_sources").insert({ accessed_at: new Date().toISOString(), author: "nflverse", label: "nflverse player outcomes", license: "CC-BY-4.0", methodology_class: "documented", publication: "nflverse-data", reliability: "high", summary: "Regular-season games, PPR fantasy production, PPG, and league-wide positional finishes for outcome validation only.", url: "https://github.com/nflverse/nflverse-data/releases/tag/player_stats", user_id: userId }).select("id").single();
+      if (created.error) throw created.error;
+      sourceIds.set("nflverse player outcomes", created.data.id);
+    }
+    const targetSourceId = sourceIds.get("cfbfastR ESPN receiving targets");
+    const earlySourceId = sourceIds.get("NFL underclassmen eligibility lists");
+    const outcomeSourceId = sourceIds.get("nflverse player outcomes");
+    if (!targetSourceId || !earlySourceId || !outcomeSourceId) throw new Error("Register the cfbfastR and NFL eligibility sources before importing enrichments.");
+
+    const { data: players, error: playerError } = await supabase.from("rookie_players").select("id,external_id,name,class_year,position").eq("user_id", userId).gte("class_year", 2020).lte("class_year", 2026).in("position", ["RB", "WR"]);
+    if (playerError) throw playerError;
+    const byExternalId = new Map((players ?? []).filter((player) => player.external_id).map((player) => [player.external_id, player]));
+    const byIdentity = new Map((players ?? []).map((player) => [`${player.class_year}:${player.position}:${normalizedPlayerName(player.name)}`, player]));
+    const resolved = rookieEnrichments.flatMap((row) => {
+      const player = byExternalId.get(row.externalId) ?? byIdentity.get(`${row.classYear}:${row.position}:${normalizedPlayerName(row.name)}`);
+      return player ? [{ player, row }] : [];
+    });
+
+    for (let start = 0; start < resolved.length; start += 25) {
+      const updates = await Promise.all(resolved.slice(start, start + 25).map(({ player, row }) => supabase.from("rookie_players").update({ early_declare: row.earlyDeclare }).eq("id", player.id).eq("user_id", userId)));
+      const failed = updates.find((result) => result.error);
+      if (failed?.error) throw failed.error;
+    }
+
+    const metricRows = resolved.flatMap(({ player, row }) => [
+      row.targetShare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "target_share", player_id: player.id, source_id: targetSourceId, user_id: userId, value: row.targetShare },
+      row.earlyDeclare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "early_declare", player_id: player.id, source_id: earlySourceId, user_id: userId, value: row.earlyDeclare ? 1 : 0 },
+    ]).filter((row): row is NonNullable<typeof row> => row !== null);
+    for (let start = 0; start < metricRows.length; start += 200) {
+      const result = await supabase.from("rookie_player_metrics").upsert(metricRows.slice(start, start + 200), { onConflict: "player_id,metric_key,as_of_date,source_id" });
+      if (result.error) throw result.error;
+    }
+
+    const outcomeRows = rookieOutcomes.flatMap((row) => {
+      const player = byExternalId.get(row.playerId);
+      return player ? [{ fantasy_points: row.fantasyPoints, fantasy_ppg: row.fantasyPpg, games: row.games, nfl_season: row.nflSeason, player_id: player.id, position_finish: row.positionFinish, source_id: outcomeSourceId, user_id: userId }] : [];
+    });
+    for (let start = 0; start < outcomeRows.length; start += 200) {
+      const result = await supabase.from("rookie_outcomes").upsert(outcomeRows.slice(start, start + 200), { onConflict: "player_id,nfl_season" });
+      if (result.error) throw result.error;
+    }
+
+    await scoreAndPersistRookieClass(userId, { classYears: [2025, 2026] });
+    revalidatePath("/dashboard/dynasty/rookies");
+    revalidatePath("/dashboard/dynasty/rookies/validation");
+    return { message: `${metricRows.length} sourced prospect metrics and ${outcomeRows.length} NFL outcomes imported.`, ok: true };
+  } catch (error) {
+    return { message: error instanceof Error ? error.message : "Open rookie enrichments could not be imported.", ok: false };
+  }
 }
 
 export async function repairImportedRookieNameVariants(): Promise<RookieImportActionState> {

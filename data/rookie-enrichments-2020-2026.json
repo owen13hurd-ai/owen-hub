@@ -1,0 +1,3002 @@
+[
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036360",
+    "name": "Clyde Edwards-Helaire",
+    "position": "RB",
+    "targetShare": 0.13348946135831383
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036275",
+    "name": "D'Andre Swift",
+    "position": "RB",
+    "targetShare": 0.08682634730538923
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036223",
+    "name": "Jonathan Taylor",
+    "position": "RB",
+    "targetShare": 0.11904761904761904
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036414",
+    "name": "Cam Akers",
+    "position": "RB",
+    "targetShare": 0.10914454277286136
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036158",
+    "name": "J.K. Dobbins",
+    "position": "RB",
+    "targetShare": 0.06451612903225806
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036265",
+    "name": "AJ Dillon",
+    "position": "RB",
+    "targetShare": 0.06818181818181818
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036328",
+    "name": "Antonio Gibson",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036450",
+    "name": "Ke'Shawn Vaughn",
+    "position": "RB",
+    "targetShare": 0.10921501706484642
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036251",
+    "name": "Zack Moss",
+    "position": "RB",
+    "targetShare": 0.116
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036297",
+    "name": "Darrynton Evans",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036370",
+    "name": "Joshua Kelley",
+    "position": "RB",
+    "targetShare": 0.04132231404958678
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036269",
+    "name": "La'Mical Perine",
+    "position": "RB",
+    "targetShare": 0.12202380952380952
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036336",
+    "name": "Anthony McFarland Jr.",
+    "position": "RB",
+    "targetShare": 0.0963855421686747
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036425",
+    "name": "DeeJay Dallas",
+    "position": "RB",
+    "targetShare": 0.060897435897435896
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036278",
+    "name": "Jason Huntley",
+    "position": "RB",
+    "targetShare": 0.13128491620111732
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036383",
+    "name": "Eno Benjamin",
+    "position": "RB",
+    "targetShare": 0.16554054054054054
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036435",
+    "name": "Raymond Calais",
+    "position": "RB",
+    "targetShare": 0.03076923076923077
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036245",
+    "name": "Malcolm Perry",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036357",
+    "name": "Henry Ruggs III",
+    "position": "WR",
+    "targetShare": 0.15028901734104047
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036407",
+    "name": "Jerry Jeudy",
+    "position": "WR",
+    "targetShare": 0.2745664739884393
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036358",
+    "name": "CeeDee Lamb",
+    "position": "WR",
+    "targetShare": 0.24584717607973422
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036387",
+    "name": "Jalen Reagor",
+    "position": "WR",
+    "targetShare": 0.22758620689655173
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036322",
+    "name": "Justin Jefferson",
+    "position": "WR",
+    "targetShare": 0.22716627634660422
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036261",
+    "name": "Brandon Aiyuk",
+    "position": "WR",
+    "targetShare": 0.3141891891891892
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036410",
+    "name": "Tee Higgins",
+    "position": "WR",
+    "targetShare": 0.1702127659574468
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036252",
+    "name": "Michael Pittman Jr.",
+    "position": "WR",
+    "targetShare": 0.2762836185819071
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036268",
+    "name": "Laviska Shenault Jr.",
+    "position": "WR",
+    "targetShare": 0.21937321937321938
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036412",
+    "name": "KJ Hamler",
+    "position": "WR",
+    "targetShare": 0.29044117647058826
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036326",
+    "name": "Chase Claypool",
+    "position": "WR",
+    "targetShare": 0.2849002849002849
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036415",
+    "name": "Van Jefferson",
+    "position": "WR",
+    "targetShare": 0.15773809523809523
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036255",
+    "name": "Denzel Mims",
+    "position": "WR",
+    "targetShare": 0.283987915407855
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "GibsAn00",
+    "name": "Antonio Gibson",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036364",
+    "name": "Lynn Bowden Jr.",
+    "position": "WR",
+    "targetShare": 0.2631578947368421
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036365",
+    "name": "Bryan Edwards",
+    "position": "WR",
+    "targetShare": 0.255050505050505
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036331",
+    "name": "Devin Duvernay",
+    "position": "WR",
+    "targetShare": 0.2932692307692308
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036196",
+    "name": "Gabe Davis",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "DaviGa01",
+    "name": "Gabriel Davis",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036340",
+    "name": "Antonio Gandy-Golden",
+    "position": "WR",
+    "targetShare": 0.3323170731707317
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036377",
+    "name": "Joe Reed",
+    "position": "WR",
+    "targetShare": 0.2413793103448276
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036427",
+    "name": "Tyler Johnson",
+    "position": "WR",
+    "targetShare": 0.37109375
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036254",
+    "name": "Collin Johnson",
+    "position": "WR",
+    "targetShare": 0.1346153846153846
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036277",
+    "name": "Quintez Cephus",
+    "position": "WR",
+    "targetShare": 0.2619047619047619
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036398",
+    "name": "John Hightower",
+    "position": "WR",
+    "targetShare": 0.21525885558583105
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036308",
+    "name": "Isaiah Coulter",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036309",
+    "name": "Darnell Mooney",
+    "position": "WR",
+    "targetShare": 0.275092936802974
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036345",
+    "name": "K.J. Osborn",
+    "position": "WR",
+    "targetShare": 0.20833333333333334
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036233",
+    "name": "Donovan Peoples-Jones",
+    "position": "WR",
+    "targetShare": 0.15384615384615385
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036271",
+    "name": "Quez Watkins",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036133",
+    "name": "James Proche",
+    "position": "WR",
+    "targetShare": 0.3616504854368932
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": true,
+    "externalId": "00-0036165",
+    "name": "Isaiah Hodgins",
+    "position": "WR",
+    "targetShare": 0.325068870523416
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036228",
+    "name": "Dezmon Patmon",
+    "position": "WR",
+    "targetShare": 0.1280701754385965
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036247",
+    "name": "Freddie Swain",
+    "position": "WR",
+    "targetShare": 0.14285714285714285
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036259",
+    "name": "Jauan Jennings",
+    "position": "WR",
+    "targetShare": 0.31226765799256506
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036382",
+    "name": "K.J. Hill",
+    "position": "WR",
+    "targetShare": 0.1906158357771261
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "PerrMa00",
+    "name": "Malcolm Perry",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2020,
+    "earlyDeclare": false,
+    "externalId": "00-0036439",
+    "name": "Tyrie Cleveland",
+    "position": "WR",
+    "targetShare": 0.06845238095238096
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036893",
+    "name": "Najee Harris",
+    "position": "RB",
+    "targetShare": 0.1253731343283582
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036973",
+    "name": "Travis Etienne",
+    "position": "RB",
+    "targetShare": 0.14066496163682865
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036997",
+    "name": "Javonte Williams",
+    "position": "RB",
+    "targetShare": 0.09712230215827339
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036984",
+    "name": "Trey Sermon",
+    "position": "RB",
+    "targetShare": 0.07792207792207792
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036924",
+    "name": "Michael Carter",
+    "position": "RB",
+    "targetShare": 0.10431654676258993
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036842",
+    "name": "Kene Nwangwu",
+    "position": "RB",
+    "targetShare": 0.012345679012345678
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036875",
+    "name": "Rhamondre Stevenson",
+    "position": "RB",
+    "targetShare": 0.07446808510638298
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036555",
+    "name": "Chuba Hubbard",
+    "position": "RB",
+    "targetShare": 0.03759398496240601
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036919",
+    "name": "Kenneth Gainwell",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036567",
+    "name": "Elijah Mitchell",
+    "position": "RB",
+    "targetShare": 0.06995884773662552
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036569",
+    "name": "Gary Brightwell",
+    "position": "RB",
+    "targetShare": 0.11409395973154363
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036650",
+    "name": "Larry Rountree",
+    "position": "RB",
+    "targetShare": 0.06042296072507553
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036857",
+    "name": "Chris Evans",
+    "position": "RB",
+    "targetShare": 0.05102040816326531
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036654",
+    "name": "Demetric Felton",
+    "position": "RB",
+    "targetShare": 0.1534090909090909
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036906",
+    "name": "Khalil Herbert",
+    "position": "RB",
+    "targetShare": 0.06334841628959276
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036860",
+    "name": "Jake Funk",
+    "position": "RB",
+    "targetShare": 0.07913669064748201
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036578",
+    "name": "Gerrid Doaks",
+    "position": "RB",
+    "targetShare": 0.06190476190476191
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036669",
+    "name": "Kylin Hill",
+    "position": "RB",
+    "targetShare": 0.05870020964360587
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036670",
+    "name": "Jermar Jefferson",
+    "position": "RB",
+    "targetShare": 0.05714285714285714
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036900",
+    "name": "Ja'Marr Chase",
+    "position": "WR",
+    "targetShare": 0.2388758782201405
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036613",
+    "name": "Jaylen Waddle",
+    "position": "WR",
+    "targetShare": 0.08656716417910448
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036912",
+    "name": "DeVonta Smith",
+    "position": "WR",
+    "targetShare": 0.3641791044776119
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036913",
+    "name": "Kadarius Toney",
+    "position": "WR",
+    "targetShare": 0.20140515222482436
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036550",
+    "name": "Rashod Bateman",
+    "position": "WR",
+    "targetShare": 0.3167701863354037
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036980",
+    "name": "Elijah Moore",
+    "position": "WR",
+    "targetShare": 0.36771300448430494
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036936",
+    "name": "Rondale Moore",
+    "position": "WR",
+    "targetShare": 0.1906779661016949
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036620",
+    "name": "D'Wayne Eskridge",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036849",
+    "name": "Tutu Atwell",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036955",
+    "name": "Terrace Marshall Jr.",
+    "position": "WR",
+    "targetShare": 0.17875647668393782
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036988",
+    "name": "Josh Palmer",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036626",
+    "name": "Dyami Brown",
+    "position": "WR",
+    "targetShare": 0.2841726618705036
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036991",
+    "name": "Amari Rodgers",
+    "position": "WR",
+    "targetShare": 0.21994884910485935
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036554",
+    "name": "Nico Collins",
+    "position": "WR",
+    "targetShare": 0.15384615384615385
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036999",
+    "name": "Anthony Schwartz",
+    "position": "WR",
+    "targetShare": 0.2793103448275862
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036627",
+    "name": "Dez Fitzpatrick",
+    "position": "WR",
+    "targetShare": 0.23333333333333334
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036963",
+    "name": "Amon-Ra St. Brown",
+    "position": "WR",
+    "targetShare": 0.2413793103448276
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036877",
+    "name": "Jaelon Darden",
+    "position": "WR",
+    "targetShare": 0.47767857142857145
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036630",
+    "name": "Tylan Wallace",
+    "position": "WR",
+    "targetShare": 0.2932330827067669
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036918",
+    "name": "Jacob Harris",
+    "position": "WR",
+    "targetShare": 0.1471698113207547
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036635",
+    "name": "Ihmir Smith-Marsette",
+    "position": "WR",
+    "targetShare": 0.18137254901960784
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036646",
+    "name": "Simi Fehoko",
+    "position": "WR",
+    "targetShare": 0.28426395939086296
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036647",
+    "name": "Cornell Powell",
+    "position": "WR",
+    "targetShare": 0.16112531969309463
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036951",
+    "name": "Frank Darby",
+    "position": "WR",
+    "targetShare": 0.14285714285714285
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036571",
+    "name": "Marquez Stevenson",
+    "position": "WR",
+    "targetShare": 0.11739130434782609
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036572",
+    "name": "Shi Smith",
+    "position": "WR",
+    "targetShare": 0.3137254901960784
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036652",
+    "name": "Racey McMath",
+    "position": "WR",
+    "targetShare": 0.054404145077720206
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036858",
+    "name": "Jalen Camp",
+    "position": "WR",
+    "targetShare": 0.15584415584415584
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036657",
+    "name": "Seth Williams",
+    "position": "WR",
+    "targetShare": 0.27586206896551724
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036907",
+    "name": "Dazz Newsome",
+    "position": "WR",
+    "targetShare": 0.1906474820143885
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036482",
+    "name": "Mike Strachan",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036536",
+    "name": "Tre Nixon",
+    "position": "WR",
+    "targetShare": 0.07924528301886792
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036862",
+    "name": "Ben Skowronek",
+    "position": "WR",
+    "targetShare": 0.12627986348122866
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": false,
+    "externalId": "00-0036939",
+    "name": "Kawaan Baker",
+    "position": "WR",
+    "targetShare": 0.21587301587301588
+  },
+  {
+    "classYear": 2021,
+    "earlyDeclare": true,
+    "externalId": "00-0036671",
+    "name": "Dax Milne",
+    "position": "WR",
+    "targetShare": 0.25752508361204013
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038120",
+    "name": "Breece Hall",
+    "position": "RB",
+    "targetShare": 0.11188811188811189
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038134",
+    "name": "Kenneth Walker III",
+    "position": "RB",
+    "targetShare": 0.06204379562043796
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037248",
+    "name": "James Cook",
+    "position": "RB",
+    "targetShare": 0.07857142857142857
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037256",
+    "name": "Rachaad White",
+    "position": "RB",
+    "targetShare": 0.2017167381974249
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037827",
+    "name": "Tyrion Davis-Price",
+    "position": "RB",
+    "targetShare": 0.03793103448275862
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037746",
+    "name": "Brian Robinson Jr.",
+    "position": "RB",
+    "targetShare": 0.08490566037735849
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037258",
+    "name": "Dameon Pierce",
+    "position": "RB",
+    "targetShare": 0.050505050505050504
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038040",
+    "name": "Zamir White",
+    "position": "RB",
+    "targetShare": 0.02857142857142857
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038045",
+    "name": "Isaiah Spiller",
+    "position": "RB",
+    "targetShare": 0.11643835616438356
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0038098",
+    "name": "Pierre Strong",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037617",
+    "name": "Hassan Haskins",
+    "position": "RB",
+    "targetShare": 0.058823529411764705
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037263",
+    "name": "Tyler Allgeier",
+    "position": "RB",
+    "targetShare": 0.11151079136690648
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037265",
+    "name": "Snoop Conner",
+    "position": "RB",
+    "targetShare": 0.041666666666666664
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037267",
+    "name": "Jerome Ford",
+    "position": "RB",
+    "targetShare": 0.061488673139158574
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037840",
+    "name": "Kyren Williams",
+    "position": "RB",
+    "targetShare": 0.13753581661891118
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037276",
+    "name": "Ty Chandler",
+    "position": "RB",
+    "targetShare": 0.046357615894039736
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "ChanTy01",
+    "name": "Tykevious Chandler",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037286",
+    "name": "Kevin Harris",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037085",
+    "name": "Tyler Badie",
+    "position": "RB",
+    "targetShare": 0.21292775665399238
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037299",
+    "name": "Keaontay Ingram",
+    "position": "RB",
+    "targetShare": 0.056511056511056514
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037087",
+    "name": "Trestan Ebner",
+    "position": "RB",
+    "targetShare": 0.10652920962199312
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037329",
+    "name": "Brittain Brown",
+    "position": "RB",
+    "targetShare": 0.07441860465116279
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037197",
+    "name": "Isiah Pacheco",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037331",
+    "name": "Zander Horvath",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037238",
+    "name": "Drake London",
+    "position": "WR",
+    "targetShare": 0.23832923832923833
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037740",
+    "name": "Garrett Wilson",
+    "position": "WR",
+    "targetShare": 0.24162679425837322
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037239",
+    "name": "Chris Olave",
+    "position": "WR",
+    "targetShare": 0.22966507177033493
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037240",
+    "name": "Jameson Williams",
+    "position": "WR",
+    "targetShare": 0.2240566037735849
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037741",
+    "name": "Jahan Dotson",
+    "position": "WR",
+    "targetShare": 0.3438395415472779
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037742",
+    "name": "Treylon Burks",
+    "position": "WR",
+    "targetShare": 0.32456140350877194
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0038124",
+    "name": "Christian Watson",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038117",
+    "name": "Wan'Dale Robinson",
+    "position": "WR",
+    "targetShare": 0.40070921985815605
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037614",
+    "name": "John Metchie",
+    "position": "WR",
+    "targetShare": 0.2830188679245283
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0038104",
+    "name": "Tyquan Thornton",
+    "position": "WR",
+    "targetShare": 0.28865979381443296
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037247",
+    "name": "George Pickens",
+    "position": "WR",
+    "targetShare": 0.02142857142857143
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037664",
+    "name": "Alec Pierce",
+    "position": "WR",
+    "targetShare": 0.23300970873786409
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038090",
+    "name": "Skyy Moore",
+    "position": "WR",
+    "targetShare": 0.41304347826086957
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037745",
+    "name": "Velus Jones Jr.",
+    "position": "WR",
+    "targetShare": 0.213768115942029
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037666",
+    "name": "Jalen Tolbert",
+    "position": "WR",
+    "targetShare": 0.3424124513618677
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037257",
+    "name": "David Bell",
+    "position": "WR",
+    "targetShare": 0.2650334075723831
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037828",
+    "name": "Danny Gray",
+    "position": "WR",
+    "targetShare": 0.16292134831460675
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0038092",
+    "name": "Erik Ezukanma",
+    "position": "WR",
+    "targetShare": 0.1948529411764706
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037816",
+    "name": "Romeo Doubs",
+    "position": "WR",
+    "targetShare": 0.20588235294117646
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037837",
+    "name": "Calvin Austin III",
+    "position": "WR",
+    "targetShare": 0.2724358974358974
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037261",
+    "name": "Khalil Shakir",
+    "position": "WR",
+    "targetShare": 0.30855018587360594
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037272",
+    "name": "Montrell Washington",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037273",
+    "name": "Kyle Philips",
+    "position": "WR",
+    "targetShare": 0.2744186046511628
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": true,
+    "externalId": "00-0037291",
+    "name": "Jalen Nailor",
+    "position": "WR",
+    "targetShare": 0.145985401459854
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037300",
+    "name": "Michael Woods II",
+    "position": "WR",
+    "targetShare": 0.1393188854489164
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "WoodMi00",
+    "name": "Mike Woods",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037091",
+    "name": "Bo Melton",
+    "position": "WR",
+    "targetShare": 0.25190839694656486
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037093",
+    "name": "Dareke Young",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2022,
+    "earlyDeclare": false,
+    "externalId": "00-0037098",
+    "name": "Samori Toure",
+    "position": "WR",
+    "targetShare": 0.22983870967741934
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038542",
+    "name": "Bijan Robinson",
+    "position": "RB",
+    "targetShare": 0.09539473684210527
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0039139",
+    "name": "Jahmyr Gibbs",
+    "position": "RB",
+    "targetShare": 0.15249266862170088
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039165",
+    "name": "Zach Charbonnet",
+    "position": "RB",
+    "targetShare": 0.14705882352941177
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038551",
+    "name": "Kendre Miller",
+    "position": "RB",
+    "targetShare": 0.06325301204819277
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0039032",
+    "name": "Tyjae Spears",
+    "position": "RB",
+    "targetShare": 0.08846153846153847
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0039040",
+    "name": "De'Von Achane",
+    "position": "RB",
+    "targetShare": 0.15467625899280577
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038555",
+    "name": "Tank Bigsby",
+    "position": "RB",
+    "targetShare": 0.17708333333333334
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039021",
+    "name": "Roschon Johnson",
+    "position": "RB",
+    "targetShare": 0.049342105263157895
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038389",
+    "name": "Israel Abanikanda",
+    "position": "RB",
+    "targetShare": 0.06140350877192982
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038597",
+    "name": "Chase Brown",
+    "position": "RB",
+    "targetShare": 0.10135135135135136
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038396",
+    "name": "Eric Gray",
+    "position": "RB",
+    "targetShare": 0.11538461538461539
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038397",
+    "name": "Evan Hull",
+    "position": "RB",
+    "targetShare": 0.19215686274509805
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038611",
+    "name": "Chris Rodriguez",
+    "position": "RB",
+    "targetShare": 0.030973451327433628
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038622",
+    "name": "Deuce Vaughn",
+    "position": "RB",
+    "targetShare": 0.1875
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0039136",
+    "name": "Zach Evans",
+    "position": "RB",
+    "targetShare": 0.044
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0039046",
+    "name": "DeWayne McBride",
+    "position": "RB",
+    "targetShare": 0.016483516483516484
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038409",
+    "name": "Lew Nichols",
+    "position": "RB",
+    "targetShare": 0.0880281690140845
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038636",
+    "name": "Kenny McIntosh",
+    "position": "RB",
+    "targetShare": 0.10857142857142857
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038543",
+    "name": "Jaxon Smith-Njigba",
+    "position": "WR",
+    "targetShare": 0.02556818181818182
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038544",
+    "name": "Quentin Johnston",
+    "position": "WR",
+    "targetShare": 0.22289156626506024
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039064",
+    "name": "Zay Flowers",
+    "position": "WR",
+    "targetShare": 0.296028880866426
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038994",
+    "name": "Jordan Addison",
+    "position": "WR",
+    "targetShare": 0.21008403361344538
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039062",
+    "name": "Jonathan Mingo",
+    "position": "WR",
+    "targetShare": 0.236
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039146",
+    "name": "Jayden Reed",
+    "position": "WR",
+    "targetShare": 0.20454545454545456
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039067",
+    "name": "Rashee Rice",
+    "position": "WR",
+    "targetShare": 0.30625
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038976",
+    "name": "Marvin Mims",
+    "position": "WR",
+    "targetShare": 0.22692307692307692
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038977",
+    "name": "Tank Dell",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "DellNa00",
+    "name": "Nathaniel Dell",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038938",
+    "name": "Jalin Hyatt",
+    "position": "WR",
+    "targetShare": 0.24057971014492754
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038979",
+    "name": "Cedric Tillman",
+    "position": "WR",
+    "targetShare": 0.16231884057971013
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038997",
+    "name": "Josh Downs",
+    "position": "WR",
+    "targetShare": 0.2616136919315403
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038559",
+    "name": "Michael Wilson",
+    "position": "WR",
+    "targetShare": 0.09508196721311475
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038563",
+    "name": "Tre Tucker",
+    "position": "WR",
+    "targetShare": 0.22093023255813954
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038573",
+    "name": "Derius Davis",
+    "position": "WR",
+    "targetShare": 0.14759036144578314
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038576",
+    "name": "Charlie Jones",
+    "position": "WR",
+    "targetShare": 0.3059490084985836
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038941",
+    "name": "Tyler Scott",
+    "position": "WR",
+    "targetShare": 0.2364341085271318
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038590",
+    "name": "Justin Shorter",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038393",
+    "name": "Dontayvion Wicks",
+    "position": "WR",
+    "targetShare": 0.19927536231884058
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039075",
+    "name": "Puka Nacua",
+    "position": "WR",
+    "targetShare": 0.1417004048582996
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038606",
+    "name": "Parker Washington",
+    "position": "WR",
+    "targetShare": 0.17684887459807075
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038608",
+    "name": "Kayshon Boutte",
+    "position": "WR",
+    "targetShare": 0.18128654970760233
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039052",
+    "name": "Trey Palmer",
+    "position": "WR",
+    "targetShare": 0.3424124513618677
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038612",
+    "name": "A.T. Perry",
+    "position": "WR",
+    "targetShare": 0.2776203966005666
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0039041",
+    "name": "Elijah Higgins",
+    "position": "WR",
+    "targetShare": 0.21967213114754097
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038618",
+    "name": "Xavier Hutchinson",
+    "position": "WR",
+    "targetShare": 0.329608938547486
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038619",
+    "name": "Andrei Iosivas",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": true,
+    "externalId": "00-0038621",
+    "name": "DeMario Douglas",
+    "position": "WR",
+    "targetShare": 0.32242990654205606
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038627",
+    "name": "Antoine Green",
+    "position": "WR",
+    "targetShare": 0.1491442542787286
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038632",
+    "name": "Colton Dowell",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038640",
+    "name": "Jalen Brooks",
+    "position": "WR",
+    "targetShare": 0.14388489208633093
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038647",
+    "name": "Ronnie Bell",
+    "position": "WR",
+    "targetShare": 0.27491408934707906
+  },
+  {
+    "classYear": 2023,
+    "earlyDeclare": false,
+    "externalId": "00-0038507",
+    "name": "Grant Dubose",
+    "position": "WR",
+    "targetShare": 0.23293172690763053
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039344",
+    "name": "Jonathon Brooks",
+    "position": "RB",
+    "targetShare": 0.0707070707070707
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039921",
+    "name": "Trey Benson",
+    "position": "RB",
+    "targetShare": 0.05929919137466307
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039738",
+    "name": "Blake Corum",
+    "position": "RB",
+    "targetShare": 0.056291390728476824
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039811",
+    "name": "MarShawn Lloyd",
+    "position": "RB",
+    "targetShare": 0.040345821325648415
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039874",
+    "name": "Jaylen Wright",
+    "position": "RB",
+    "targetShare": 0.06
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039361",
+    "name": "Bucky Irving",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039746",
+    "name": "Will Shipley",
+    "position": "RB",
+    "targetShare": 0.09350649350649351
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039875",
+    "name": "Ray Davis",
+    "position": "RB",
+    "targetShare": 0.13409961685823754
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039363",
+    "name": "Isaac Guerendo",
+    "position": "RB",
+    "targetShare": 0.06909090909090909
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039794",
+    "name": "Braelon Allen",
+    "position": "RB",
+    "targetShare": 0.07692307692307693
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039373",
+    "name": "Audric Estime",
+    "position": "RB",
+    "targetShare": 0.06666666666666667
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039796",
+    "name": "Rasheen Ali",
+    "position": "RB",
+    "targetShare": 0.1059190031152648
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039384",
+    "name": "Tyrone Tracy Jr.",
+    "position": "RB",
+    "targetShare": 0.0778688524590164
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039385",
+    "name": "Keilan Robinson",
+    "position": "RB",
+    "targetShare": 0.022727272727272728
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039798",
+    "name": "Isaiah Davis",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039391",
+    "name": "Kimani Vidal",
+    "position": "RB",
+    "targetShare": 0.05787781350482315
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039393",
+    "name": "Jase McClellan",
+    "position": "RB",
+    "targetShare": 0.07063197026022305
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039405",
+    "name": "Jawhar Jordan",
+    "position": "RB",
+    "targetShare": 0.07636363636363637
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039407",
+    "name": "Dylan Laube",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039849",
+    "name": "Marvin Harrison Jr.",
+    "position": "WR",
+    "targetShare": 0.2635135135135135
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039337",
+    "name": "Malik Nabers",
+    "position": "WR",
+    "targetShare": 0.34513274336283184
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039919",
+    "name": "Rome Odunze",
+    "position": "WR",
+    "targetShare": 0.25316455696202533
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039893",
+    "name": "Brian Thomas",
+    "position": "WR",
+    "targetShare": 0.22123893805309736
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039894",
+    "name": "Xavier Worthy",
+    "position": "WR",
+    "targetShare": 0.2398989898989899
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039916",
+    "name": "Ricky Pearsall",
+    "position": "WR",
+    "targetShare": 0.22258064516129034
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039342",
+    "name": "Xavier Legette",
+    "position": "WR",
+    "targetShare": 0.25846153846153846
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039901",
+    "name": "Keon Coleman",
+    "position": "WR",
+    "targetShare": 0.20215633423180593
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039915",
+    "name": "Ladd McConkey",
+    "position": "WR",
+    "targetShare": 0.09734513274336283
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039907",
+    "name": "Ja'Lynn Polk",
+    "position": "WR",
+    "targetShare": 0.18354430379746836
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039890",
+    "name": "Adonai Mitchell",
+    "position": "WR",
+    "targetShare": 0.19444444444444445
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039920",
+    "name": "Malachi Corley",
+    "position": "WR",
+    "targetShare": 0.22627737226277372
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039810",
+    "name": "Jermaine Burton",
+    "position": "WR",
+    "targetShare": 0.1895910780669145
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039739",
+    "name": "Roman Wilson",
+    "position": "WR",
+    "targetShare": 0.17880794701986755
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039855",
+    "name": "Jalen McMillan",
+    "position": "WR",
+    "targetShare": 0.12658227848101267
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039355",
+    "name": "Luke McCaffrey",
+    "position": "WR",
+    "targetShare": 0.2591549295774648
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": true,
+    "externalId": "00-0039868",
+    "name": "Troy Franklin",
+    "position": "WR",
+    "targetShare": 0.21890547263681592
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039853",
+    "name": "Javon Baker",
+    "position": "WR",
+    "targetShare": 0.23577235772357724
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039792",
+    "name": "Devontez Walker",
+    "position": "WR",
+    "targetShare": 0.1721311475409836
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039365",
+    "name": "Jacob Cowing",
+    "position": "WR",
+    "targetShare": 0.25892857142857145
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039816",
+    "name": "Anthony Gould",
+    "position": "WR",
+    "targetShare": 0.20675105485232068
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039747",
+    "name": "Ainias Smith",
+    "position": "WR",
+    "targetShare": 0.1850828729281768
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039379",
+    "name": "Jamari Thrash",
+    "position": "WR",
+    "targetShare": 0.2290909090909091
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039386",
+    "name": "Bub Means",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039392",
+    "name": "Jha'Quan Jackson",
+    "position": "WR",
+    "targetShare": 0.12758620689655173
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039880",
+    "name": "Malik Washington",
+    "position": "WR",
+    "targetShare": 0.3903225806451613
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039236",
+    "name": "Johnny Wilson",
+    "position": "WR",
+    "targetShare": 0.15902964959568733
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039394",
+    "name": "Casey Washington",
+    "position": "WR",
+    "targetShare": 0.18072289156626506
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039397",
+    "name": "Tejhaun Palmer",
+    "position": "WR",
+    "targetShare": 0.16558441558441558
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039751",
+    "name": "Jordan Whittington",
+    "position": "WR",
+    "targetShare": 0.12121212121212122
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039410",
+    "name": "Ryan Flournoy",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039415",
+    "name": "Brenden Rice",
+    "position": "WR",
+    "targetShare": 0.14697406340057637
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039424",
+    "name": "Devaughn Vele",
+    "position": "WR",
+    "targetShare": 0.245
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039884",
+    "name": "Tahj Washington",
+    "position": "WR",
+    "targetShare": 0.18155619596541786
+  },
+  {
+    "classYear": 2024,
+    "earlyDeclare": false,
+    "externalId": "00-0039437",
+    "name": "Cornelius Johnson",
+    "position": "WR",
+    "targetShare": 0.18543046357615894
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040122",
+    "name": "Ashton Jeanty",
+    "position": "RB",
+    "targetShare": 0.0970464135021097
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040666",
+    "name": "Omarion Hampton",
+    "position": "RB",
+    "targetShare": 0.16521739130434782
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040784",
+    "name": "Quinshon Judkins",
+    "position": "RB",
+    "targetShare": 0.06744868035190615
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040734",
+    "name": "TreVeyon Henderson",
+    "position": "RB",
+    "targetShare": 0.09090909090909091
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040730",
+    "name": "RJ Harvey",
+    "position": "RB",
+    "targetShare": 0.09473684210526316
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040142",
+    "name": "Kaleb Johnson",
+    "position": "RB",
+    "targetShare": 0.1532258064516129
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040719",
+    "name": "Bhayshul Tuten",
+    "position": "RB",
+    "targetShare": 0.09205020920502092
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040715",
+    "name": "Cam Skattebo",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040644",
+    "name": "Trevor Etienne",
+    "position": "RB",
+    "targetShare": 0.08542713567839195
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040583",
+    "name": "Woody Marks",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040692",
+    "name": "Jarquez Hunter",
+    "position": "RB",
+    "targetShare": 0.09523809523809523
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040162",
+    "name": "Dylan Sampson",
+    "position": "RB",
+    "targetShare": 0.07241379310344828
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040177",
+    "name": "Jordan James",
+    "position": "RB",
+    "targetShare": 0.07738095238095238
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040586",
+    "name": "Jaydon Blue",
+    "position": "RB",
+    "targetShare": 0.10964912280701754
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040179",
+    "name": "DJ Giddens",
+    "position": "RB",
+    "targetShare": 0.09051724137931035
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040198",
+    "name": "Ollie Gordon",
+    "position": "RB",
+    "targetShare": 0.09385113268608414
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040202",
+    "name": "Devin Neal",
+    "position": "RB",
+    "targetShare": 0.1443850267379679
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040205",
+    "name": "Kalel Mullings",
+    "position": "RB",
+    "targetShare": 0.03365384615384615
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040208",
+    "name": "Tahj Brooks",
+    "position": "RB",
+    "targetShare": 0.07807807807807808
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040651",
+    "name": "Damien Martinez",
+    "position": "RB",
+    "targetShare": 0.053824362606232294
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040078",
+    "name": "Brashard Smith",
+    "position": "RB",
+    "targetShare": 0.15593220338983052
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040236",
+    "name": "Kyle Monangai",
+    "position": "RB",
+    "targetShare": 0.06077348066298342
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040238",
+    "name": "LeQuint Allen",
+    "position": "RB",
+    "targetShare": 0.1543778801843318
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040021",
+    "name": "Phil Mafah",
+    "position": "RB",
+    "targetShare": 0.06188118811881188
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040242",
+    "name": "Jacory Croskey-Merritt",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040718",
+    "name": "Travis Hunter",
+    "position": "WR",
+    "targetShare": 0.27245508982035926
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040124",
+    "name": "Tetairoa McMillan",
+    "position": "WR",
+    "targetShare": 0.3384615384615385
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040129",
+    "name": "Emeka Egbuka",
+    "position": "WR",
+    "targetShare": 0.22287390029325513
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040667",
+    "name": "Matthew Golden",
+    "position": "WR",
+    "targetShare": 0.1600877192982456
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040130",
+    "name": "Jayden Higgins",
+    "position": "WR",
+    "targetShare": 0.3161512027491409
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040735",
+    "name": "Luther Burden",
+    "position": "WR",
+    "targetShare": 0.236
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040727",
+    "name": "Tre Harris",
+    "position": "WR",
+    "targetShare": 0.18674698795180722
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "HarrTr03",
+    "name": "Cleveland Harris",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040729",
+    "name": "Jack Bech",
+    "position": "WR",
+    "targetShare": 0.216
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040131",
+    "name": "Kyle Williams",
+    "position": "WR",
+    "targetShare": 0.28270042194092826
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040669",
+    "name": "Isaac TeSlaa",
+    "position": "WR",
+    "targetShare": 0.10752688172043011
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040134",
+    "name": "Pat Bryant",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040138",
+    "name": "Jaylin Noel",
+    "position": "WR",
+    "targetShare": 0.27491408934707906
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040009",
+    "name": "Savion Williams",
+    "position": "WR",
+    "targetShare": 0.17066666666666666
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040154",
+    "name": "Tai Felton",
+    "position": "WR",
+    "targetShare": 0.29605263157894735
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040705",
+    "name": "Chimere Dike",
+    "position": "WR",
+    "targetShare": 0.21212121212121213
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040581",
+    "name": "Dont'e Thornton",
+    "position": "WR",
+    "targetShare": 0.1
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040582",
+    "name": "Arian Smith",
+    "position": "WR",
+    "targetShare": 0.12814070351758794
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040164",
+    "name": "Jaylin Lane",
+    "position": "WR",
+    "targetShare": 0.17154811715481172
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "LaneJa00",
+    "name": "Joshua Lane",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040646",
+    "name": "Jalen Royals",
+    "position": "WR",
+    "targetShare": 0.15234375
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": true,
+    "externalId": "00-0040170",
+    "name": "Elic Ayomanor",
+    "position": "WR",
+    "targetShare": 0.32051282051282054
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040172",
+    "name": "Jordan Watkins",
+    "position": "WR",
+    "targetShare": 0.19879518072289157
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040184",
+    "name": "KeAndre Lambert-Smith",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040648",
+    "name": "Tory Horton",
+    "position": "WR",
+    "targetShare": 0.10222222222222223
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040075",
+    "name": "LaJohntay Wester",
+    "position": "WR",
+    "targetShare": 0.20958083832335328
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040218",
+    "name": "Jimmy Horn",
+    "position": "WR",
+    "targetShare": 0.08383233532934131
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040237",
+    "name": "Tez Johnson",
+    "position": "WR",
+    "targetShare": 0.2261904761904762
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040653",
+    "name": "Ricky White",
+    "position": "WR",
+    "targetShare": 0.4095744680851064
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "PratKa00",
+    "name": "Kaden Prather",
+    "position": "WR",
+    "targetShare": 0.17763157894736842
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040590",
+    "name": "Konata Mumpfield",
+    "position": "WR",
+    "targetShare": 0.17218543046357615
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040241",
+    "name": "Dominic Lovett",
+    "position": "WR",
+    "targetShare": 0.1934673366834171
+  },
+  {
+    "classYear": 2025,
+    "earlyDeclare": false,
+    "externalId": "00-0040247",
+    "name": "Junior Bergen",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "LOV121782",
+    "name": "Jeremiyah Love",
+    "position": "RB",
+    "targetShare": 0.1118421052631579
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "PRI206342",
+    "name": "Jadarian Price",
+    "position": "RB",
+    "targetShare": 0.019736842105263157
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BLA097235",
+    "name": "Kaelon Black",
+    "position": "RB",
+    "targetShare": 0.0169971671388102
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "COL293648",
+    "name": "Jonah Coleman",
+    "position": "RB",
+    "targetShare": 0.10903426791277258
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "WAS797326",
+    "name": "Mike Washington Jr.",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "JOH224817",
+    "name": "Emmett Johnson",
+    "position": "RB",
+    "targetShare": 0.17117117117117117
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "SingNi01",
+    "name": "Nicholas Singleton",
+    "position": "RB",
+    "targetShare": 0.11486486486486487
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "RAN022436",
+    "name": "Adam Randall",
+    "position": "RB",
+    "targetShare": 0.11707317073170732
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "ALL532376",
+    "name": "Kaytron Allen",
+    "position": "RB",
+    "targetShare": 0.06756756756756757
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "CLA041524",
+    "name": "Demond Claiborne",
+    "position": "RB",
+    "targetShare": 0.10084033613445378
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "MCG547540",
+    "name": "Seth McGowan",
+    "position": "RB",
+    "targetShare": 0.08223684210526316
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "MIL303300",
+    "name": "Jam Miller",
+    "position": "RB",
+    "targetShare": null
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "TAT143045",
+    "name": "Carnell Tate",
+    "position": "WR",
+    "targetShare": 0.16666666666666666
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "TYS405541",
+    "name": "Jordyn Tyson",
+    "position": "WR",
+    "targetShare": 0.21311475409836064
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "LEM694125",
+    "name": "Makai Lemon",
+    "position": "WR",
+    "targetShare": 0.26616915422885573
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "CON046719",
+    "name": "KC Concepcion",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "COO816508",
+    "name": "Omar Cooper Jr.",
+    "position": "WR",
+    "targetShare": 0.23229461756373937
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "StriDe01",
+    "name": "De'Zhaun Stribling",
+    "position": "WR",
+    "targetShare": 0.16046511627906976
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "BOS677861",
+    "name": "Denzel Boston",
+    "position": "WR",
+    "targetShare": 0.26791277258566976
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BER218265",
+    "name": "Germie Bernard",
+    "position": "WR",
+    "targetShare": 0.21908893709327548
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "WIL143106",
+    "name": "Antonio Williams",
+    "position": "WR",
+    "targetShare": 0.17317073170731706
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "FIE775129",
+    "name": "Malachi Fields",
+    "position": "WR",
+    "targetShare": 0.21052631578947367
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "DOU210628",
+    "name": "Caleb Douglas",
+    "position": "WR",
+    "targetShare": 0.2119815668202765
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "BRA531428",
+    "name": "Zachariah Branch",
+    "position": "WR",
+    "targetShare": 0.26330532212885155
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "LAN311008",
+    "name": "Ja'Kobi Lane",
+    "position": "WR",
+    "targetShare": 0.1791044776119403
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": true,
+    "externalId": "BRA836631",
+    "name": "Chris Brazzell II",
+    "position": "WR",
+    "targetShare": 0.21584699453551912
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "HUR541377",
+    "name": "Ted Hurst",
+    "position": "WR",
+    "targetShare": 0.2617924528301887
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "THO417520",
+    "name": "Zavion Thomas",
+    "position": "WR",
+    "targetShare": 0.14136125654450263
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BEL267684",
+    "name": "Chris Bell",
+    "position": "WR",
+    "targetShare": 0.2934472934472934
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "THO495568",
+    "name": "Brenen Thompson",
+    "position": "WR",
+    "targetShare": 0.23919308357348704
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "SAR527100",
+    "name": "Elijah Sarratt",
+    "position": "WR",
+    "targetShare": 0.23229461756373937
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "WET055619",
+    "name": "Kaden Wetjen",
+    "position": "WR",
+    "targetShare": 0.09881422924901186
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BEL597603",
+    "name": "Skyler Bell",
+    "position": "WR",
+    "targetShare": 0.33827160493827163
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "LAN016345",
+    "name": "Bryce Lance",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "YounCo01",
+    "name": "Colbie Young",
+    "position": "WR",
+    "targetShare": 0.06722689075630252
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "VIR271235",
+    "name": "Reggie Virgil",
+    "position": "WR",
+    "targetShare": null
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "LAW090280",
+    "name": "Kendrick Law",
+    "position": "WR",
+    "targetShare": 0.16447368421052633
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "ALL092954",
+    "name": "Cyrus Allen",
+    "position": "WR",
+    "targetShare": 0.19637462235649547
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "COL362413",
+    "name": "Kevin Coleman Jr.",
+    "position": "WR",
+    "targetShare": 0.24836601307189543
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BRO268113",
+    "name": "Barion Brown",
+    "position": "WR",
+    "targetShare": 0.19895287958115182
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "CAM108646",
+    "name": "Josh Cameron",
+    "position": "WR",
+    "targetShare": 0.22857142857142856
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BEN601117",
+    "name": "Malik Benson",
+    "position": "WR",
+    "targetShare": 0.13902439024390245
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "DAN490797",
+    "name": "CJ Daniels",
+    "position": "WR",
+    "targetShare": 0.13729977116704806
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "HEN199637",
+    "name": "Emmanuel Henderson Jr.",
+    "position": "WR",
+    "targetShare": 0.23255813953488372
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "WIL189259",
+    "name": "CJ Williams",
+    "position": "WR",
+    "targetShare": 0.25885558583106266
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BON235618",
+    "name": "Lewis Bond",
+    "position": "WR",
+    "targetShare": 0.2704714640198511
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "SMI038569",
+    "name": "Anthony Smith",
+    "position": "WR",
+    "targetShare": 0.2398921832884097
+  },
+  {
+    "classYear": 2026,
+    "earlyDeclare": false,
+    "externalId": "BurkDe02",
+    "name": "Deion Burks",
+    "position": "WR",
+    "targetShare": 0.21348314606741572
+  }
+]
