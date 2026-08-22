@@ -72,12 +72,6 @@ export async function importOpenRookieEnrichments(): Promise<RookieImportActionS
       return player ? [{ player, row }] : [];
     });
 
-    for (let start = 0; start < resolved.length; start += 25) {
-      const updates = await Promise.all(resolved.slice(start, start + 25).map(({ player, row }) => supabase.from("rookie_players").update({ early_declare: row.earlyDeclare }).eq("id", player.id).eq("user_id", userId)));
-      const failed = updates.find((result) => result.error);
-      if (failed?.error) throw failed.error;
-    }
-
     const metricRows = resolved.flatMap(({ player, row }) => [
       row.targetShare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "target_share", player_id: player.id, source_id: targetSourceId, user_id: userId, value: row.targetShare },
       row.earlyDeclare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "early_declare", player_id: player.id, source_id: earlySourceId, user_id: userId, value: row.earlyDeclare ? 1 : 0 },
@@ -96,7 +90,6 @@ export async function importOpenRookieEnrichments(): Promise<RookieImportActionS
       if (result.error) throw result.error;
     }
 
-    await scoreAndPersistRookieClass(userId, { classYears: [2025, 2026] });
     revalidatePath("/dashboard/dynasty/rookies");
     revalidatePath("/dashboard/dynasty/rookies/validation");
     return { message: `${metricRows.length} sourced prospect metrics and ${outcomeRows.length} NFL outcomes imported.`, ok: true };
