@@ -1,6 +1,6 @@
 "use client";
 
-import { DatabaseZap } from "lucide-react";
+import { DatabaseZap, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -25,5 +25,6 @@ export function RookiePublicDataImportClient() {
     </div>
     <p className="mt-3 text-xs text-ink/45">Requires a private CFBD_API_KEY in the app environment. Unmatched names are recorded for review instead of being merged automatically.</p>
     <div className="mt-5 flex flex-col justify-between gap-4 border-t border-ink/10 pt-5 sm:flex-row sm:items-center"><div><h3 className="font-bold text-ink">Open-data enrichments</h3><p className="mt-1 max-w-2xl text-sm text-ink/55">Import audited target share, early-entry status, and NFL outcomes.</p></div><Button type="button" variant="outline" disabled={enrichmentPending} onClick={() => startEnrichmentTransition(async () => { const result = await importBundledRookieEnrichments(); if (result.ok) toast.success(result.message); else toast.error(result.message); if (result.ok) router.refresh(); })}><DatabaseZap className="h-4 w-4" />{enrichmentPending ? "Importing..." : "Import enrichments"}</Button></div>
+    <div className="mt-5 flex flex-col justify-between gap-4 border-t border-ink/10 pt-5 sm:flex-row sm:items-center"><div><h3 className="font-bold text-ink">Licensed charting and RAS</h3><p className="mt-1 max-w-2xl text-sm text-ink/55">Download a pre-matched 2020–2026 template for provider exports. Routes, contact charting, and official RAS stay blank until their source permits use.</p><p className="mt-2 text-xs text-ink/45">Fields: career and best YPRR, final-season receiving YPRR, yards after contact per attempt, missed tackles per attempt, and official RAS.</p></div><Button asChild type="button" variant="outline"><a href="/data/rookie-provider-enrichment-template-2020-2026.csv" download><Download className="h-4 w-4" />Download template</a></Button></div>
   </section>;
 }

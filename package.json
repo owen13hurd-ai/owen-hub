@@ -12,6 +12,7 @@
     "test:rookie-model": "node --experimental-strip-types --test tests/rookie-model.test.mjs",
     "check:rookie-migrations": "node scripts/check-rookie-migrations.mjs",
     "build:rookie-dataset": "node scripts/build-rookie-dataset.mjs",
+    "build:rookie-provider-template": "node scripts/build-rookie-provider-template.mjs",
     "build:rookie-outcomes": "node scripts/build-rookie-outcomes.mjs",
     "build": "next build --webpack",
     "start": "next start",
