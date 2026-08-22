@@ -20,6 +20,18 @@ export type RookieImportActionState = {
   preview?: ReturnType<typeof previewRookieCsv>;
 };
 
+const importedRookieNameRepairs = [
+  ["Cameron Skattebo", "Cam Skattebo"],
+  ["D.J. Giddens", "DJ Giddens"],
+  ["Tre Harris", "Cleveland Harris"],
+  ["Ollie Gordon II", "Ollie Gordon"],
+  ["Jaylin Lane", "Joshua Lane"],
+  ["Nick Singleton", "Nicholas Singleton"],
+  ["Emmanuel Henderson", "Emmanuel Henderson Jr."],
+  ["R.J. Harvey Jr.", "RJ Harvey"],
+  ["Jimmy Horn Jr.", "Jimmy Horn"],
+] as const;
+
 async function getAuthenticatedClient() {
   if (!hasSupabaseConfig()) throw new Error("Supabase is not configured.");
   const supabase = await createRookieClient();
@@ -31,6 +43,84 @@ async function getAuthenticatedClient() {
 async function requireOwnedRookieSource(supabase: Awaited<ReturnType<typeof createRookieClient>>, userId: string, sourceId: string) {
   const { data } = await supabase.from("rookie_sources").select("id").eq("id", sourceId).eq("user_id", userId).maybeSingle();
   if (!data) throw new Error("Choose a valid source from the Source Library.");
+}
+
+export async function repairImportedRookieNameVariants(): Promise<RookieImportActionState> {
+  try {
+    const { supabase, userId } = await getAuthenticatedClient();
+    let repaired = 0;
+
+    for (const [canonicalName, importedName] of importedRookieNameRepairs) {
+      const { data: players, error: playersError } = await supabase
+        .from("rookie_players")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("class_year", 2025)
+        .in("name", [canonicalName, importedName]);
+      if (playersError) throw playersError;
+      const canonical = players?.find((player) => player.name === canonicalName);
+      const duplicate = players?.find((player) => player.name === importedName);
+      if (!canonical || !duplicate || canonical.position !== duplicate.position) continue;
+
+      const playerMergeKeys = [
+        "external_id", "school", "conference", "birthdate", "age_at_draft", "height_inches",
+        "weight_pounds", "bmi", "recruiting_rating", "early_declare", "nfl_team", "draft_round",
+        "overall_pick", "source_id", "import_batch_id",
+      ] as const;
+      const mergedPlayer = Object.fromEntries(playerMergeKeys.map((key) => [key, duplicate[key] ?? canonical[key]]));
+      const playerUpdate = await supabase.from("rookie_players").update({ ...mergedPlayer, updated_at: new Date().toISOString() }).eq("id", canonical.id).eq("user_id", userId);
+      if (playerUpdate.error) throw playerUpdate.error;
+
+      const { data: metrics, error: metricsError } = await supabase.from("rookie_player_metrics").select("*").eq("player_id", duplicate.id).eq("user_id", userId);
+      if (metricsError) throw metricsError;
+      for (const metric of metrics ?? []) {
+        let existingQuery = supabase.from("rookie_player_metrics").select("id").eq("player_id", canonical.id).eq("metric_key", metric.metric_key).eq("as_of_date", metric.as_of_date);
+        existingQuery = metric.source_id ? existingQuery.eq("source_id", metric.source_id) : existingQuery.is("source_id", null);
+        const existing = await existingQuery.maybeSingle();
+        if (existing.error) throw existing.error;
+        const write = existing.data
+          ? await supabase.from("rookie_player_metrics").update({ confidence: metric.confidence, import_batch_id: metric.import_batch_id, value: metric.value }).eq("id", existing.data.id)
+          : await supabase.from("rookie_player_metrics").update({ player_id: canonical.id }).eq("id", metric.id);
+        if (write.error) throw write.error;
+        if (existing.data) {
+          const removed = await supabase.from("rookie_player_metrics").delete().eq("id", metric.id);
+          if (removed.error) throw removed.error;
+        }
+      }
+
+      const { data: seasons, error: seasonsError } = await supabase.from("rookie_seasons").select("*").eq("player_id", duplicate.id).eq("user_id", userId);
+      if (seasonsError) throw seasonsError;
+      for (const season of seasons ?? []) {
+        const existing = await supabase.from("rookie_seasons").select("id").eq("player_id", canonical.id).eq("season", season.season).maybeSingle();
+        if (existing.error) throw existing.error;
+        const { id: _id, user_id: _userId, player_id: _playerId, created_at: _createdAt, ...seasonValues } = season;
+        void [_id, _userId, _playerId, _createdAt];
+        const write = existing.data
+          ? await supabase.from("rookie_seasons").update(seasonValues).eq("id", existing.data.id)
+          : await supabase.from("rookie_seasons").update({ player_id: canonical.id }).eq("id", season.id);
+        if (write.error) throw write.error;
+        if (existing.data) {
+          const removed = await supabase.from("rookie_seasons").delete().eq("id", season.id);
+          if (removed.error) throw removed.error;
+        }
+      }
+
+      const importRows = await supabase.from("rookie_import_rows").update({ matched_player_id: canonical.id }).eq("matched_player_id", duplicate.id).eq("user_id", userId);
+      if (importRows.error) throw importRows.error;
+      const removed = await supabase.from("rookie_players").delete().eq("id", duplicate.id).eq("user_id", userId);
+      if (removed.error) throw removed.error;
+      repaired += 1;
+    }
+
+    if (repaired > 0) {
+      await scoreAndPersistRookieClass(userId, { classYears: [2025] });
+      revalidatePath("/dashboard/dynasty/rookies");
+      revalidatePath("/dashboard/dynasty/rookies/imports");
+    }
+    return { message: repaired > 0 ? `${repaired} imported name variants consolidated and the 2025 class rescored.` : "No imported name variants needed repair.", ok: true };
+  } catch (error) {
+    return { message: error instanceof Error ? error.message : "Imported name variants could not be repaired.", ok: false };
+  }
 }
 
 export async function previewRookieImport(
