@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import enrichments from "@/data/rookie-enrichments-2020-2026.json";
+import pahowdyYprr from "@/data/pahowdy-yprr-2020-2025.json";
 import outcomes from "@/data/rookie-outcomes-2020-2025.json";
 import { createRookieClient } from "@/lib/supabase/rookie";
 
@@ -16,7 +17,7 @@ export async function importBundledRookieEnrichments() {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) throw new Error("Sign in before importing rookie enrichments.");
     const userId = auth.user.id;
-    const { data: sources, error: sourceError } = await supabase.from("rookie_sources").select("id,label").eq("user_id", userId).in("label", ["cfbfastR ESPN receiving targets", "NFL underclassmen eligibility lists", "nflverse player outcomes"]);
+    const { data: sources, error: sourceError } = await supabase.from("rookie_sources").select("id,label").eq("user_id", userId).in("label", ["cfbfastR ESPN receiving targets", "NFL underclassmen eligibility lists", "nflverse player outcomes", "Pahowdy public prospect database — career YPRR"]);
     if (sourceError) throw sourceError;
     const sourceIds = new Map((sources ?? []).map((source) => [source.label, source.id]));
     let outcomeSourceId = sourceIds.get("nflverse player outcomes");
@@ -28,6 +29,12 @@ export async function importBundledRookieEnrichments() {
     const targetSourceId = sourceIds.get("cfbfastR ESPN receiving targets");
     const earlySourceId = sourceIds.get("NFL underclassmen eligibility lists");
     if (!targetSourceId || !earlySourceId) throw new Error("The approved cfbfastR and NFL sources are missing.");
+    let yprrSourceId = sourceIds.get("Pahowdy public prospect database — career YPRR");
+    if (!yprrSourceId) {
+      const created = await supabase.from("rookie_sources").insert({ accessed_at: "2026-08-22", author: "Peter Howard (@pahowdy) and credited contributors", label: "Pahowdy public prospect database — career YPRR", license: "Public compiler permits sharing with attribution; upstream sources are disclosed in the workbook", methodology_class: "partial", publication: "Pahowdy's College Database", reliability: "medium", summary: "Career college receiving yards per route run from the public WR prospect workbook. The compiler credits PFF, Sports Reference, and community contributors; values are treated as secondary-source data.", url: "https://www.patreon.com/posts/pahowdy-prospect-63253587", user_id: userId }).select("id").single();
+      if (created.error) throw created.error;
+      yprrSourceId = created.data.id;
+    }
 
     const { data: players, error: playerError } = await supabase.from("rookie_players").select("id,external_id,name,class_year,position").eq("user_id", userId).gte("class_year", 2020).lte("class_year", 2026);
     if (playerError) throw playerError;
@@ -40,7 +47,10 @@ export async function importBundledRookieEnrichments() {
         row.targetShare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "target_share", player_id: player.id, source_id: targetSourceId, user_id: userId, value: row.targetShare },
         row.earlyDeclare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "early_declare", player_id: player.id, source_id: earlySourceId, user_id: userId, value: row.earlyDeclare ? 1 : 0 },
       ].filter((value): value is NonNullable<typeof value> => value !== null);
-    });
+    }).concat(pahowdyYprr.flatMap((row) => {
+      const player = byExternal.get(row.externalId) ?? byIdentity.get(`${row.classYear}:${row.position}:${normalize(row.name)}`);
+      return player ? [{ as_of_date: `${row.classYear}-04-30`, confidence: "medium", metric_key: "career_yprr", player_id: player.id, source_id: yprrSourceId, user_id: userId, value: row.careerYprr }] : [];
+    }));
     const metricRows = [...new Map(rawMetricRows.map((row) => [`${row.player_id}:${row.metric_key}:${row.as_of_date}:${row.source_id}`, row])).values()];
     for (let start = 0; start < metricRows.length; start += 200) {
       const result = await supabase.from("rookie_player_metrics").upsert(metricRows.slice(start, start + 200), { onConflict: "player_id,metric_key,as_of_date,source_id" });
