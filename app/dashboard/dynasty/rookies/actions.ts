@@ -205,6 +205,19 @@ export async function commitRookieImport(batchId: string): Promise<RookieImportA
         matchedPlayerId = aliasMatch?.player_id ?? null;
       }
       if (!matchedPlayerId) {
+        const { data: normalizedCandidates, error } = await supabase
+          .from("rookie_players")
+          .select("id,name")
+          .eq("user_id", userId)
+          .eq("class_year", row.classYear)
+          .eq("position", rowPosition);
+        if (error) throw error;
+        const normalizedMatch = normalizedCandidates?.filter(
+          (candidate) => normalizedPlayerName(candidate.name) === normalizedPlayerName(row.name),
+        );
+        if (normalizedMatch?.length === 1) matchedPlayerId = normalizedMatch[0].id;
+      }
+      if (!matchedPlayerId) {
         const { data: nameMatch, error } = await supabase.from("rookie_players").select("id").eq("user_id", userId).eq("class_year", row.classYear).eq("position", rowPosition).ilike("name", row.name).maybeSingle();
         if (error) throw error;
         matchedPlayerId = nameMatch?.id ?? null;

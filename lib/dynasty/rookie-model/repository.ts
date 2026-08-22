@@ -71,7 +71,7 @@ export type RookiePlayerDetail = RookieEngineRanking & {
     key: string;
     label: string;
     sourceLabel: string | null;
-    value: number;
+    value: number | null;
   }>;
   athleticTests: Array<{ eventDate: string | null; eventType: string; fortySeconds: number | null; ras: number | null; sourceLabel: string | null; speedScore: number | null }>;
   benchmarks: Array<{ consensusRank: number; observedAt: string; provider: string; sourceLabel: string | null }>;
@@ -506,14 +506,25 @@ export async function scoreAndPersistRookieClass(
   if (!players?.length) return 0;
 
   const playerIds = players.map((player) => player.id);
-  const { data: metrics, error: metricError } = await supabase
-    .from("rookie_player_metrics")
-    .select("player_id,metric_key,value,source_id,as_of_date,created_at")
-    .in("player_id", playerIds)
-    .lte("as_of_date", asOfDate)
-    .order("as_of_date", { ascending: false })
-    .order("created_at", { ascending: false });
-  if (metricError) throw metricError;
+  const metrics: Array<{
+    as_of_date: string;
+    created_at: string;
+    metric_key: string;
+    player_id: string;
+    source_id: string | null;
+    value: number | null;
+  }> = [];
+  for (let start = 0; start < playerIds.length; start += 40) {
+    const { data, error } = await supabase
+      .from("rookie_player_metrics")
+      .select("player_id,metric_key,value,source_id,as_of_date,created_at")
+      .in("player_id", playerIds.slice(start, start + 40))
+      .lte("as_of_date", asOfDate)
+      .order("as_of_date", { ascending: false })
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    metrics.push(...(data ?? []));
+  }
   const [{ data: contexts, error: contextError }, { data: markets, error: marketError }] = await Promise.all([
     supabase.from("rookie_context_snapshots").select("player_id,observed_at,landing_spot_score,coaching_score,quarterback_score,offensive_line_score,depth_chart_score").in("player_id", playerIds).lte("observed_at", `${asOfDate}T23:59:59Z`).order("observed_at", { ascending: false }),
     supabase.from("rookie_market_snapshots").select("player_id,observed_at,market_value").in("player_id", playerIds).lte("observed_at", `${asOfDate}T23:59:59Z`).order("observed_at", { ascending: false }),
