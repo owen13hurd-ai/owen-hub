@@ -317,16 +317,20 @@ export async function getRookieBacktestReport(filters: { classYear?: number; nfl
   const playerIds = players.map((player) => player.id);
   let outcomesQuery = context.supabase.from("rookie_outcomes").select("player_id,nfl_season,games,fantasy_points,fantasy_ppg,position_finish,peak_dynasty_value").in("player_id", playerIds);
   if (filters.nflSeason) outcomesQuery = outcomesQuery.eq("nfl_season", filters.nflSeason);
-  const [{ data: scores, error: scoreError }, { data: outcomes, error: outcomeError }, { data: benchmarks, error: benchmarkError }] = await Promise.all([
-    context.supabase.from("rookie_score_runs").select("player_id,as_of_date,prospect_score,draft_capital_score,market_score,created_at").in("player_id", playerIds).order("as_of_date", { ascending: false }).order("created_at", { ascending: false }),
+  const scores: Array<{ as_of_date: string; created_at: string; draft_capital_score: number | null; market_score: number | null; player_id: string; prospect_score: number | null }> = [];
+  for (let start = 0; start < playerIds.length; start += 40) {
+    const result = await context.supabase.from("rookie_score_runs").select("player_id,as_of_date,prospect_score,draft_capital_score,market_score,created_at").in("player_id", playerIds.slice(start, start + 40)).order("as_of_date", { ascending: false }).order("created_at", { ascending: false });
+    if (result.error) throw result.error;
+    scores.push(...(result.data ?? []));
+  }
+  const [{ data: outcomes, error: outcomeError }, { data: benchmarks, error: benchmarkError }] = await Promise.all([
     outcomesQuery,
     context.supabase.from("rookie_benchmark_snapshots").select("player_id,observed_at,consensus_rank").in("player_id", playerIds).order("observed_at", { ascending: false }),
   ]);
-  if (scoreError) throw scoreError;
   if (outcomeError) throw outcomeError;
   if (benchmarkError) throw benchmarkError;
   const scoresByPlayer = new Map<string, typeof scores>();
-  scores?.forEach((score) => scoresByPlayer.set(score.player_id, [...(scoresByPlayer.get(score.player_id) ?? []), score]));
+  scores.forEach((score) => scoresByPlayer.set(score.player_id, [...(scoresByPlayer.get(score.player_id) ?? []), score]));
   const playerById = new Map(players.map((player) => [player.id, player]));
   return buildRookieBacktestReport((outcomes ?? []).map((outcome) => {
     const player = playerById.get(outcome.player_id)!;
