@@ -33,7 +33,7 @@ export async function importBundledRookieEnrichments() {
     if (playerError) throw playerError;
     const byExternal = new Map((players ?? []).filter((player) => player.external_id).map((player) => [player.external_id, player]));
     const byIdentity = new Map((players ?? []).map((player) => [`${player.class_year}:${player.position}:${normalize(player.name)}`, player]));
-    const metricRows = enrichments.flatMap((row) => {
+    const rawMetricRows = enrichments.flatMap((row) => {
       const player = byExternal.get(row.externalId) ?? byIdentity.get(`${row.classYear}:${row.position}:${normalize(row.name)}`);
       if (!player) return [];
       return [
@@ -41,14 +41,16 @@ export async function importBundledRookieEnrichments() {
         row.earlyDeclare === null ? null : { as_of_date: `${row.classYear}-04-30`, confidence: "high", metric_key: "early_declare", player_id: player.id, source_id: earlySourceId, user_id: userId, value: row.earlyDeclare ? 1 : 0 },
       ].filter((value): value is NonNullable<typeof value> => value !== null);
     });
+    const metricRows = [...new Map(rawMetricRows.map((row) => [`${row.player_id}:${row.metric_key}:${row.as_of_date}:${row.source_id}`, row])).values()];
     for (let start = 0; start < metricRows.length; start += 200) {
       const result = await supabase.from("rookie_player_metrics").upsert(metricRows.slice(start, start + 200), { onConflict: "player_id,metric_key,as_of_date,source_id" });
       if (result.error) throw result.error;
     }
-    const outcomeRows = outcomes.flatMap((row) => {
+    const rawOutcomeRows = outcomes.flatMap((row) => {
       const player = byExternal.get(row.playerId);
       return player ? [{ fantasy_points: row.fantasyPoints, fantasy_ppg: row.fantasyPpg, games: row.games, nfl_season: row.nflSeason, player_id: player.id, position_finish: row.positionFinish, source_id: outcomeSourceId, user_id: userId }] : [];
     });
+    const outcomeRows = [...new Map(rawOutcomeRows.map((row) => [`${row.player_id}:${row.nfl_season}`, row])).values()];
     for (let start = 0; start < outcomeRows.length; start += 200) {
       const result = await supabase.from("rookie_outcomes").upsert(outcomeRows.slice(start, start + 200), { onConflict: "player_id,nfl_season" });
       if (result.error) throw result.error;
