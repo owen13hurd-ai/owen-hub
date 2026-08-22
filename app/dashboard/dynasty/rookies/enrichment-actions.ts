@@ -56,6 +56,7 @@ export async function importBundledRookieEnrichments() {
     revalidatePath("/dashboard/dynasty/rookies");
     return { message: `${metricRows.length} prospect metrics and ${outcomeRows.length} outcomes imported.`, ok: true };
   } catch (error) {
-    return { message: error instanceof Error ? error.message : "The enrichments could not be imported.", ok: false };
+    const message = error instanceof Error ? error.message : error && typeof error === "object" && "message" in error ? String(error.message) : "The enrichments could not be imported.";
+    return { message, ok: false };
   }
 }
