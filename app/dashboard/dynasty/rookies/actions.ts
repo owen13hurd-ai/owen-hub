@@ -21,15 +21,15 @@ export type RookieImportActionState = {
 };
 
 const importedRookieNameRepairs = [
-  ["Cameron Skattebo", "Cam Skattebo"],
-  ["D.J. Giddens", "DJ Giddens"],
-  ["Tre Harris", "Cleveland Harris"],
-  ["Ollie Gordon II", "Ollie Gordon"],
-  ["Jaylin Lane", "Joshua Lane"],
-  ["Nick Singleton", "Nicholas Singleton"],
-  ["Emmanuel Henderson", "Emmanuel Henderson Jr."],
-  ["R.J. Harvey Jr.", "RJ Harvey"],
-  ["Jimmy Horn Jr.", "Jimmy Horn"],
+  [2025, "Cameron Skattebo", "Cam Skattebo"],
+  [2025, "D.J. Giddens", "DJ Giddens"],
+  [2025, "Tre Harris", "Cleveland Harris"],
+  [2025, "Ollie Gordon II", "Ollie Gordon"],
+  [2025, "Jaylin Lane", "Joshua Lane"],
+  [2026, "Nick Singleton", "Nicholas Singleton"],
+  [2026, "Emmanuel Henderson", "Emmanuel Henderson Jr."],
+  [2025, "R.J. Harvey Jr.", "RJ Harvey"],
+  [2025, "Jimmy Horn Jr.", "Jimmy Horn"],
 ] as const;
 
 async function getAuthenticatedClient() {
@@ -50,12 +50,13 @@ export async function repairImportedRookieNameVariants(): Promise<RookieImportAc
     const { supabase, userId } = await getAuthenticatedClient();
     let repaired = 0;
 
-    for (const [canonicalName, importedName] of importedRookieNameRepairs) {
+    const repairedClassYears = new Set<number>();
+    for (const [classYear, canonicalName, importedName] of importedRookieNameRepairs) {
       const { data: players, error: playersError } = await supabase
         .from("rookie_players")
         .select("*")
         .eq("user_id", userId)
-        .eq("class_year", 2025)
+        .eq("class_year", classYear)
         .in("name", [canonicalName, importedName]);
       if (playersError) throw playersError;
       const canonical = players?.find((player) => player.name === canonicalName);
@@ -110,10 +111,11 @@ export async function repairImportedRookieNameVariants(): Promise<RookieImportAc
       const removed = await supabase.from("rookie_players").delete().eq("id", duplicate.id).eq("user_id", userId);
       if (removed.error) throw removed.error;
       repaired += 1;
+      repairedClassYears.add(classYear);
     }
 
     if (repaired > 0) {
-      await scoreAndPersistRookieClass(userId, { classYears: [2025] });
+      await scoreAndPersistRookieClass(userId, { classYears: [...repairedClassYears] });
       revalidatePath("/dashboard/dynasty/rookies");
       revalidatePath("/dashboard/dynasty/rookies/imports");
     }
