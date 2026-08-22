@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import enrichments from "@/data/rookie-enrichments-2020-2026.json";
 import pahowdyYprr from "@/data/pahowdy-yprr-2020-2025.json";
 import outcomes from "@/data/rookie-outcomes-2020-2025.json";
+import steinYprr from "@/data/stein-2025-receiving-yprr.json";
 import { createRookieClient } from "@/lib/supabase/rookie";
 
 function normalize(value: string) {
@@ -17,7 +18,7 @@ export async function importBundledRookieEnrichments() {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) throw new Error("Sign in before importing rookie enrichments.");
     const userId = auth.user.id;
-    const { data: sources, error: sourceError } = await supabase.from("rookie_sources").select("id,label").eq("user_id", userId).in("label", ["cfbfastR ESPN receiving targets", "NFL underclassmen eligibility lists", "nflverse player outcomes", "Pahowdy public prospect database — career YPRR"]);
+    const { data: sources, error: sourceError } = await supabase.from("rookie_sources").select("id,label").eq("user_id", userId).in("label", ["cfbfastR ESPN receiving targets", "NFL underclassmen eligibility lists", "nflverse player outcomes", "Pahowdy public prospect database — career YPRR", "Stein 2025 CFB stats — receiving YPRR"]);
     if (sourceError) throw sourceError;
     const sourceIds = new Map((sources ?? []).map((source) => [source.label, source.id]));
     let outcomeSourceId = sourceIds.get("nflverse player outcomes");
@@ -35,6 +36,12 @@ export async function importBundledRookieEnrichments() {
       if (created.error) throw created.error;
       yprrSourceId = created.data.id;
     }
+    let currentYprrSourceId = sourceIds.get("Stein 2025 CFB stats — receiving YPRR");
+    if (!currentYprrSourceId) {
+      const created = await supabase.from("rookie_sources").insert({ accessed_at: "2026-08-22", author: "Stein (shared workbook compiler); PFF receiving data", label: "Stein 2025 CFB stats — receiving YPRR", license: "Public view-only workbook shared by user; downstream PFF attribution retained", methodology_class: "partial", publication: "Stein - 2025 cfb stats", reliability: "medium", summary: "Final 2025 college-season yards per route run from the workbook's pff_rec tab. Stored as season receiving YPRR, not career YPRR.", url: "https://docs.google.com/spreadsheets/d/167k1l6dMPJOw1V0eQh-R1WHqtmEhqoeyS4DmePmhiYY/edit?usp=sharing", user_id: userId }).select("id").single();
+      if (created.error) throw created.error;
+      currentYprrSourceId = created.data.id;
+    }
 
     const { data: players, error: playerError } = await supabase.from("rookie_players").select("id,external_id,name,class_year,position").eq("user_id", userId).gte("class_year", 2020).lte("class_year", 2026);
     if (playerError) throw playerError;
@@ -50,6 +57,9 @@ export async function importBundledRookieEnrichments() {
     }).concat(pahowdyYprr.flatMap((row) => {
       const player = byExternal.get(row.externalId) ?? byIdentity.get(`${row.classYear}:${row.position}:${normalize(row.name)}`);
       return player ? [{ as_of_date: `${row.classYear}-04-30`, confidence: "medium", metric_key: "career_yprr", player_id: player.id, source_id: yprrSourceId, user_id: userId, value: row.careerYprr }] : [];
+    })).concat(steinYprr.flatMap((row) => {
+      const player = byIdentity.get(`${row.classYear}:${row.position}:${normalize(row.name)}`);
+      return player ? [{ as_of_date: "2026-04-30", confidence: "medium", metric_key: "receiving_yprr", player_id: player.id, source_id: currentYprrSourceId, user_id: userId, value: row.receivingYprr }] : [];
     }));
     const metricRows = [...new Map(rawMetricRows.map((row) => [`${row.player_id}:${row.metric_key}:${row.as_of_date}:${row.source_id}`, row])).values()];
     for (let start = 0; start < metricRows.length; start += 200) {
