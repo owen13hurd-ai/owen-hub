@@ -1,0 +1,166 @@
+{
+  "generated_at": "2026-08-22T19:59:18.527Z",
+  "cohort": {
+    "end_year": 2026,
+    "positions": [
+      "RB",
+      "WR"
+    ],
+    "start_year": 2020
+  },
+  "limitations": [
+    "Cohort contains drafted RB/WR players plus undrafted NFL combine participants; non-combine undrafted prospects require another approved identity source.",
+    "RAS, YPRR, yards after contact, missed tackles, target share, and early-declare are null until an approved source is added.",
+    "Name-only CFBD joins are accepted only when exactly one eligible drafted player matches.",
+    "Receiving and rushing shares use CFBD player-stat team totals for the final matched college season.",
+    "Per-game metrics prefer CFBD player game counts and fall back to the final college team's regular-season game count."
+  ],
+  "player_count": 375,
+  "by_class": {
+    "2020": 56,
+    "2021": 54,
+    "2022": 53,
+    "2023": 52,
+    "2024": 54,
+    "2025": 58,
+    "2026": 48
+  },
+  "coverage": {
+    "name": {
+      "count": 375,
+      "percent": 100
+    },
+    "position": {
+      "count": 375,
+      "percent": 100
+    },
+    "class_year": {
+      "count": 375,
+      "percent": 100
+    },
+    "school": {
+      "count": 375,
+      "percent": 100
+    },
+    "external_id": {
+      "count": 375,
+      "percent": 100
+    },
+    "scoring_date": {
+      "count": 375,
+      "percent": 100
+    },
+    "draft_round": {
+      "count": 375,
+      "percent": 100
+    },
+    "overall_pick": {
+      "count": 375,
+      "percent": 100
+    },
+    "nfl_team": {
+      "count": 375,
+      "percent": 100
+    },
+    "pass_play_usage": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "best_pass_play_usage": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "receiving_ppa": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "career_receiving_ppa": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "best_receiving_ppa": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "rushing_ppa": {
+      "count": 324,
+      "percent": 86.4
+    },
+    "career_rushing_ppa": {
+      "count": 324,
+      "percent": 86.4
+    },
+    "best_rushing_ppa": {
+      "count": 324,
+      "percent": 86.4
+    },
+    "career_yprr": {
+      "count": 0,
+      "percent": 0
+    },
+    "best_yprr": {
+      "count": 0,
+      "percent": 0
+    },
+    "target_share": {
+      "count": 0,
+      "percent": 0
+    },
+    "receiving_yard_share": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "age_at_draft": {
+      "count": 359,
+      "percent": 95.7
+    },
+    "early_declare": {
+      "count": 0,
+      "percent": 0
+    },
+    "ras": {
+      "count": 0,
+      "percent": 0
+    },
+    "bmi": {
+      "count": 275,
+      "percent": 73.3
+    },
+    "speed_score": {
+      "count": 230,
+      "percent": 61.3
+    },
+    "recruiting_rating": {
+      "count": 327,
+      "percent": 87.2
+    },
+    "conference_strength": {
+      "count": 322,
+      "percent": 85.9
+    },
+    "scrimmage_yards_per_game": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "rushing_yard_share": {
+      "count": 274,
+      "percent": 73.1
+    },
+    "yards_after_contact_per_attempt": {
+      "count": 0,
+      "percent": 0
+    },
+    "missed_tackles_per_attempt": {
+      "count": 0,
+      "percent": 0
+    },
+    "receptions_per_game": {
+      "count": 348,
+      "percent": 92.8
+    },
+    "receiving_yprr": {
+      "count": 0,
+      "percent": 0
+    }
+  }
+}

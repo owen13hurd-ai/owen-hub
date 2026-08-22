@@ -69,17 +69,19 @@ test("suppresses a family below its required coverage", () => {
 
 test("previews valid and invalid MVP CSV rows without committing", () => {
   const preview = previewRookieCsv(
-    "name,position,class_year,school,career_yprr,early_declare\nAlpha Receiver,WR,2026,Example,2.75,yes\nBad Quarterback,QB,2026,Example,,no",
+    "name,position,class_year,school,career_yprr,pass_play_usage,receiving_ppa,early_declare\nAlpha Receiver,WR,2026,Example,2.75,0.24,0.51,yes\nBad Quarterback,QB,2026,Example,,,,no",
   );
   assert.equal(preview.validRows, 1);
   assert.equal(preview.invalidRows, 1);
   assert.equal(preview.rows[0].metrics.find((metric) => metric.key === "early_declare").value, 1);
+  assert.equal(preview.rows[0].metrics.find((metric) => metric.key === "pass_play_usage").value, 0.24);
+  assert.equal(preview.rows[0].metrics.find((metric) => metric.key === "receiving_ppa").value, 0.51);
   assert.match(preview.rows[1].errors[0], /RB or WR/);
 });
 
 test("historical CSV requires one leakage-safe pre-draft scoring date", () => {
   const preview = previewHistoricalRookieCsv(
-    "name,position,class_year,scoring_date,career_yprr\nSafe Receiver,WR,2020,2020-04-20,2.5\nLate Receiver,WR,2020,2020-10-01,2.4\nCurrent Receiver,WR,2025,2025-04-20,2.7",
+    "name,position,class_year,scoring_date,overall_pick,career_yprr\nSafe Receiver,WR,2020,2020-04-20,260,2.5\nLate Receiver,WR,2020,2020-10-01,,2.4\nCurrent Receiver,WR,2025,2025-04-20,,2.7",
   );
   assert.equal(preview.validRows, 1);
   assert.equal(preview.invalidRows, 2);

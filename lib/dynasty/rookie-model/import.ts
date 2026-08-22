@@ -3,6 +3,14 @@ import { parse } from "csv-parse/sync";
 import type { RookieEnginePosition, RookieImportPreview, RookieMetricInput } from "@/types/rookie-engine";
 
 const metricColumns = [
+  "pass_play_usage",
+  "best_pass_play_usage",
+  "receiving_ppa",
+  "career_receiving_ppa",
+  "best_receiving_ppa",
+  "rushing_ppa",
+  "career_rushing_ppa",
+  "best_rushing_ppa",
   "career_yprr",
   "best_yprr",
   "target_share",
@@ -61,7 +69,7 @@ function previewCsv(csv: string, mode: "mvp" | "historical"): RookieImportPrevie
 
     if (!name) errors.push("Name is required.");
     if (!position) errors.push("Position must be RB or WR.");
-    if (overallPick !== null && (overallPick < 1 || overallPick > 257)) errors.push("Overall pick must be between 1 and 257.");
+    if (overallPick !== null && (overallPick < 1 || overallPick > 300)) errors.push("Overall pick must be between 1 and 300.");
     if (draftRound !== null && (draftRound < 1 || draftRound > 7)) errors.push("Draft round must be between 1 and 7.");
     if (mode === "mvp" && classYear !== 2025 && classYear !== 2026) errors.push("Class year must be 2025 or 2026 for the MVP.");
     if (mode === "historical" && (!classYear || classYear < 2010 || classYear > 2024)) errors.push("Historical class year must be between 2010 and 2024.");

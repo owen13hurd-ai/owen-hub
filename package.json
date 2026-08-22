@@ -11,6 +11,7 @@
     "test:pokemon-intelligence": "node --experimental-strip-types --test tests/pokemon-intelligence-*.test.mjs",
     "test:rookie-model": "node --experimental-strip-types --test tests/rookie-model.test.mjs",
     "check:rookie-migrations": "node scripts/check-rookie-migrations.mjs",
+    "build:rookie-dataset": "node scripts/build-rookie-dataset.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint ."
