@@ -62,6 +62,31 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
     });
   }, [rankings]);
 
+  const coverageGaps = useMemo(() => {
+    const gaps = new Map<string, { families: Set<string>; players: number }>();
+
+    for (const ranking of visibleRankings) {
+      for (const family of ranking.familyScores) {
+        for (const metric of family.missingMetrics) {
+          const gap = gaps.get(metric) ?? { families: new Set<string>(), players: 0 };
+          gap.families.add(family.label);
+          gap.players += 1;
+          gaps.set(metric, gap);
+        }
+      }
+    }
+
+    return [...gaps.entries()]
+      .map(([metric, gap]) => ({
+        families: [...gap.families].join(", "),
+        metric,
+        players: gap.players,
+        share: visibleRankings.length ? (gap.players / visibleRankings.length) * 100 : 0,
+      }))
+      .sort((a, b) => b.players - a.players || a.metric.localeCompare(b.metric))
+      .slice(0, 6);
+  }, [visibleRankings]);
+
   function handleSaveManualRanks() {
     const changed = Object.entries(manualEdits).map(([playerId, edit]) => ({
       manualRank: edit.rank.trim() ? Number.parseInt(edit.rank, 10) : null,
@@ -103,6 +128,34 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
           <p className="text-sm text-ink/55">Format</p>
           <p className="mt-2 text-sm font-bold text-ink">12-team Superflex</p>
         </div>
+      </section>
+
+      <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="font-bold text-ink">Coverage gaps</h2>
+            <p className="mt-1 text-sm text-ink/55">Most commonly missing inputs for the prospects currently shown.</p>
+          </div>
+          <p className="text-xs font-semibold text-ink/45">{visibleRankings.length} prospects analyzed</p>
+        </div>
+        {coverageGaps.length ? (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {coverageGaps.map((gap) => (
+              <article key={gap.metric} className="rounded-md border border-ink/10 bg-mist/35 p-3">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="font-semibold text-ink">{gap.metric}</h3>
+                  <span className="text-sm font-bold text-amber-700">{gap.players}</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink/8" aria-label={`${gap.metric} missing for ${gap.share.toFixed(0)}% of visible prospects`}>
+                  <div className="h-full rounded-full bg-amber-500" style={{ width: `${gap.share}%` }} />
+                </div>
+                <p className="mt-1.5 text-xs text-ink/50">Missing for {gap.share.toFixed(0)}% · {gap.families}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm font-semibold text-emerald-800">Every configured input is present for the current view.</p>
+        )}
       </section>
 
       <section className="rounded-lg border border-ink/10 bg-white shadow-soft">
