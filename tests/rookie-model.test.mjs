@@ -87,6 +87,19 @@ test("suppresses a family below its required coverage", () => {
   assert.equal(result.families[0].suppressed, true);
 });
 
+test("does not create a market-only overall score when the required prospect score is missing", () => {
+  const result = calculateRookieScore(
+    wrModelConfiguration,
+    [{ key: "early_declare", value: 1 }],
+    [{ key: "early_declare", values: [0, 1] }],
+    { draftCapital: 95, market: 90, situation: 85 },
+  );
+
+  assert.equal(result.prospectScore, null);
+  assert.equal(result.overallScore, null);
+  assert.equal(result.tier, null);
+});
+
 test("previews valid and invalid MVP CSV rows without committing", () => {
   const preview = previewRookieCsv(
     "name,position,class_year,school,career_yprr,pass_play_usage,receiving_ppa,early_declare\nAlpha Receiver,WR,2026,Example,2.75,0.24,0.51,yes\nBad Specialist,K,2026,Example,,,,no",

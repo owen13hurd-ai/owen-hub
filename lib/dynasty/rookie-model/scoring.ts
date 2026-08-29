@@ -127,7 +127,7 @@ export function calculateRookieScore(
   ].filter((part): part is { value: number; weight: number } => part.value !== null);
   const overallAvailableWeight = overallParts.reduce((total, part) => total + part.weight, 0);
   const overallScore =
-    overallAvailableWeight === 0
+    prospectScore === null || overallAvailableWeight === 0
       ? null
       : overallParts.reduce((total, part) => total + part.value * (part.weight / overallAvailableWeight), 0);
   const tier =
