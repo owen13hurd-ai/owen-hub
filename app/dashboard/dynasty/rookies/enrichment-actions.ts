@@ -113,6 +113,8 @@ export async function importBundledRookieEnrichments() {
 
     const { data: players, error: playerError } = await supabase.from("rookie_players").select("id,external_id,name,class_year,position").eq("user_id", userId).gte("class_year", 2020).lte("class_year", 2026);
     if (playerError) throw playerError;
+    const { data: aliases, error: aliasError } = await supabase.from("rookie_player_aliases").select("player_id,alias").eq("user_id", userId).in("player_id", (players ?? []).map((player) => player.id));
+    if (aliasError) throw aliasError;
     const byExternal = new Map((players ?? []).filter((player) => player.external_id).map((player) => [player.external_id, player]));
     const byIdentity = new Map((players ?? []).map((player) => [`${player.class_year}:${player.position}:${normalize(player.name)}`, player]));
     const currentPlayersByName = new Map<string, (typeof players)[number][]>();
@@ -120,6 +122,13 @@ export async function importBundledRookieEnrichments() {
       if (![2025, 2026].includes(player.class_year)) continue;
       const key = normalize(player.name);
       currentPlayersByName.set(key, [...(currentPlayersByName.get(key) ?? []), player]);
+    }
+    for (const alias of aliases ?? []) {
+      const player = (players ?? []).find((candidate) => candidate.id === alias.player_id);
+      if (!player || ![2025, 2026].includes(player.class_year)) continue;
+      const key = normalize(alias.alias);
+      const matches = currentPlayersByName.get(key) ?? [];
+      if (!matches.some((candidate) => candidate.id === player.id)) currentPlayersByName.set(key, [...matches, player]);
     }
 
     type CfbdHistory = { pass: number[]; rush: number[]; usage: number[] };
