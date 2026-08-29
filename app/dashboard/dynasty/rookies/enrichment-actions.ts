@@ -97,10 +97,85 @@ export async function importBundledRookieEnrichments() {
       rasSourceId = created.data.id;
     }
 
+    const cfbdKey = process.env.CFBD_API_KEY;
+    if (!cfbdKey) throw new Error("The CollegeFootballData API key is missing.");
+    let cfbdSourceId = sourceIds.get("CollegeFootballData API");
+    if (!cfbdSourceId) {
+      const existing = await supabase.from("rookie_sources").select("id").eq("user_id", userId).eq("label", "CollegeFootballData API").maybeSingle();
+      if (existing.error) throw existing.error;
+      if (existing.data) cfbdSourceId = existing.data.id;
+      else {
+        const created = await supabase.from("rookie_sources").insert({ accessed_at: new Date().toISOString(), author: "CollegeFootballData", label: "CollegeFootballData API", license: "Provider terms apply", methodology_class: "documented", publication: "CollegeFootballData", reliability: "high", summary: "Documented college usage and predicted-points-added metrics used for reproducible prospect production families.", url: "https://collegefootballdata.com/", user_id: userId }).select("id").single();
+        if (created.error) throw created.error;
+        cfbdSourceId = created.data.id;
+      }
+    }
+
     const { data: players, error: playerError } = await supabase.from("rookie_players").select("id,external_id,name,class_year,position").eq("user_id", userId).gte("class_year", 2020).lte("class_year", 2026);
     if (playerError) throw playerError;
     const byExternal = new Map((players ?? []).filter((player) => player.external_id).map((player) => [player.external_id, player]));
     const byIdentity = new Map((players ?? []).map((player) => [`${player.class_year}:${player.position}:${normalize(player.name)}`, player]));
+    const currentPlayersByName = new Map<string, (typeof players)[number][]>();
+    for (const player of players ?? []) {
+      if (![2025, 2026].includes(player.class_year)) continue;
+      const key = normalize(player.name);
+      currentPlayersByName.set(key, [...(currentPlayersByName.get(key) ?? []), player]);
+    }
+
+    type CfbdHistory = { pass: number[]; rush: number[]; usage: number[] };
+    const cfbdHistory = new Map<string, CfbdHistory>();
+    const historyFor = (playerId: string) => {
+      const history = cfbdHistory.get(playerId) ?? { pass: [], rush: [], usage: [] };
+      cfbdHistory.set(playerId, history);
+      return history;
+    };
+    const cfbdMetricRows: Array<{ as_of_date: string; confidence: "high"; metric_key: string; player_id: string; source_id: string; user_id: string; value: number }> = [];
+    const cfbdHeaders = { Authorization: `Bearer ${cfbdKey}` };
+    const seasons = await Promise.all([2020, 2021, 2022, 2023, 2024, 2025].map(async (season) => {
+      const [usageResponse, ppaResponse] = await Promise.all([
+        fetch(`https://api.collegefootballdata.com/player/usage?year=${season}`, { headers: cfbdHeaders, next: { revalidate: 86400 } }),
+        fetch(`https://api.collegefootballdata.com/ppa/players/season?year=${season}`, { headers: cfbdHeaders, next: { revalidate: 86400 } }),
+      ]);
+      if (!usageResponse.ok) throw new Error(`CollegeFootballData usage ${season} returned ${usageResponse.status}.`);
+      if (!ppaResponse.ok) throw new Error(`CollegeFootballData PPA ${season} returned ${ppaResponse.status}.`);
+      return {
+        ppa: await ppaResponse.json() as Array<{ name: string; averagePPA?: { pass?: number | null; rush?: number | null } }>,
+        season,
+        usage: await usageResponse.json() as Array<{ name: string; usage?: { pass?: number | null } }>,
+      };
+    }));
+    for (const seasonRows of seasons) {
+      for (const row of seasonRows.usage) {
+        const candidates = currentPlayersByName.get(normalize(row.name)) ?? [];
+        if (candidates.length !== 1 || row.usage?.pass == null) continue;
+        historyFor(candidates[0].id).usage.push(row.usage.pass);
+      }
+      for (const row of seasonRows.ppa) {
+        const candidates = currentPlayersByName.get(normalize(row.name)) ?? [];
+        if (candidates.length !== 1) continue;
+        const history = historyFor(candidates[0].id);
+        if (row.averagePPA?.pass != null) history.pass.push(row.averagePPA.pass);
+        if (row.averagePPA?.rush != null) history.rush.push(row.averagePPA.rush);
+      }
+    }
+    const average = (values: number[]) => values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
+    const best = (values: number[]) => values.length ? Math.max(...values) : null;
+    for (const player of (players ?? []).filter((candidate) => [2025, 2026].includes(candidate.class_year))) {
+      const history = cfbdHistory.get(player.id) ?? { pass: [], rush: [], usage: [] };
+      const finalSeason = player.class_year - 1;
+      const finalRows = seasons.find((entry) => entry.season === finalSeason);
+      const finalUsage = finalRows?.usage.find((row) => normalize(row.name) === normalize(player.name))?.usage?.pass ?? null;
+      const finalPpa = finalRows?.ppa.find((row) => normalize(row.name) === normalize(player.name))?.averagePPA;
+      const values = player.position === "QB"
+        ? [{ key: "passing_ppa", value: finalPpa?.pass }, { key: "career_passing_ppa", value: average(history.pass) }, { key: "best_passing_ppa", value: best(history.pass) }, { key: "rushing_ppa", value: finalPpa?.rush }, { key: "best_rushing_ppa", value: best(history.rush) }]
+        : player.position === "WR" || player.position === "TE"
+          ? [{ key: "pass_play_usage", value: finalUsage }, { key: "best_pass_play_usage", value: best(history.usage) }, { key: "receiving_ppa", value: finalPpa?.pass }, { key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }]
+          : [{ key: "rushing_ppa", value: finalPpa?.rush }, { key: "career_rushing_ppa", value: average(history.rush) }, { key: "best_rushing_ppa", value: best(history.rush) }, { key: "receiving_ppa", value: finalPpa?.pass }, { key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }];
+      for (const value of values) {
+        if (value.value == null || !Number.isFinite(value.value)) continue;
+        cfbdMetricRows.push({ as_of_date: `${player.class_year}-04-30`, confidence: "high", metric_key: value.key, player_id: player.id, source_id: cfbdSourceId, user_id: userId, value: value.value });
+      }
+    }
     for (const row of pahowdyQbTe) {
       const player = byIdentity.get(`${row.classYear}:${row.position}:${normalize(row.name)}`);
       if (!player) continue;
@@ -168,7 +243,7 @@ export async function importBundledRookieEnrichments() {
     })).concat(steinYprr.flatMap((row) => {
       const player = byIdentity.get(`${row.classYear}:${row.position}:${normalize(row.name)}`);
       return player ? [{ as_of_date: "2026-04-30", confidence: "medium", metric_key: "receiving_yprr", player_id: player.id, source_id: currentYprrSourceId, user_id: userId, value: row.receivingYprr }] : [];
-    }));
+    })).concat(cfbdMetricRows);
     const metricRows = [...new Map(rawMetricRows.map((row) => [`${row.player_id}:${row.metric_key}:${row.as_of_date}:${row.source_id}`, row])).values()];
     for (let start = 0; start < metricRows.length; start += 200) {
       const result = await supabase.from("rookie_player_metrics").upsert(metricRows.slice(start, start + 200), { onConflict: "player_id,metric_key,as_of_date,source_id" });
