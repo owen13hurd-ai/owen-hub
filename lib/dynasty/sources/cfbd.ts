@@ -24,6 +24,13 @@ export type CfbdPlayerSeason = {
   touchdowns: number | null;
 };
 
+export type CfbdPlayerPpa = {
+  name: string;
+  passingPpa: number | null;
+  rushingPpa: number | null;
+  team: string | null;
+};
+
 function finiteNumber(value: unknown) {
   const parsed = typeof value === "number" ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : null;
@@ -94,4 +101,29 @@ export async function fetchCfbdPlayerSeasons(apiKey: string, season: number) {
     fetchCategory(apiKey, season, "rushing"),
   ]);
   return aggregateCfbdPlayerSeasons([...receiving, ...rushing], season);
+}
+
+export async function fetchCfbdPlayerPpa(apiKey: string, season: number): Promise<CfbdPlayerPpa[]> {
+  const response = await fetch(`${CFBD_API_URL}/ppa/players/season?year=${season}`, {
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  if (!response.ok) throw new Error(`CFBD PPA ${season} returned ${response.status}.`);
+  const payload = await response.json();
+  if (!Array.isArray(payload)) throw new Error("CFBD returned an unexpected PPA response.");
+  return payload.flatMap((raw): CfbdPlayerPpa[] => {
+    if (!raw || typeof raw !== "object") return [];
+    const row = raw as Record<string, unknown>;
+    const average = row.averagePPA && typeof row.averagePPA === "object"
+      ? row.averagePPA as Record<string, unknown>
+      : {};
+    const name = String(row.name ?? "").trim();
+    if (!name) return [];
+    return [{
+      name,
+      passingPpa: finiteNumber(average.pass),
+      rushingPpa: finiteNumber(average.rush),
+      team: row.team ? String(row.team) : null,
+    }];
+  });
 }

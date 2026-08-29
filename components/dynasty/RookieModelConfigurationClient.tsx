@@ -9,16 +9,17 @@ import { publishRookieModelDraft, saveRookieModelDraft } from "@/app/dashboard/d
 import { Button } from "@/components/ui/button";
 import type { RookieModelVersionSummary } from "@/lib/dynasty/rookie-model/repository";
 import type { RookieModelConfiguration } from "@/types/rookie-engine";
+import { rookieEnginePositions, type RookieEnginePosition } from "@/types/rookie-engine";
 
 export function RookieModelConfigurationClient({ defaults, versions }: { defaults: RookieModelConfiguration[]; versions: RookieModelVersionSummary[] }) {
   const router = useRouter();
-  const [position, setPosition] = useState<"RB" | "WR">("WR");
+  const [position, setPosition] = useState<RookieEnginePosition>("WR");
   const newest = useMemo(() => versions.find((version) => version.position === position), [position, versions]);
   const base = useMemo(() => newest?.configuration ?? defaults.find((configuration) => configuration.position === position)!, [defaults, newest, position]);
   const [drafts, setDrafts] = useState<Record<string, RookieModelConfiguration>>({});
   const [isSaving, startSaving] = useTransition();
   const [isPublishing, startPublishing] = useTransition();
-  const [savedDraftIds, setSavedDraftIds] = useState<Partial<Record<"RB" | "WR", string>>>({});
+  const [savedDraftIds, setSavedDraftIds] = useState<Partial<Record<RookieEnginePosition, string>>>({});
   const configuration = useMemo(() => drafts[position] ?? { ...base, version: newest?.status === "draft" ? base.version : `${base.version}-next` }, [base, drafts, newest?.status, position]);
   const familyTotal = configuration.prospectFamilies.reduce((total, family) => total + family.weight, 0);
   const overallTotal = Object.values(configuration.overallWeights).reduce((total, weight) => total + weight, 0);
@@ -34,7 +35,7 @@ export function RookieModelConfigurationClient({ defaults, versions }: { default
   }
 
   return <div className="space-y-6">
-    <div className="flex gap-2">{(["WR", "RB"] as const).map((candidate) => <Button key={candidate} type="button" variant={position === candidate ? "default" : "outline"} onClick={() => setPosition(candidate)}>{candidate}</Button>)}</div>
+    <div className="flex flex-wrap gap-2">{rookieEnginePositions.map((candidate) => <Button key={candidate} type="button" variant={position === candidate ? "default" : "outline"} onClick={() => setPosition(candidate)}>{candidate}</Button>)}</div>
     <section className="rounded-lg border border-ink/10 bg-white shadow-soft">
       <div className="grid gap-4 border-b border-ink/10 p-5 md:grid-cols-2"><label className="grid gap-2 text-sm font-semibold text-ink">Model label<input value={configuration.label} onChange={(event) => update({ ...configuration, label: event.target.value })} className="h-10 rounded-md border border-ink/15 px-3 font-normal" /></label><label className="grid gap-2 text-sm font-semibold text-ink">Version<input value={configuration.version} onChange={(event) => update({ ...configuration, version: event.target.value })} className="h-10 rounded-md border border-ink/15 px-3 font-normal" /><span className="text-xs font-normal text-ink/50">Published names cannot be reused.</span></label></div>
       <div className="p-5"><h2 className="font-bold text-ink">Prospect families</h2><p className="mt-1 text-sm text-ink/55">Family weights must total 100%. Metric weights remain visible and versioned inside each family.</p><div className="mt-4 grid gap-3 lg:grid-cols-2">{configuration.prospectFamilies.map((family, index) => <article key={family.key} className="rounded-md border border-ink/10 bg-mist/35 p-4"><div className="flex items-start justify-between gap-4"><div><h3 className="font-bold text-ink">{family.label}</h3><p className="mt-1 text-xs text-ink/50">Minimum coverage {(family.minimumCoverage * 100).toFixed(0)}%</p></div><label className="text-xs font-semibold text-ink/55">Weight %<input type="number" min="0" max="100" step="1" value={Math.round(family.weight * 100)} onChange={(event) => { const families = [...configuration.prospectFamilies]; families[index] = { ...family, weight: Number(event.target.value) / 100 }; update({ ...configuration, prospectFamilies: families }); }} className="ml-2 h-8 w-20 rounded border border-ink/15 bg-white px-2 text-sm text-ink" /></label></div><ul className="mt-3 space-y-1 text-xs text-ink/60">{family.metrics.map((metric) => <li key={metric.key} className="flex justify-between gap-3"><span>{metric.label}</span><span>{(metric.weight * 100).toFixed(0)}%</span></li>)}</ul></article>)}</div></div>

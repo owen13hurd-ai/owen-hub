@@ -2,9 +2,14 @@ import { parse } from "csv-parse/sync";
 
 import type { RookieEnginePosition, RookieImportPreview, RookieMetricInput } from "@/types/rookie-engine";
 
+const importPositions: RookieEnginePosition[] = ["QB", "RB", "WR", "TE"];
+
 const metricColumns = [
   "pass_play_usage",
   "best_pass_play_usage",
+  "passing_ppa",
+  "career_passing_ppa",
+  "best_passing_ppa",
   "receiving_ppa",
   "career_receiving_ppa",
   "best_receiving_ppa",
@@ -59,7 +64,7 @@ function previewCsv(csv: string, mode: "mvp" | "historical"): RookieImportPrevie
     const errors: string[] = [];
     const name = record.name?.trim() ?? "";
     const rawPosition = record.position?.trim().toUpperCase();
-    const position: RookieEnginePosition | null = rawPosition === "RB" || rawPosition === "WR" ? rawPosition : null;
+    const position: RookieEnginePosition | null = importPositions.includes(rawPosition as RookieEnginePosition) ? rawPosition as RookieEnginePosition : null;
     const classYear = numberOrNull(record.class_year ?? record.draft_year);
     const ageAtDraft = numberOrNull(record.age_at_draft);
     const earlyDeclare = booleanOrNull(record.early_declare);
@@ -68,7 +73,7 @@ function previewCsv(csv: string, mode: "mvp" | "historical"): RookieImportPrevie
     const scoringDate = record.scoring_date?.trim() || null;
 
     if (!name) errors.push("Name is required.");
-    if (!position) errors.push("Position must be RB or WR.");
+    if (!position) errors.push("Position must be QB, RB, WR, or TE.");
     if (overallPick !== null && (overallPick < 1 || overallPick > 300)) errors.push("Overall pick must be between 1 and 300.");
     if (draftRound !== null && (draftRound < 1 || draftRound > 7)) errors.push("Draft round must be between 1 and 7.");
     if (mode === "mvp" && classYear !== 2025 && classYear !== 2026) errors.push("Class year must be 2025 or 2026 for the MVP.");

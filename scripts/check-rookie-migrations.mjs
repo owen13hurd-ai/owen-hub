@@ -3,7 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const migrationDirectory = path.join(root, "supabase", "migrations");
-const expected = ["0008", "0009", "0010", "0011", "0012", "0013"];
+const expected = ["0008", "0009", "0010", "0011", "0012", "0013", "0014"];
 const files = await readdir(migrationDirectory);
 for (const prefix of expected) {
   if (!files.some((file) => file.startsWith(`${prefix}_`) && file.endsWith(".sql"))) {

@@ -2,20 +2,23 @@
 
 import { DatabaseZap, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { importCfbdRookieSeasons } from "@/app/dashboard/dynasty/rookies/actions";
-import { importBundledRookieEnrichments } from "@/app/dashboard/dynasty/rookies/enrichment-actions";
+import { importAuditedRookieOutcomes, importBundledRookieEnrichments } from "@/app/dashboard/dynasty/rookies/enrichment-actions";
 import { Button } from "@/components/ui/button";
 
 export function RookiePublicDataImportClient() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [enrichmentPending, startEnrichmentTransition] = useTransition();
+  const [outcomePending, startOutcomeTransition] = useTransition();
+  const [outcomeMessage, setOutcomeMessage] = useState("");
   return <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+    <div className="mb-5 border-b border-ink/10 pb-5"><h2 className="font-bold text-ink">Audited NFL outcomes</h2><p className="my-2 text-sm text-ink/55">Refresh the verified 2020–2025 regular-season data without changing prospect inputs or scoring weights.</p><Button variant="outline" disabled={outcomePending} onClick={() => startOutcomeTransition(async () => { const result = await importAuditedRookieOutcomes(); setOutcomeMessage(result.message); if (result.ok) router.refresh(); })}>{outcomePending ? "Verifying outcomes…" : "Refresh audited outcomes"}</Button><p role="status" className="mt-2 text-sm">{outcomeMessage}</p></div>
     <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-      <div><h2 className="font-bold text-ink">CollegeFootballData</h2><p className="mt-1 max-w-2xl text-sm text-ink/55">Import official 2024 and 2025 college rushing and receiving totals for the existing 2025–2026 RB/WR classes. This never invents routes, YPRR, shares, or scores.</p></div>
+      <div><h2 className="font-bold text-ink">CollegeFootballData</h2><p className="mt-1 max-w-2xl text-sm text-ink/55">Import official 2024 and 2025 college passing, rushing, and receiving totals for the existing 2025–2026 QB/RB/WR/TE classes. This never invents routes, YPRR, shares, or scores.</p></div>
       <Button type="button" disabled={pending} onClick={() => startTransition(async () => {
         const result = await importCfbdRookieSeasons();
         if (result.ok) toast.success(result.message);

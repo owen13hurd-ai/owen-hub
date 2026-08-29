@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-08-26T00:18:21.902Z",
+  "scheduleUrl": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+  "seasons": [
+    {
+      "season": 2020,
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2020.csv",
+      "games": 256,
+      "rows": 16774,
+      "complete": true
+    },
+    {
+      "season": 2021,
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2021.csv",
+      "games": 272,
+      "rows": 18128,
+      "complete": true
+    },
+    {
+      "season": 2022,
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2022.csv",
+      "games": 271,
+      "rows": 17981,
+      "complete": true
+    },
+    {
+      "season": 2023,
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2023.csv",
+      "games": 272,
+      "rows": 17806,
+      "complete": true
+    },
+    {
+      "season": 2024,
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2024.csv",
+      "games": 272,
+      "rows": 18130,
+      "complete": true
+    },
+    {
+      "season": 2025,
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2025.csv",
+      "games": 272,
+      "rows": 18540,
+      "complete": true
+    }
+  ],
+  "missingPolicy": "Absent player-season rows remain unknown; never silently converted to zero. PPG denominator is statistical appearances, not roster games.",
+  "unmatchedPlayers": [
+    {
+      "name": "Gerrid Doaks",
+      "externalId": "00-0036578",
+      "classYear": 2021
+    },
+    {
+      "name": "Cornell Powell",
+      "externalId": "00-0036647",
+      "classYear": 2021
+    },
+    {
+      "name": "Tre Nixon",
+      "externalId": "00-0036536",
+      "classYear": 2021
+    },
+    {
+      "name": "DeWayne McBride",
+      "externalId": "00-0039046",
+      "classYear": 2023
+    }
+  ]
+}

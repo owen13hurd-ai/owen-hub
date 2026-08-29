@@ -1,4 +1,6 @@
-export type RookieEnginePosition = "RB" | "WR";
+export const rookieEnginePositions = ["QB", "RB", "WR", "TE"] as const;
+
+export type RookieEnginePosition = (typeof rookieEnginePositions)[number];
 
 export type RookieMetricDirection = "higher" | "lower";
 
@@ -12,10 +14,12 @@ export type RookieMetricDefinition = {
 };
 
 export type RookieFamilyDefinition = {
+  applicabilityMetricKey?: string;
   key: string;
   label: string;
   minimumCoverage: number;
   metrics: RookieMetricDefinition[];
+  required?: boolean;
   weight: number;
 };
 

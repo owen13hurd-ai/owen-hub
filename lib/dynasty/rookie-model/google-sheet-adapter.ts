@@ -1,9 +1,11 @@
 import { parse } from "csv-parse/sync";
 
+import type { RookieEnginePosition } from "@/types/rookie-engine";
+
 export type GoogleSheetRookieIdentity = {
   classYear: number;
   name: string;
-  position: "RB" | "WR";
+  position: RookieEnginePosition;
   sheetScore: number | null;
   sourceRow: number;
   tier: string;
@@ -24,7 +26,7 @@ export function parseGoogleSheetRookieIdentities(csv: string, classYear: number)
   let currentTier = "Uncategorized";
   rows.slice(1).forEach((row, index) => {
     if (row[1]?.trim()) currentTier = tierLabel(row[1]);
-    ([{ column: 3, position: "RB" }, { column: 4, position: "WR" }] as const).forEach(({ column, position }) => {
+    ([{ column: 2, position: "QB" }, { column: 3, position: "RB" }, { column: 4, position: "WR" }, { column: 5, position: "TE" }] as const).forEach(({ column, position }) => {
       const raw = row[column]?.trim();
       if (!raw) return;
       const parsed = playerValue(raw);

@@ -16,9 +16,10 @@ const EARLY_ENTRY_URLS = new Map([
   [2025, "https://www.nfl.com/news/fifty-five-players-granted-special-eligibility-for-2025-nfl-draft"],
   [2026, "https://www.nfl.com/news/forty-two-players-granted-special-eligibility-for-2026-nfl-draft"],
 ]);
-const POSITIONS = new Set(["RB", "WR"]);
+const POSITIONS = new Set(["QB", "RB", "WR", "TE"]);
 const METRIC_FIELDS = [
-  "pass_play_usage", "best_pass_play_usage", "receiving_ppa", "career_receiving_ppa",
+  "pass_play_usage", "best_pass_play_usage", "passing_ppa", "career_passing_ppa",
+  "best_passing_ppa", "receiving_ppa", "career_receiving_ppa",
   "best_receiving_ppa", "rushing_ppa", "career_rushing_ppa", "best_rushing_ppa",
   "career_yprr", "best_yprr", "target_share", "receiving_yard_share", "age_at_draft",
   "early_declare", "ras", "bmi", "speed_score", "recruiting_rating", "conference_strength",
@@ -307,6 +308,9 @@ for (const player of players) {
   player.receiving_ppa = player._receivingPpa.at(-1) ?? null;
   player.career_receiving_ppa = mean(player._receivingPpa);
   player.best_receiving_ppa = maximum(player._receivingPpa);
+  player.passing_ppa = player.position === "QB" ? player._receivingPpa.at(-1) ?? null : null;
+  player.career_passing_ppa = player.position === "QB" ? mean(player._receivingPpa) : null;
+  player.best_passing_ppa = player.position === "QB" ? maximum(player._receivingPpa) : null;
   player.rushing_ppa = player._rushingPpa.at(-1) ?? null;
   player.career_rushing_ppa = mean(player._rushingPpa);
   player.best_rushing_ppa = maximum(player._rushingPpa);
@@ -333,7 +337,7 @@ const coverage = Object.fromEntries(OUTPUT_FIELDS.map((field) => [field, {
 const report = {
   generated_at: new Date().toISOString(), cohort: { end_year: endYear, positions: [...POSITIONS], start_year: startYear },
   limitations: [
-    "Cohort contains drafted RB/WR players plus undrafted NFL combine participants; non-combine undrafted prospects require another approved identity source.",
+    "Cohort contains drafted QB/RB/WR/TE players plus undrafted NFL combine participants; non-combine undrafted prospects require another approved identity source.",
     "RAS, YPRR, yards after contact, and missed tackles are null until an approved licensed source is added.",
     "Name-only CFBD joins are accepted only when exactly one eligible drafted player matches.",
     "Receiving and rushing shares use CFBD player-stat team totals for the final matched college season.",

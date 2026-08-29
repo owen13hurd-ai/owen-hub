@@ -1,8 +1,10 @@
+import type { RookieEnginePosition } from "@/types/rookie-engine";
+
 export type RookieMatchCandidate = {
   classYear: number;
   id: string;
   name: string;
-  position: "RB" | "WR";
+  position: RookieEnginePosition;
   school: string | null;
 };
 
@@ -36,7 +38,7 @@ export function rookieNameSimilarity(first: string, second: string) {
 export function findRookieDuplicateCandidates(
   name: string,
   classYear: number,
-  position: "RB" | "WR" | null,
+  position: RookieEnginePosition | null,
   players: RookieMatchCandidate[],
 ) {
   if (!position) return [];

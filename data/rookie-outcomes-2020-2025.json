@@ -65,16 +65,16 @@
   },
   {
     "fantasyPoints": 56.900000000000006,
-    "fantasyPpg": 7.112500000000001,
-    "games": 8,
+    "fantasyPpg": 6.322222222222223,
+    "games": 9,
     "nflSeason": 2020,
     "playerId": "00-0036425",
     "positionFinish": 73
   },
   {
     "fantasyPoints": 52.49999999999999,
-    "fantasyPpg": 5.833333333333332,
-    "games": 9,
+    "fantasyPpg": 5.249999999999999,
+    "games": 10,
     "nflSeason": 2020,
     "playerId": "00-0036269",
     "positionFinish": 77
@@ -89,8 +89,8 @@
   },
   {
     "fantasyPoints": 24.700000000000003,
-    "fantasyPpg": 3.0875000000000004,
-    "games": 8,
+    "fantasyPpg": 2.744444444444445,
+    "games": 9,
     "nflSeason": 2020,
     "playerId": "00-0036245",
     "positionFinish": 96
@@ -113,19 +113,27 @@
   },
   {
     "fantasyPoints": 16.099999999999998,
-    "fantasyPpg": 4.0249999999999995,
-    "games": 4,
+    "fantasyPpg": 3.2199999999999998,
+    "games": 5,
     "nflSeason": 2020,
     "playerId": "00-0036297",
-    "positionFinish": 113
+    "positionFinish": 115
   },
   {
     "fantasyPoints": 2.9000000000000004,
-    "fantasyPpg": 0.9666666666666668,
-    "games": 3,
+    "fantasyPpg": 0.7250000000000001,
+    "games": 4,
     "nflSeason": 2020,
     "playerId": "00-0036278",
-    "positionFinish": 135
+    "positionFinish": 136
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 4,
+    "nflSeason": 2020,
+    "playerId": "00-0036435",
+    "positionFinish": 152
   },
   {
     "fantasyPoints": 274.2,
@@ -233,8 +241,8 @@
   },
   {
     "fantasyPoints": 66.89999999999999,
-    "fantasyPpg": 6.081818181818181,
-    "games": 11,
+    "fantasyPpg": 5.574999999999999,
+    "games": 12,
     "nflSeason": 2020,
     "playerId": "00-0036277",
     "positionFinish": 101
@@ -249,16 +257,16 @@
   },
   {
     "fantasyPoints": 59.199999999999996,
-    "fantasyPpg": 5.92,
-    "games": 10,
+    "fantasyPpg": 5.381818181818182,
+    "games": 11,
     "nflSeason": 2020,
     "playerId": "00-0036254",
     "positionFinish": 107
   },
   {
     "fantasyPoints": 58.4,
-    "fantasyPpg": 8.342857142857143,
-    "games": 7,
+    "fantasyPpg": 4.866666666666666,
+    "games": 12,
     "nflSeason": 2020,
     "playerId": "00-0036233",
     "positionFinish": 108
@@ -273,16 +281,16 @@
   },
   {
     "fantasyPoints": 53.10000000000001,
-    "fantasyPpg": 3.7928571428571436,
-    "games": 14,
+    "fantasyPpg": 3.5400000000000005,
+    "games": 15,
     "nflSeason": 2020,
     "playerId": "00-0036331",
     "positionFinish": 115
   },
   {
     "fantasyPoints": 46.9,
-    "fantasyPpg": 3.6076923076923078,
-    "games": 13,
+    "fantasyPpg": 3.35,
+    "games": 14,
     "nflSeason": 2020,
     "playerId": "00-0036415",
     "positionFinish": 120
@@ -297,8 +305,8 @@
   },
   {
     "fantasyPoints": 40.89999999999999,
-    "fantasyPpg": 3.4083333333333328,
-    "games": 12,
+    "fantasyPpg": 3.1461538461538456,
+    "games": 13,
     "nflSeason": 2020,
     "playerId": "00-0036247",
     "positionFinish": 128
@@ -329,27 +337,27 @@
   },
   {
     "fantasyPoints": 14.3,
-    "fantasyPpg": 2.8600000000000003,
-    "games": 5,
+    "fantasyPpg": 1.1916666666666667,
+    "games": 12,
     "nflSeason": 2020,
     "playerId": "00-0036382",
     "positionFinish": 167
   },
   {
     "fantasyPoints": 12.3,
-    "fantasyPpg": 2.46,
-    "games": 5,
+    "fantasyPpg": 1.7571428571428573,
+    "games": 7,
     "nflSeason": 2020,
     "playerId": "00-0036439",
-    "positionFinish": 172
+    "positionFinish": 171
   },
   {
     "fantasyPoints": 8.9,
-    "fantasyPpg": 2.966666666666667,
-    "games": 3,
+    "fantasyPpg": 0.89,
+    "games": 10,
     "nflSeason": 2020,
     "playerId": "00-0036377",
-    "positionFinish": 184
+    "positionFinish": 183
   },
   {
     "fantasyPoints": 3.5,
@@ -361,11 +369,19 @@
   },
   {
     "fantasyPoints": 2.4,
-    "fantasyPpg": 0.7999999999999999,
-    "games": 3,
+    "fantasyPpg": 0.1846153846153846,
+    "games": 13,
     "nflSeason": 2020,
     "playerId": "00-0036133",
     "positionFinish": 205
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 8,
+    "nflSeason": 2020,
+    "playerId": "00-0036345",
+    "positionFinish": 217
   },
   {
     "fantasyPoints": 373.09999999999997,
@@ -473,24 +489,24 @@
   },
   {
     "fantasyPoints": 78.89999999999999,
-    "fantasyPpg": 5.635714285714285,
-    "games": 14,
+    "fantasyPpg": 4.9312499999999995,
+    "games": 16,
     "nflSeason": 2021,
     "playerId": "00-0036906",
     "positionFinish": 63
   },
   {
     "fantasyPoints": 60.099999999999994,
-    "fantasyPpg": 5.463636363636363,
-    "games": 11,
+    "fantasyPpg": 3.5352941176470587,
+    "games": 17,
     "nflSeason": 2021,
     "playerId": "00-0036425",
     "positionFinish": 70
   },
   {
     "fantasyPoints": 50.50000000000001,
-    "fantasyPpg": 4.590909090909092,
-    "games": 11,
+    "fantasyPpg": 3.366666666666667,
+    "games": 15,
     "nflSeason": 2021,
     "playerId": "00-0036654",
     "positionFinish": 78
@@ -513,19 +529,19 @@
   },
   {
     "fantasyPoints": 28.3,
-    "fantasyPpg": 5.66,
-    "games": 5,
+    "fantasyPpg": 4.716666666666667,
+    "games": 6,
     "nflSeason": 2021,
     "playerId": "00-0036984",
-    "positionFinish": 96
+    "positionFinish": 95
   },
   {
     "fantasyPoints": 28,
-    "fantasyPpg": 4,
-    "games": 7,
+    "fantasyPpg": 3.5,
+    "games": 8,
     "nflSeason": 2021,
     "playerId": "00-0036383",
-    "positionFinish": 97
+    "positionFinish": 96
   },
   {
     "fantasyPoints": 25.7,
@@ -533,15 +549,15 @@
     "games": 4,
     "nflSeason": 2021,
     "playerId": "00-0036670",
-    "positionFinish": 100
+    "positionFinish": 99
   },
   {
     "fantasyPoints": 23,
-    "fantasyPpg": 3.8333333333333335,
-    "games": 6,
+    "fantasyPpg": 2.5555555555555554,
+    "games": 9,
     "nflSeason": 2021,
     "playerId": "00-0036842",
-    "positionFinish": 102
+    "positionFinish": 101
   },
   {
     "fantasyPoints": 17,
@@ -553,8 +569,8 @@
   },
   {
     "fantasyPoints": 15.6,
-    "fantasyPpg": 1.95,
-    "games": 8,
+    "fantasyPpg": 1.7333333333333334,
+    "games": 9,
     "nflSeason": 2021,
     "playerId": "00-0036650",
     "positionFinish": 111
@@ -565,7 +581,7 @@
     "games": 1,
     "nflSeason": 2021,
     "playerId": "00-0036278",
-    "positionFinish": 128
+    "positionFinish": 131
   },
   {
     "fantasyPoints": 4.3,
@@ -573,15 +589,15 @@
     "games": 1,
     "nflSeason": 2021,
     "playerId": "00-0036414",
-    "positionFinish": 130
+    "positionFinish": 133
   },
   {
     "fantasyPoints": 3.9000000000000004,
-    "fantasyPpg": 0.9750000000000001,
-    "games": 4,
+    "fantasyPpg": 0.48750000000000004,
+    "games": 8,
     "nflSeason": 2021,
     "playerId": "00-0036669",
-    "positionFinish": 132
+    "positionFinish": 135
   },
   {
     "fantasyPoints": 3.8,
@@ -589,7 +605,7 @@
     "games": 1,
     "nflSeason": 2021,
     "playerId": "00-0036297",
-    "positionFinish": 133
+    "positionFinish": 136
   },
   {
     "fantasyPoints": 3.0999999999999996,
@@ -597,7 +613,7 @@
     "games": 2,
     "nflSeason": 2021,
     "playerId": "00-0036269",
-    "positionFinish": 136
+    "positionFinish": 139
   },
   {
     "fantasyPoints": 2.4,
@@ -605,23 +621,23 @@
     "games": 2,
     "nflSeason": 2021,
     "playerId": "00-0036336",
-    "positionFinish": 137
+    "positionFinish": 141
   },
   {
     "fantasyPoints": 2,
-    "fantasyPpg": 1,
-    "games": 2,
+    "fantasyPpg": 0.2857142857142857,
+    "games": 7,
     "nflSeason": 2021,
     "playerId": "00-0036569",
-    "positionFinish": 139
+    "positionFinish": 143
   },
   {
     "fantasyPoints": 0.5,
-    "fantasyPpg": 0.25,
-    "games": 2,
+    "fantasyPpg": 0.1,
+    "games": 5,
     "nflSeason": 2021,
     "playerId": "00-0036860",
-    "positionFinish": 147
+    "positionFinish": 151
   },
   {
     "fantasyPoints": 330.4000000000001,
@@ -669,7 +685,7 @@
     "games": 16,
     "nflSeason": 2021,
     "playerId": "00-0036963",
-    "positionFinish": 21
+    "positionFinish": 22
   },
   {
     "fantasyPoints": 219.7,
@@ -697,8 +713,8 @@
   },
   {
     "fantasyPoints": 170.29999999999998,
-    "fantasyPpg": 10.643749999999999,
-    "games": 16,
+    "fantasyPpg": 10.017647058823528,
+    "games": 17,
     "nflSeason": 2021,
     "playerId": "00-0036261",
     "positionFinish": 35
@@ -801,8 +817,8 @@
   },
   {
     "fantasyPoints": 86.5,
-    "fantasyPpg": 5.40625,
-    "games": 16,
+    "fantasyPpg": 5.088235294117647,
+    "games": 17,
     "nflSeason": 2021,
     "playerId": "00-0036247",
     "positionFinish": 83
@@ -857,16 +873,16 @@
   },
   {
     "fantasyPoints": 77.2,
-    "fantasyPpg": 5.1466666666666665,
-    "games": 15,
+    "fantasyPpg": 4.825,
+    "games": 16,
     "nflSeason": 2021,
     "playerId": "00-0036331",
     "positionFinish": 98
   },
   {
     "fantasyPoints": 72.00000000000001,
-    "fantasyPpg": 4.800000000000001,
-    "games": 15,
+    "fantasyPpg": 4.500000000000001,
+    "games": 16,
     "nflSeason": 2021,
     "playerId": "00-0036427",
     "positionFinish": 101
@@ -889,11 +905,11 @@
   },
   {
     "fantasyPoints": 33.4,
-    "fantasyPpg": 2.783333333333333,
-    "games": 12,
+    "fantasyPpg": 2.569230769230769,
+    "games": 13,
     "nflSeason": 2021,
     "playerId": "00-0036999",
-    "positionFinish": 138
+    "positionFinish": 137
   },
   {
     "fantasyPoints": 32.8,
@@ -905,11 +921,11 @@
   },
   {
     "fantasyPoints": 28.6,
-    "fantasyPpg": 9.533333333333333,
-    "games": 3,
+    "fantasyPpg": 4.766666666666667,
+    "games": 6,
     "nflSeason": 2021,
     "playerId": "00-0036635",
-    "positionFinish": 145
+    "positionFinish": 144
   },
   {
     "fantasyPoints": 28.299999999999997,
@@ -917,31 +933,31 @@
     "games": 8,
     "nflSeason": 2021,
     "playerId": "00-0036620",
-    "positionFinish": 146
+    "positionFinish": 145
   },
   {
     "fantasyPoints": 28.1,
-    "fantasyPpg": 3.1222222222222222,
-    "games": 9,
+    "fantasyPpg": 2.81,
+    "games": 10,
     "nflSeason": 2021,
     "playerId": "00-0036626",
-    "positionFinish": 147
+    "positionFinish": 146
   },
   {
     "fantasyPoints": 24.3,
-    "fantasyPpg": 3.4714285714285715,
-    "games": 7,
+    "fantasyPpg": 2.025,
+    "games": 12,
     "nflSeason": 2021,
     "playerId": "00-0036862",
-    "positionFinish": 150
+    "positionFinish": 149
   },
   {
     "fantasyPoints": 21.5,
-    "fantasyPpg": 3.0714285714285716,
-    "games": 7,
+    "fantasyPpg": 2.6875,
+    "games": 8,
     "nflSeason": 2021,
     "playerId": "00-0036254",
-    "positionFinish": 152
+    "positionFinish": 151
   },
   {
     "fantasyPoints": 21.299999999999997,
@@ -949,7 +965,7 @@
     "games": 10,
     "nflSeason": 2021,
     "playerId": "00-0036255",
-    "positionFinish": 153
+    "positionFinish": 152
   },
   {
     "fantasyPoints": 16.1,
@@ -957,7 +973,7 @@
     "games": 5,
     "nflSeason": 2021,
     "playerId": "00-0036572",
-    "positionFinish": 163
+    "positionFinish": 162
   },
   {
     "fantasyPoints": 15.9,
@@ -965,7 +981,7 @@
     "games": 3,
     "nflSeason": 2021,
     "playerId": "00-0036627",
-    "positionFinish": 164
+    "positionFinish": 163
   },
   {
     "fantasyPoints": 15.400000000000002,
@@ -973,7 +989,7 @@
     "games": 9,
     "nflSeason": 2021,
     "playerId": "00-0036671",
-    "positionFinish": 165
+    "positionFinish": 164
   },
   {
     "fantasyPoints": 12.399999999999999,
@@ -981,15 +997,15 @@
     "games": 3,
     "nflSeason": 2021,
     "playerId": "00-0036412",
-    "positionFinish": 173
+    "positionFinish": 172
   },
   {
     "fantasyPoints": 11.4,
-    "fantasyPpg": 1.6285714285714286,
-    "games": 7,
+    "fantasyPpg": 1.2666666666666666,
+    "games": 9,
     "nflSeason": 2021,
     "playerId": "00-0036877",
-    "positionFinish": 175
+    "positionFinish": 174
   },
   {
     "fantasyPoints": 10.1,
@@ -997,23 +1013,23 @@
     "games": 4,
     "nflSeason": 2021,
     "playerId": "00-0036228",
-    "positionFinish": 179
+    "positionFinish": 178
   },
   {
     "fantasyPoints": 9.6,
-    "fantasyPpg": 2.4,
-    "games": 4,
+    "fantasyPpg": 0.6,
+    "games": 16,
     "nflSeason": 2021,
     "playerId": "00-0036991",
-    "positionFinish": 182
+    "positionFinish": 181
   },
   {
     "fantasyPoints": 6,
-    "fantasyPpg": 6,
-    "games": 1,
+    "fantasyPpg": 1,
+    "games": 6,
     "nflSeason": 2021,
     "playerId": "00-0036382",
-    "positionFinish": 196
+    "positionFinish": 194
   },
   {
     "fantasyPoints": 4.6,
@@ -1021,7 +1037,7 @@
     "games": 2,
     "nflSeason": 2021,
     "playerId": "00-0036482",
-    "positionFinish": 202
+    "positionFinish": 201
   },
   {
     "fantasyPoints": 4.4,
@@ -1029,15 +1045,15 @@
     "games": 1,
     "nflSeason": 2021,
     "playerId": "00-0036657",
-    "positionFinish": 204
+    "positionFinish": 203
   },
   {
     "fantasyPoints": 4.3,
-    "fantasyPpg": 1.075,
-    "games": 4,
+    "fantasyPpg": 0.43,
+    "games": 10,
     "nflSeason": 2021,
     "playerId": "00-0036630",
-    "positionFinish": 205
+    "positionFinish": 204
   },
   {
     "fantasyPoints": 4.3,
@@ -1045,23 +1061,63 @@
     "games": 3,
     "nflSeason": 2021,
     "playerId": "00-0036907",
-    "positionFinish": 206
+    "positionFinish": 205
   },
   {
     "fantasyPoints": 2.4,
-    "fantasyPpg": 1.2,
-    "games": 2,
+    "fantasyPpg": 0.6,
+    "games": 4,
     "nflSeason": 2021,
     "playerId": "00-0036951",
-    "positionFinish": 215
+    "positionFinish": 214
   },
   {
     "fantasyPoints": 0.7999999999999998,
-    "fantasyPpg": 0.15999999999999998,
-    "games": 5,
+    "fantasyPpg": 0.1333333333333333,
+    "games": 6,
     "nflSeason": 2021,
     "playerId": "00-0036652",
-    "positionFinish": 224
+    "positionFinish": 223
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 6,
+    "nflSeason": 2021,
+    "playerId": "00-0036849",
+    "positionFinish": 229
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 4,
+    "nflSeason": 2021,
+    "playerId": "00-0036439",
+    "positionFinish": 232
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2021,
+    "playerId": "00-0036340",
+    "positionFinish": 236
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 2,
+    "nflSeason": 2021,
+    "playerId": "00-0036918",
+    "positionFinish": 237
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2021,
+    "playerId": "00-0036398",
+    "positionFinish": 239
   },
   {
     "fantasyPoints": 0,
@@ -1069,15 +1125,31 @@
     "games": 1,
     "nflSeason": 2021,
     "playerId": "00-0036308",
-    "positionFinish": 234
+    "positionFinish": 245
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 5,
+    "nflSeason": 2021,
+    "playerId": "00-0036571",
+    "positionFinish": 246
   },
   {
     "fantasyPoints": 0,
     "fantasyPpg": 0,
     "games": 1,
     "nflSeason": 2021,
-    "playerId": "00-0036439",
-    "positionFinish": 235
+    "playerId": "00-0036858",
+    "positionFinish": 252
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2021,
+    "playerId": "00-0036939",
+    "positionFinish": 253
   },
   {
     "fantasyPoints": 249.1,
@@ -1088,16 +1160,16 @@
     "positionFinish": 7
   },
   {
-    "fantasyPoints": 223.46,
-    "fantasyPpg": 13.144705882352941,
+    "fantasyPoints": 225.46,
+    "fantasyPpg": 13.262352941176472,
     "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0036893",
     "positionFinish": 14
   },
   {
-    "fantasyPoints": 203.1,
-    "fantasyPpg": 11.947058823529412,
+    "fantasyPoints": 205.1,
+    "fantasyPpg": 12.064705882352941,
     "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0036973",
@@ -1169,8 +1241,8 @@
   },
   {
     "fantasyPoints": 141.10000000000002,
-    "fantasyPpg": 8.818750000000001,
-    "games": 16,
+    "fantasyPpg": 8.3,
+    "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0037256",
     "positionFinish": 36
@@ -1233,16 +1305,16 @@
   },
   {
     "fantasyPoints": 89.7,
-    "fantasyPpg": 7.4750000000000005,
-    "games": 12,
+    "fantasyPpg": 6.4071428571428575,
+    "games": 14,
     "nflSeason": 2022,
     "playerId": "00-0036555",
     "positionFinish": 49
   },
   {
     "fantasyPoints": 89.6,
-    "fantasyPpg": 7.466666666666666,
-    "games": 12,
+    "fantasyPpg": 6.892307692307692,
+    "games": 13,
     "nflSeason": 2022,
     "playerId": "00-0036383",
     "positionFinish": 50
@@ -1281,8 +1353,8 @@
   },
   {
     "fantasyPoints": 46.2,
-    "fantasyPpg": 4.2,
-    "games": 11,
+    "fantasyPpg": 3.08,
+    "games": 15,
     "nflSeason": 2022,
     "playerId": "00-0036425",
     "positionFinish": 75
@@ -1313,24 +1385,24 @@
   },
   {
     "fantasyPoints": 28.999999999999996,
-    "fantasyPpg": 3.6249999999999996,
-    "games": 8,
+    "fantasyPpg": 1.9333333333333331,
+    "games": 15,
     "nflSeason": 2022,
     "playerId": "00-0036569",
     "positionFinish": 89
   },
   {
     "fantasyPoints": 27.2,
-    "fantasyPpg": 6.8,
-    "games": 4,
+    "fantasyPpg": 2.7199999999999998,
+    "games": 10,
     "nflSeason": 2022,
     "playerId": "00-0038098",
     "positionFinish": 92
   },
   {
     "fantasyPoints": 26.000000000000004,
-    "fantasyPpg": 3.714285714285715,
-    "games": 7,
+    "fantasyPpg": 1.8571428571428574,
+    "games": 14,
     "nflSeason": 2022,
     "playerId": "00-0037617",
     "positionFinish": 94
@@ -1341,31 +1413,31 @@
     "games": 8,
     "nflSeason": 2022,
     "playerId": "00-0037331",
-    "positionFinish": 102
+    "positionFinish": 104
   },
   {
     "fantasyPoints": 18.099999999999998,
-    "fantasyPpg": 1.8099999999999998,
-    "games": 10,
+    "fantasyPpg": 1.6454545454545453,
+    "games": 11,
     "nflSeason": 2022,
     "playerId": "00-0037299",
-    "positionFinish": 103
+    "positionFinish": 105
   },
   {
     "fantasyPoints": 12.8,
-    "fantasyPpg": 3.2,
-    "games": 4,
+    "fantasyPpg": 1.28,
+    "games": 10,
     "nflSeason": 2022,
     "playerId": "00-0036857",
-    "positionFinish": 108
+    "positionFinish": 110
   },
   {
     "fantasyPoints": 11.5,
-    "fantasyPpg": 3.8333333333333335,
-    "games": 3,
+    "fantasyPpg": 0.8214285714285714,
+    "games": 14,
     "nflSeason": 2022,
     "playerId": "00-0036842",
-    "positionFinish": 109
+    "positionFinish": 111
   },
   {
     "fantasyPoints": 11.200000000000001,
@@ -1373,7 +1445,7 @@
     "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0037286",
-    "positionFinish": 110
+    "positionFinish": 112
   },
   {
     "fantasyPoints": 10.700000000000001,
@@ -1381,15 +1453,15 @@
     "games": 3,
     "nflSeason": 2022,
     "playerId": "00-0036297",
-    "positionFinish": 111
+    "positionFinish": 113
   },
   {
     "fantasyPoints": 10.2,
-    "fantasyPpg": 2.04,
-    "games": 5,
+    "fantasyPpg": 1.7,
+    "games": 6,
     "nflSeason": 2022,
     "playerId": "00-0036450",
-    "positionFinish": 113
+    "positionFinish": 115
   },
   {
     "fantasyPoints": 10.2,
@@ -1397,7 +1469,7 @@
     "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0037265",
-    "positionFinish": 114
+    "positionFinish": 116
   },
   {
     "fantasyPoints": 9.899999999999999,
@@ -1405,7 +1477,7 @@
     "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0037827",
-    "positionFinish": 116
+    "positionFinish": 118
   },
   {
     "fantasyPoints": 9.4,
@@ -1413,7 +1485,7 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0037085",
-    "positionFinish": 118
+    "positionFinish": 120
   },
   {
     "fantasyPoints": 8.4,
@@ -1421,14 +1493,6 @@
     "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0038045",
-    "positionFinish": 120
-  },
-  {
-    "fantasyPoints": 8.2,
-    "fantasyPpg": 1.1714285714285713,
-    "games": 7,
-    "nflSeason": 2022,
-    "playerId": "00-0037087",
     "positionFinish": 122
   },
   {
@@ -1437,7 +1501,15 @@
     "games": 11,
     "nflSeason": 2022,
     "playerId": "00-0038040",
-    "positionFinish": 126
+    "positionFinish": 127
+  },
+  {
+    "fantasyPoints": 6.199999999999999,
+    "fantasyPpg": 0.5636363636363636,
+    "games": 11,
+    "nflSeason": 2022,
+    "playerId": "00-0037087",
+    "positionFinish": 129
   },
   {
     "fantasyPoints": 6.1,
@@ -1445,7 +1517,7 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0036336",
-    "positionFinish": 127
+    "positionFinish": 130
   },
   {
     "fantasyPoints": 5.3,
@@ -1453,23 +1525,23 @@
     "games": 2,
     "nflSeason": 2022,
     "playerId": "00-0036650",
-    "positionFinish": 131
+    "positionFinish": 135
   },
   {
     "fantasyPoints": 2.4,
-    "fantasyPpg": 0.6,
-    "games": 4,
+    "fantasyPpg": 0.39999999999999997,
+    "games": 6,
     "nflSeason": 2022,
     "playerId": "00-0036654",
-    "positionFinish": 136
+    "positionFinish": 140
   },
   {
     "fantasyPoints": 2,
-    "fantasyPpg": 2,
-    "games": 1,
+    "fantasyPpg": 1,
+    "games": 2,
     "nflSeason": 2022,
     "playerId": "00-0037276",
-    "positionFinish": 137
+    "positionFinish": 141
   },
   {
     "fantasyPoints": 1.9,
@@ -1477,15 +1549,15 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0036984",
-    "positionFinish": 138
+    "positionFinish": 142
   },
   {
     "fantasyPoints": 1.2,
-    "fantasyPpg": 0.6,
-    "games": 2,
+    "fantasyPpg": 0.0923076923076923,
+    "games": 13,
     "nflSeason": 2022,
     "playerId": "00-0037267",
-    "positionFinish": 142
+    "positionFinish": 146
   },
   {
     "fantasyPoints": 0.7,
@@ -1493,7 +1565,23 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0036669",
-    "positionFinish": 144
+    "positionFinish": 148
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2022,
+    "playerId": "00-0036860",
+    "positionFinish": 155
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2022,
+    "playerId": "00-0037329",
+    "positionFinish": 158
   },
   {
     "fantasyPoints": 368.66,
@@ -1528,8 +1616,8 @@
     "positionFinish": 8
   },
   {
-    "fantasyPoints": 254.6,
-    "fantasyPpg": 14.976470588235294,
+    "fantasyPoints": 256.6,
+    "fantasyPpg": 15.094117647058825,
     "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0036912",
@@ -1541,7 +1629,7 @@
     "games": 12,
     "nflSeason": 2022,
     "playerId": "00-0036900",
-    "positionFinish": 12
+    "positionFinish": 11
   },
   {
     "fantasyPoints": 227.79999999999998,
@@ -1737,8 +1825,8 @@
   },
   {
     "fantasyPoints": 84.50000000000001,
-    "fantasyPpg": 5.281250000000001,
-    "games": 16,
+    "fantasyPpg": 4.970588235294119,
+    "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0036271",
     "positionFinish": 85
@@ -1801,8 +1889,8 @@
   },
   {
     "fantasyPoints": 61.6,
-    "fantasyPpg": 4.1066666666666665,
-    "games": 15,
+    "fantasyPpg": 3.623529411764706,
+    "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0036572",
     "positionFinish": 104
@@ -1833,32 +1921,32 @@
   },
   {
     "fantasyPoints": 49.400000000000006,
-    "fantasyPpg": 3.528571428571429,
-    "games": 14,
+    "fantasyPpg": 3.0875000000000004,
+    "games": 16,
     "nflSeason": 2022,
     "playerId": "00-0038090",
     "positionFinish": 118
   },
   {
     "fantasyPoints": 45.4,
-    "fantasyPpg": 3.242857142857143,
-    "games": 14,
+    "fantasyPpg": 3.0266666666666664,
+    "games": 15,
     "nflSeason": 2022,
     "playerId": "00-0037257",
     "positionFinish": 121
   },
   {
     "fantasyPoints": 43.10000000000001,
-    "fantasyPpg": 4.78888888888889,
-    "games": 9,
+    "fantasyPpg": 2.873333333333334,
+    "games": 15,
     "nflSeason": 2022,
     "playerId": "00-0036991",
     "positionFinish": 122
   },
   {
     "fantasyPoints": 38,
-    "fantasyPpg": 4.222222222222222,
-    "games": 9,
+    "fantasyPpg": 3.4545454545454546,
+    "games": 11,
     "nflSeason": 2022,
     "playerId": "00-0037745",
     "positionFinish": 126
@@ -1873,16 +1961,16 @@
   },
   {
     "fantasyPoints": 32.9,
-    "fantasyPpg": 6.58,
-    "games": 5,
+    "fantasyPpg": 4.1125,
+    "games": 8,
     "nflSeason": 2022,
     "playerId": "00-0037291",
     "positionFinish": 132
   },
   {
     "fantasyPoints": 32.8,
-    "fantasyPpg": 4.685714285714285,
-    "games": 7,
+    "fantasyPpg": 3.644444444444444,
+    "games": 9,
     "nflSeason": 2022,
     "playerId": "00-0036626",
     "positionFinish": 133
@@ -1897,8 +1985,8 @@
   },
   {
     "fantasyPoints": 26.900000000000002,
-    "fantasyPpg": 2.6900000000000004,
-    "games": 10,
+    "fantasyPpg": 1.5823529411764707,
+    "games": 17,
     "nflSeason": 2022,
     "playerId": "00-0036387",
     "positionFinish": 138
@@ -1917,15 +2005,15 @@
     "games": 4,
     "nflSeason": 2022,
     "playerId": "00-0037098",
-    "positionFinish": 148
+    "positionFinish": 147
   },
   {
     "fantasyPoints": 18.8,
-    "fantasyPpg": 3.1333333333333333,
-    "games": 6,
+    "fantasyPpg": 2.685714285714286,
+    "games": 7,
     "nflSeason": 2022,
     "playerId": "00-0036999",
-    "positionFinish": 152
+    "positionFinish": 151
   },
   {
     "fantasyPoints": 15.799999999999999,
@@ -1933,15 +2021,15 @@
     "games": 4,
     "nflSeason": 2022,
     "playerId": "00-0037273",
-    "positionFinish": 155
+    "positionFinish": 154
   },
   {
     "fantasyPoints": 15.700000000000001,
-    "fantasyPpg": 2.242857142857143,
-    "games": 7,
+    "fantasyPpg": 1.0466666666666666,
+    "games": 15,
     "nflSeason": 2022,
     "playerId": "00-0036671",
-    "positionFinish": 156
+    "positionFinish": 155
   },
   {
     "fantasyPoints": 15.1,
@@ -1949,23 +2037,23 @@
     "games": 6,
     "nflSeason": 2022,
     "playerId": "00-0037240",
-    "positionFinish": 158
+    "positionFinish": 157
   },
   {
     "fantasyPoints": 13.800000000000002,
-    "fantasyPpg": 1.7250000000000003,
-    "games": 8,
+    "fantasyPpg": 1.5333333333333337,
+    "games": 9,
     "nflSeason": 2022,
     "playerId": "00-0036620",
-    "positionFinish": 160
+    "positionFinish": 159
   },
   {
     "fantasyPoints": 12.200000000000001,
-    "fantasyPpg": 1.742857142857143,
-    "games": 7,
+    "fantasyPpg": 1.1090909090909091,
+    "games": 11,
     "nflSeason": 2022,
     "playerId": "00-0036133",
-    "positionFinish": 162
+    "positionFinish": 161
   },
   {
     "fantasyPoints": 11.4,
@@ -1973,15 +2061,15 @@
     "games": 3,
     "nflSeason": 2022,
     "playerId": "00-0036247",
-    "positionFinish": 165
+    "positionFinish": 164
   },
   {
     "fantasyPoints": 9,
-    "fantasyPpg": 1.5,
-    "games": 6,
+    "fantasyPpg": 1.2857142857142858,
+    "games": 7,
     "nflSeason": 2022,
     "playerId": "00-0037300",
-    "positionFinish": 173
+    "positionFinish": 172
   },
   {
     "fantasyPoints": 8.899999999999999,
@@ -1989,7 +2077,7 @@
     "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0036482",
-    "positionFinish": 174
+    "positionFinish": 173
   },
   {
     "fantasyPoints": 7.3,
@@ -1997,15 +2085,15 @@
     "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0036630",
-    "positionFinish": 179
+    "positionFinish": 178
   },
   {
     "fantasyPoints": 7.2,
-    "fantasyPpg": 0.8,
-    "games": 9,
+    "fantasyPpg": 0.48000000000000004,
+    "games": 15,
     "nflSeason": 2022,
     "playerId": "00-0037272",
-    "positionFinish": 180
+    "positionFinish": 179
   },
   {
     "fantasyPoints": 6.4,
@@ -2013,31 +2101,31 @@
     "games": 4,
     "nflSeason": 2022,
     "playerId": "00-0036652",
-    "positionFinish": 181
+    "positionFinish": 180
   },
   {
     "fantasyPoints": 5.4,
-    "fantasyPpg": 2.7,
-    "games": 2,
+    "fantasyPpg": 1.8,
+    "games": 3,
     "nflSeason": 2022,
     "playerId": "00-0036646",
-    "positionFinish": 183
+    "positionFinish": 182
   },
   {
     "fantasyPoints": 4.800000000000001,
-    "fantasyPpg": 1.6000000000000003,
-    "games": 3,
+    "fantasyPpg": 0.3428571428571429,
+    "games": 14,
     "nflSeason": 2022,
     "playerId": "00-0036877",
-    "positionFinish": 185
+    "positionFinish": 184
   },
   {
     "fantasyPoints": 4.8,
-    "fantasyPpg": 1.5999999999999999,
-    "games": 3,
+    "fantasyPpg": 0.96,
+    "games": 5,
     "nflSeason": 2022,
     "playerId": "00-0036439",
-    "positionFinish": 186
+    "positionFinish": 185
   },
   {
     "fantasyPoints": 4.5,
@@ -2045,7 +2133,7 @@
     "games": 4,
     "nflSeason": 2022,
     "playerId": "00-0036365",
-    "positionFinish": 187
+    "positionFinish": 186
   },
   {
     "fantasyPoints": 4.4,
@@ -2053,39 +2141,39 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0036228",
-    "positionFinish": 189
+    "positionFinish": 188
   },
   {
     "fantasyPoints": 4.4,
-    "fantasyPpg": 4.4,
-    "games": 1,
+    "fantasyPpg": 0.7333333333333334,
+    "games": 6,
     "nflSeason": 2022,
     "playerId": "00-0037093",
-    "positionFinish": 190
+    "positionFinish": 189
   },
   {
     "fantasyPoints": 3.5,
-    "fantasyPpg": 3.5,
-    "games": 1,
+    "fantasyPpg": 1.1666666666666667,
+    "games": 3,
     "nflSeason": 2022,
     "playerId": "00-0036277",
-    "positionFinish": 198
+    "positionFinish": 197
   },
   {
     "fantasyPoints": 3.2,
-    "fantasyPpg": 1.6,
-    "games": 2,
+    "fantasyPpg": 1.0666666666666667,
+    "games": 3,
     "nflSeason": 2022,
     "playerId": "00-0037666",
-    "positionFinish": 202
+    "positionFinish": 201
   },
   {
     "fantasyPoints": 2.9,
-    "fantasyPpg": 0.58,
-    "games": 5,
+    "fantasyPpg": 0.41428571428571426,
+    "games": 7,
     "nflSeason": 2022,
     "playerId": "00-0037828",
-    "positionFinish": 204
+    "positionFinish": 203
   },
   {
     "fantasyPoints": 2.5,
@@ -2093,7 +2181,7 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0036951",
-    "positionFinish": 207
+    "positionFinish": 206
   },
   {
     "fantasyPoints": 1.7,
@@ -2101,15 +2189,15 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0036858",
-    "positionFinish": 209
+    "positionFinish": 210
   },
   {
     "fantasyPoints": 1.6,
-    "fantasyPpg": 1.6,
-    "games": 1,
+    "fantasyPpg": 0.5333333333333333,
+    "games": 3,
     "nflSeason": 2022,
     "playerId": "00-0036918",
-    "positionFinish": 213
+    "positionFinish": 211
   },
   {
     "fantasyPoints": 1.3,
@@ -2117,15 +2205,23 @@
     "games": 1,
     "nflSeason": 2022,
     "playerId": "00-0038092",
-    "positionFinish": 216
+    "positionFinish": 215
   },
   {
     "fantasyPoints": 0.4,
-    "fantasyPpg": 0.13333333333333333,
-    "games": 3,
+    "fantasyPpg": 0.1,
+    "games": 4,
     "nflSeason": 2022,
     "playerId": "00-0036635",
-    "positionFinish": 219
+    "positionFinish": 218
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2022,
+    "playerId": "00-0036627",
+    "positionFinish": 229
   },
   {
     "fantasyPoints": 290.5,
@@ -2192,8 +2288,8 @@
     "positionFinish": 15
   },
   {
-    "fantasyPoints": 213.2,
-    "fantasyPpg": 12.541176470588235,
+    "fantasyPoints": 211.2,
+    "fantasyPpg": 12.423529411764704,
     "games": 17,
     "nflSeason": 2023,
     "playerId": "00-0037267",
@@ -2337,8 +2433,8 @@
   },
   {
     "fantasyPoints": 101.00000000000001,
-    "fantasyPpg": 7.76923076923077,
-    "games": 13,
+    "fantasyPpg": 6.312500000000001,
+    "games": 16,
     "nflSeason": 2023,
     "playerId": "00-0037276",
     "positionFinish": 48
@@ -2353,8 +2449,8 @@
   },
   {
     "fantasyPoints": 82.69999999999999,
-    "fantasyPpg": 6.36153846153846,
-    "games": 13,
+    "fantasyPpg": 5.907142857142857,
+    "games": 14,
     "nflSeason": 2023,
     "playerId": "00-0037258",
     "positionFinish": 55
@@ -2393,8 +2489,8 @@
   },
   {
     "fantasyPoints": 53.49999999999999,
-    "fantasyPpg": 5.35,
-    "games": 10,
+    "fantasyPpg": 4.458333333333333,
+    "games": 12,
     "nflSeason": 2023,
     "playerId": "00-0038597",
     "positionFinish": 63
@@ -2425,16 +2521,16 @@
   },
   {
     "fantasyPoints": 42.800000000000004,
-    "fantasyPpg": 3.2923076923076926,
-    "games": 13,
+    "fantasyPpg": 2.6750000000000003,
+    "games": 16,
     "nflSeason": 2023,
     "playerId": "00-0038098",
     "positionFinish": 72
   },
   {
     "fantasyPoints": 37.9,
-    "fantasyPpg": 4.7375,
-    "games": 8,
+    "fantasyPpg": 4.211111111111111,
+    "games": 9,
     "nflSeason": 2023,
     "playerId": "00-0038611",
     "positionFinish": 77
@@ -2493,7 +2589,7 @@
     "games": 6,
     "nflSeason": 2023,
     "playerId": "00-0038622",
-    "positionFinish": 97
+    "positionFinish": 98
   },
   {
     "fantasyPoints": 14,
@@ -2501,7 +2597,7 @@
     "games": 2,
     "nflSeason": 2023,
     "playerId": "00-0036269",
-    "positionFinish": 100
+    "positionFinish": 101
   },
   {
     "fantasyPoints": 13.999999999999998,
@@ -2509,23 +2605,23 @@
     "games": 7,
     "nflSeason": 2023,
     "playerId": "00-0037299",
-    "positionFinish": 101
+    "positionFinish": 102
   },
   {
     "fantasyPoints": 13,
-    "fantasyPpg": 2.6,
-    "games": 5,
+    "fantasyPpg": 1.3,
+    "games": 10,
     "nflSeason": 2023,
     "playerId": "00-0038396",
-    "positionFinish": 103
+    "positionFinish": 104
   },
   {
     "fantasyPoints": 12.2,
-    "fantasyPpg": 1.22,
-    "games": 10,
+    "fantasyPpg": 0.7176470588235294,
+    "games": 17,
     "nflSeason": 2023,
     "playerId": "00-0036425",
-    "positionFinish": 104
+    "positionFinish": 106
   },
   {
     "fantasyPoints": 11.7,
@@ -2533,22 +2629,14 @@
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0036158",
-    "positionFinish": 105
+    "positionFinish": 107
   },
   {
     "fantasyPoints": 11.6,
-    "fantasyPpg": 3.8666666666666667,
-    "games": 3,
+    "fantasyPpg": 2.9,
+    "games": 4,
     "nflSeason": 2023,
     "playerId": "00-0036569",
-    "positionFinish": 106
-  },
-  {
-    "fantasyPoints": 11.1,
-    "fantasyPpg": 1.1099999999999999,
-    "games": 10,
-    "nflSeason": 2023,
-    "playerId": "00-0037745",
     "positionFinish": 108
   },
   {
@@ -2557,7 +2645,7 @@
     "games": 5,
     "nflSeason": 2023,
     "playerId": "00-0036450",
-    "positionFinish": 112
+    "positionFinish": 114
   },
   {
     "fantasyPoints": 3.2,
@@ -2565,23 +2653,23 @@
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0036860",
-    "positionFinish": 120
-  },
-  {
-    "fantasyPoints": 3.1,
-    "fantasyPpg": 3.1,
-    "games": 1,
-    "nflSeason": 2023,
-    "playerId": "00-0036336",
     "positionFinish": 122
   },
   {
+    "fantasyPoints": 3.1,
+    "fantasyPpg": 1.0333333333333334,
+    "games": 3,
+    "nflSeason": 2023,
+    "playerId": "00-0036336",
+    "positionFinish": 123
+  },
+  {
     "fantasyPoints": 2.1,
-    "fantasyPpg": 2.1,
-    "games": 1,
+    "fantasyPpg": 0.7000000000000001,
+    "games": 3,
     "nflSeason": 2023,
     "playerId": "00-0036857",
-    "positionFinish": 126
+    "positionFinish": 129
   },
   {
     "fantasyPoints": 2.1,
@@ -2589,7 +2677,7 @@
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0037827",
-    "positionFinish": 127
+    "positionFinish": 130
   },
   {
     "fantasyPoints": 1.9000000000000001,
@@ -2597,7 +2685,7 @@
     "games": 4,
     "nflSeason": 2023,
     "playerId": "00-0039136",
-    "positionFinish": 128
+    "positionFinish": 131
   },
   {
     "fantasyPoints": 1.7,
@@ -2605,19 +2693,27 @@
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0038397",
-    "positionFinish": 129
+    "positionFinish": 132
   },
   {
     "fantasyPoints": 1.3,
-    "fantasyPpg": 0.43333333333333335,
-    "games": 3,
+    "fantasyPpg": 0.1625,
+    "games": 8,
     "nflSeason": 2023,
     "playerId": "00-0036842",
-    "positionFinish": 130
+    "positionFinish": 134
   },
   {
-    "fantasyPoints": 405.20000000000005,
-    "fantasyPpg": 23.835294117647063,
+    "fantasyPoints": 36.300000000000004,
+    "fantasyPpg": 3.3000000000000003,
+    "games": 11,
+    "nflSeason": 2023,
+    "playerId": "00-0039041",
+    "positionFinish": 56
+  },
+  {
+    "fantasyPoints": 403.20000000000005,
+    "fantasyPpg": 23.71764705882353,
     "games": 17,
     "nflSeason": 2023,
     "playerId": "00-0036358",
@@ -2736,12 +2832,12 @@
     "positionFinish": 30
   },
   {
-    "fantasyPoints": 204.2,
-    "fantasyPpg": 20.419999999999998,
+    "fantasyPoints": 202.2,
+    "fantasyPpg": 20.22,
     "games": 10,
     "nflSeason": 2023,
     "playerId": "00-0036322",
-    "positionFinish": 31
+    "positionFinish": 33
   },
   {
     "fantasyPoints": 198.6,
@@ -2969,8 +3065,8 @@
   },
   {
     "fantasyPoints": 74.7,
-    "fantasyPpg": 4.98,
-    "games": 15,
+    "fantasyPpg": 4.66875,
+    "games": 16,
     "nflSeason": 2023,
     "playerId": "00-0038976",
     "positionFinish": 86
@@ -2985,8 +3081,8 @@
   },
   {
     "fantasyPoints": 60.8,
-    "fantasyPpg": 4.676923076923076,
-    "games": 13,
+    "fantasyPpg": 4.3428571428571425,
+    "games": 14,
     "nflSeason": 2023,
     "playerId": "00-0037666",
     "positionFinish": 98
@@ -3033,24 +3129,24 @@
   },
   {
     "fantasyPoints": 52.7,
-    "fantasyPpg": 3.7642857142857147,
-    "games": 14,
+    "fantasyPpg": 3.29375,
+    "games": 16,
     "nflSeason": 2023,
     "playerId": "00-0037837",
     "positionFinish": 109
   },
   {
     "fantasyPoints": 51.5,
-    "fantasyPpg": 4.291666666666667,
-    "games": 12,
+    "fantasyPpg": 3.9615384615384617,
+    "games": 13,
     "nflSeason": 2023,
     "playerId": "00-0036259",
     "positionFinish": 110
   },
   {
     "fantasyPoints": 50.6,
-    "fantasyPpg": 5.622222222222223,
-    "games": 9,
+    "fantasyPpg": 4.6000000000000005,
+    "games": 11,
     "nflSeason": 2023,
     "playerId": "00-0038619",
     "positionFinish": 111
@@ -3097,16 +3193,16 @@
   },
   {
     "fantasyPoints": 39.2,
-    "fantasyPpg": 6.533333333333334,
-    "games": 6,
+    "fantasyPpg": 4.9,
+    "games": 8,
     "nflSeason": 2023,
     "playerId": "00-0038606",
     "positionFinish": 124
   },
   {
     "fantasyPoints": 37.7,
-    "fantasyPpg": 2.692857142857143,
-    "games": 14,
+    "fantasyPpg": 2.2176470588235295,
+    "games": 17,
     "nflSeason": 2023,
     "playerId": "00-0038573",
     "positionFinish": 128
@@ -3129,8 +3225,8 @@
   },
   {
     "fantasyPoints": 34.96,
-    "fantasyPpg": 2.689230769230769,
-    "games": 13,
+    "fantasyPpg": 2.185,
+    "games": 16,
     "nflSeason": 2023,
     "playerId": "00-0036626",
     "positionFinish": 133
@@ -3153,8 +3249,8 @@
   },
   {
     "fantasyPoints": 32.5,
-    "fantasyPpg": 4.642857142857143,
-    "games": 7,
+    "fantasyPpg": 1.911764705882353,
+    "games": 17,
     "nflSeason": 2023,
     "playerId": "00-0036635",
     "positionFinish": 138
@@ -3169,16 +3265,16 @@
   },
   {
     "fantasyPoints": 30.799999999999997,
-    "fantasyPpg": 3.8499999999999996,
-    "games": 8,
+    "fantasyPpg": 2.369230769230769,
+    "games": 13,
     "nflSeason": 2023,
     "playerId": "00-0038647",
     "positionFinish": 140
   },
   {
     "fantasyPoints": 28.5,
-    "fantasyPpg": 2.375,
-    "games": 12,
+    "fantasyPpg": 2.0357142857142856,
+    "games": 14,
     "nflSeason": 2023,
     "playerId": "00-0036233",
     "positionFinish": 144
@@ -3209,16 +3305,16 @@
   },
   {
     "fantasyPoints": 21.900000000000002,
-    "fantasyPpg": 1.9909090909090912,
-    "games": 11,
+    "fantasyPpg": 1.8250000000000002,
+    "games": 12,
     "nflSeason": 2023,
     "playerId": "00-0038618",
     "positionFinish": 154
   },
   {
     "fantasyPoints": 21.700000000000003,
-    "fantasyPpg": 3.1000000000000005,
-    "games": 7,
+    "fantasyPpg": 1.9727272727272729,
+    "games": 11,
     "nflSeason": 2023,
     "playerId": "00-0036326",
     "positionFinish": 155
@@ -3233,16 +3329,16 @@
   },
   {
     "fantasyPoints": 21.5,
-    "fantasyPpg": 2.388888888888889,
-    "games": 9,
+    "fantasyPpg": 1.6538461538461537,
+    "games": 13,
     "nflSeason": 2023,
     "playerId": "00-0036862",
     "positionFinish": 157
   },
   {
     "fantasyPoints": 20.7,
-    "fantasyPpg": 4.14,
-    "games": 5,
+    "fantasyPpg": 1.8818181818181818,
+    "games": 11,
     "nflSeason": 2023,
     "playerId": "00-0038576",
     "positionFinish": 159
@@ -3264,44 +3360,52 @@
     "positionFinish": 169
   },
   {
+    "fantasyPoints": 11.1,
+    "fantasyPpg": 0.8538461538461538,
+    "games": 13,
+    "nflSeason": 2023,
+    "playerId": "00-0037745",
+    "positionFinish": 172
+  },
+  {
     "fantasyPoints": 8.8,
     "fantasyPpg": 8.8,
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0036427",
-    "positionFinish": 177
+    "positionFinish": 178
   },
   {
     "fantasyPoints": 8.1,
-    "fantasyPpg": 4.05,
-    "games": 2,
+    "fantasyPpg": 1.3499999999999999,
+    "games": 6,
     "nflSeason": 2023,
     "playerId": "00-0036630",
-    "positionFinish": 179
-  },
-  {
-    "fantasyPoints": 7.9,
-    "fantasyPpg": 7.9,
-    "games": 1,
-    "nflSeason": 2023,
-    "playerId": "00-0036646",
     "positionFinish": 180
   },
   {
-    "fantasyPoints": 7.3,
-    "fantasyPpg": 1.2166666666666666,
-    "games": 6,
+    "fantasyPoints": 7.9,
+    "fantasyPpg": 3.95,
+    "games": 2,
     "nflSeason": 2023,
-    "playerId": "00-0036331",
+    "playerId": "00-0036646",
     "positionFinish": 181
   },
   {
+    "fantasyPoints": 7.3,
+    "fantasyPpg": 0.5615384615384615,
+    "games": 13,
+    "nflSeason": 2023,
+    "playerId": "00-0036331",
+    "positionFinish": 182
+  },
+  {
     "fantasyPoints": 5.9,
-    "fantasyPpg": 2.95,
-    "games": 2,
+    "fantasyPpg": 1.9666666666666668,
+    "games": 3,
     "nflSeason": 2023,
     "playerId": "00-0037291",
-    "positionFinish": 186
+    "positionFinish": 187
   },
   {
     "fantasyPoints": 5.5,
@@ -3309,7 +3413,7 @@
     "games": 2,
     "nflSeason": 2023,
     "playerId": "00-0036482",
-    "positionFinish": 188
+    "positionFinish": 189
   },
   {
     "fantasyPoints": 3.9000000000000004,
@@ -3317,7 +3421,7 @@
     "games": 3,
     "nflSeason": 2023,
     "playerId": "00-0038608",
-    "positionFinish": 192
+    "positionFinish": 193
   },
   {
     "fantasyPoints": 2.2,
@@ -3325,7 +3429,7 @@
     "games": 2,
     "nflSeason": 2023,
     "playerId": "00-0038092",
-    "positionFinish": 196
+    "positionFinish": 197
   },
   {
     "fantasyPoints": 2.1,
@@ -3333,15 +3437,15 @@
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0036254",
-    "positionFinish": 197
+    "positionFinish": 198
   },
   {
     "fantasyPoints": 1.3,
-    "fantasyPpg": 0.65,
-    "games": 2,
+    "fantasyPpg": 0.325,
+    "games": 4,
     "nflSeason": 2023,
     "playerId": "00-0038632",
-    "positionFinish": 200
+    "positionFinish": 201
   },
   {
     "fantasyPoints": 1.2,
@@ -3353,19 +3457,27 @@
   },
   {
     "fantasyPoints": 0.5,
-    "fantasyPpg": 0.16666666666666666,
-    "games": 3,
+    "fantasyPpg": 0.125,
+    "games": 4,
     "nflSeason": 2023,
     "playerId": "00-0036620",
-    "positionFinish": 203
+    "positionFinish": 204
   },
   {
     "fantasyPoints": 0,
     "fantasyPpg": 0,
-    "games": 2,
+    "games": 4,
     "nflSeason": 2023,
-    "playerId": "00-0036133",
-    "positionFinish": 207
+    "playerId": "00-0037272",
+    "positionFinish": 208
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2023,
+    "playerId": "00-0036877",
+    "positionFinish": 210
   },
   {
     "fantasyPoints": 0,
@@ -3373,15 +3485,31 @@
     "games": 1,
     "nflSeason": 2023,
     "playerId": "00-0036991",
-    "positionFinish": 208
+    "positionFinish": 211
   },
   {
-    "fantasyPoints": 354.90000000000003,
-    "fantasyPpg": 20.876470588235296,
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 10,
+    "nflSeason": 2023,
+    "playerId": "00-0036133",
+    "positionFinish": 219
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2023,
+    "playerId": "00-0037093",
+    "positionFinish": 224
+  },
+  {
+    "fantasyPoints": 362.90000000000003,
+    "fantasyPpg": 21.347058823529412,
     "games": 17,
     "nflSeason": 2024,
     "playerId": "00-0039139",
-    "positionFinish": 2
+    "positionFinish": 1
   },
   {
     "fantasyPoints": 341.70000000000005,
@@ -3424,8 +3552,8 @@
     "positionFinish": 10
   },
   {
-    "fantasyPoints": 246.70000000000002,
-    "fantasyPpg": 17.621428571428574,
+    "fantasyPoints": 244.70000000000002,
+    "fantasyPpg": 17.47857142857143,
     "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0036223",
@@ -3488,8 +3616,8 @@
     "positionFinish": 24
   },
   {
-    "fantasyPoints": 183.70000000000002,
-    "fantasyPpg": 10.805882352941177,
+    "fantasyPoints": 186.9,
+    "fantasyPpg": 10.994117647058824,
     "games": 17,
     "nflSeason": 2024,
     "playerId": "00-0039165",
@@ -3553,16 +3681,16 @@
   },
   {
     "fantasyPoints": 129,
-    "fantasyPpg": 8.6,
-    "games": 15,
+    "fantasyPpg": 8.0625,
+    "games": 16,
     "nflSeason": 2024,
     "playerId": "00-0038555",
     "positionFinish": 36
   },
   {
     "fantasyPoints": 116.1,
-    "fantasyPpg": 7.25625,
-    "games": 16,
+    "fantasyPpg": 6.829411764705882,
+    "games": 17,
     "nflSeason": 2024,
     "playerId": "00-0039875",
     "positionFinish": 40
@@ -3593,16 +3721,16 @@
   },
   {
     "fantasyPoints": 96.2,
-    "fantasyPpg": 7.4,
-    "games": 13,
+    "fantasyPpg": 6.0125,
+    "games": 16,
     "nflSeason": 2024,
     "playerId": "00-0039363",
     "positionFinish": 47
   },
   {
     "fantasyPoints": 93.2,
-    "fantasyPpg": 6.213333333333334,
-    "games": 15,
+    "fantasyPpg": 5.825,
+    "games": 16,
     "nflSeason": 2024,
     "playerId": "00-0036414",
     "positionFinish": 49
@@ -3625,16 +3753,16 @@
   },
   {
     "fantasyPoints": 77.4,
-    "fantasyPpg": 6.45,
-    "games": 12,
+    "fantasyPpg": 5.953846153846154,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0039021",
     "positionFinish": 54
   },
   {
     "fantasyPoints": 62.59999999999999,
-    "fantasyPpg": 3.912499999999999,
-    "games": 16,
+    "fantasyPpg": 3.68235294117647,
+    "games": 17,
     "nflSeason": 2024,
     "playerId": "00-0036919",
     "positionFinish": 61
@@ -3649,8 +3777,8 @@
   },
   {
     "fantasyPoints": 53.79999999999999,
-    "fantasyPpg": 3.842857142857142,
-    "games": 14,
+    "fantasyPpg": 3.586666666666666,
+    "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0036984",
     "positionFinish": 66
@@ -3673,16 +3801,16 @@
   },
   {
     "fantasyPoints": 45.9,
-    "fantasyPpg": 5.1,
-    "games": 9,
+    "fantasyPpg": 3.5307692307692307,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0039798",
     "positionFinish": 70
   },
   {
     "fantasyPoints": 43.5,
-    "fantasyPpg": 4.833333333333333,
-    "games": 9,
+    "fantasyPpg": 4.35,
+    "games": 10,
     "nflSeason": 2024,
     "playerId": "00-0037258",
     "positionFinish": 72
@@ -3697,24 +3825,24 @@
   },
   {
     "fantasyPoints": 35.199999999999996,
-    "fantasyPpg": 3.1999999999999997,
-    "games": 11,
+    "fantasyPpg": 2.7076923076923074,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0038098",
     "positionFinish": 78
   },
   {
     "fantasyPoints": 33.5,
-    "fantasyPpg": 2.392857142857143,
-    "games": 14,
+    "fantasyPpg": 2.2333333333333334,
+    "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0039738",
     "positionFinish": 79
   },
   {
     "fantasyPoints": 32.8,
-    "fantasyPpg": 2.9818181818181815,
-    "games": 11,
+    "fantasyPpg": 2.733333333333333,
+    "games": 12,
     "nflSeason": 2024,
     "playerId": "00-0037617",
     "positionFinish": 80
@@ -3729,16 +3857,16 @@
   },
   {
     "fantasyPoints": 31.5,
-    "fantasyPpg": 3.9375,
-    "games": 8,
+    "fantasyPpg": 2.8636363636363638,
+    "games": 11,
     "nflSeason": 2024,
     "playerId": "00-0036906",
     "positionFinish": 83
   },
   {
     "fantasyPoints": 31.5,
-    "fantasyPpg": 5.25,
-    "games": 6,
+    "fantasyPpg": 4.5,
+    "games": 7,
     "nflSeason": 2024,
     "playerId": "00-0038611",
     "positionFinish": 84
@@ -3761,8 +3889,8 @@
   },
   {
     "fantasyPoints": 28.399999999999995,
-    "fantasyPpg": 2.8399999999999994,
-    "games": 10,
+    "fantasyPpg": 2.028571428571428,
+    "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0037276",
     "positionFinish": 89
@@ -3773,39 +3901,39 @@
     "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0039874",
-    "positionFinish": 91
+    "positionFinish": 92
   },
   {
     "fantasyPoints": 22.4,
-    "fantasyPpg": 3.1999999999999997,
-    "games": 7,
+    "fantasyPpg": 2.036363636363636,
+    "games": 11,
     "nflSeason": 2024,
     "playerId": "00-0038636",
-    "positionFinish": 94
-  },
-  {
-    "fantasyPoints": 20.999999999999996,
-    "fantasyPpg": 2.9999999999999996,
-    "games": 7,
-    "nflSeason": 2024,
-    "playerId": "00-0036425",
     "positionFinish": 95
   },
   {
+    "fantasyPoints": 20.999999999999996,
+    "fantasyPpg": 1.3124999999999998,
+    "games": 16,
+    "nflSeason": 2024,
+    "playerId": "00-0036425",
+    "positionFinish": 96
+  },
+  {
     "fantasyPoints": 19.3,
-    "fantasyPpg": 1.9300000000000002,
-    "games": 10,
+    "fantasyPpg": 1.3785714285714286,
+    "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0038396",
-    "positionFinish": 97
+    "positionFinish": 98
   },
   {
     "fantasyPoints": 15.7,
-    "fantasyPpg": 3.1399999999999997,
-    "games": 5,
+    "fantasyPpg": 1.2076923076923076,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0039746",
-    "positionFinish": 99
+    "positionFinish": 100
   },
   {
     "fantasyPoints": 11.8,
@@ -3813,7 +3941,7 @@
     "games": 5,
     "nflSeason": 2024,
     "playerId": "00-0038622",
-    "positionFinish": 101
+    "positionFinish": 102
   },
   {
     "fantasyPoints": 10,
@@ -3821,7 +3949,7 @@
     "games": 2,
     "nflSeason": 2024,
     "playerId": "00-0036360",
-    "positionFinish": 104
+    "positionFinish": 106
   },
   {
     "fantasyPoints": 9.4,
@@ -3829,7 +3957,7 @@
     "games": 3,
     "nflSeason": 2024,
     "playerId": "00-0037085",
-    "positionFinish": 105
+    "positionFinish": 107
   },
   {
     "fantasyPoints": 7.5,
@@ -3837,15 +3965,15 @@
     "games": 3,
     "nflSeason": 2024,
     "playerId": "00-0039344",
-    "positionFinish": 108
+    "positionFinish": 110
   },
   {
     "fantasyPoints": 6,
-    "fantasyPpg": 6,
-    "games": 1,
+    "fantasyPpg": 3,
+    "games": 2,
     "nflSeason": 2024,
     "playerId": "00-0036842",
-    "positionFinish": 112
+    "positionFinish": 114
   },
   {
     "fantasyPoints": 4.2,
@@ -3853,7 +3981,7 @@
     "games": 2,
     "nflSeason": 2024,
     "playerId": "00-0036670",
-    "positionFinish": 115
+    "positionFinish": 117
   },
   {
     "fantasyPoints": 3.2,
@@ -3861,23 +3989,15 @@
     "games": 2,
     "nflSeason": 2024,
     "playerId": "00-0039393",
-    "positionFinish": 119
+    "positionFinish": 121
   },
   {
     "fantasyPoints": 3.1000000000000005,
-    "fantasyPpg": 0.7750000000000001,
-    "games": 4,
+    "fantasyPpg": 0.6200000000000001,
+    "games": 5,
     "nflSeason": 2024,
     "playerId": "00-0039796",
-    "positionFinish": 120
-  },
-  {
-    "fantasyPoints": 2.9,
-    "fantasyPpg": 1.45,
-    "games": 2,
-    "nflSeason": 2024,
-    "playerId": "00-0037745",
-    "positionFinish": 121
+    "positionFinish": 122
   },
   {
     "fantasyPoints": 2.8,
@@ -3885,7 +4005,7 @@
     "games": 1,
     "nflSeason": 2024,
     "playerId": "00-0039811",
-    "positionFinish": 122
+    "positionFinish": 123
   },
   {
     "fantasyPoints": 0.7,
@@ -3893,7 +4013,7 @@
     "games": 1,
     "nflSeason": 2024,
     "playerId": "00-0037827",
-    "positionFinish": 130
+    "positionFinish": 132
   },
   {
     "fantasyPoints": 0.4,
@@ -3901,7 +4021,7 @@
     "games": 1,
     "nflSeason": 2024,
     "playerId": "00-0036450",
-    "positionFinish": 131
+    "positionFinish": 133
   },
   {
     "fantasyPoints": 0.3,
@@ -3909,7 +4029,7 @@
     "games": 1,
     "nflSeason": 2024,
     "playerId": "00-0036297",
-    "positionFinish": 132
+    "positionFinish": 134
   },
   {
     "fantasyPoints": 0.2,
@@ -3917,15 +4037,55 @@
     "games": 1,
     "nflSeason": 2024,
     "playerId": "00-0036370",
-    "positionFinish": 133
+    "positionFinish": 136
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2024,
+    "playerId": "00-0037299",
+    "positionFinish": 142
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2024,
+    "playerId": "00-0036569",
+    "positionFinish": 143
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2024,
+    "playerId": "00-0039385",
+    "positionFinish": 147
   },
   {
     "fantasyPoints": -2,
-    "fantasyPpg": -2,
-    "games": 1,
+    "fantasyPpg": -0.3333333333333333,
+    "games": 6,
     "nflSeason": 2024,
     "playerId": "00-0039407",
-    "positionFinish": 135
+    "positionFinish": 148
+  },
+  {
+    "fantasyPoints": 49.199999999999996,
+    "fantasyPpg": 3.28,
+    "games": 15,
+    "nflSeason": 2024,
+    "playerId": "00-0039041",
+    "positionFinish": 45
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2024,
+    "playerId": "00-0038590",
+    "positionFinish": 122
   },
   {
     "fantasyPoints": 403,
@@ -4112,12 +4272,20 @@
     "positionFinish": 33
   },
   {
+    "fantasyPoints": 183.49999999999997,
+    "fantasyPpg": 13.107142857142856,
+    "games": 14,
+    "nflSeason": 2024,
+    "playerId": "00-0038997",
+    "positionFinish": 35
+  },
+  {
     "fantasyPoints": 182.70000000000002,
     "fantasyPpg": 10.747058823529413,
     "games": 17,
     "nflSeason": 2024,
     "playerId": "00-0038117",
-    "positionFinish": 35
+    "positionFinish": 36
   },
   {
     "fantasyPoints": 182.5,
@@ -4125,14 +4293,6 @@
     "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0037261",
-    "positionFinish": 36
-  },
-  {
-    "fantasyPoints": 182.19999999999996,
-    "fantasyPpg": 13.01428571428571,
-    "games": 14,
-    "nflSeason": 2024,
-    "playerId": "00-0038997",
     "positionFinish": 37
   },
   {
@@ -4233,8 +4393,8 @@
   },
   {
     "fantasyPoints": 129.5,
-    "fantasyPpg": 8.09375,
-    "games": 16,
+    "fantasyPpg": 7.617647058823529,
+    "games": 17,
     "nflSeason": 2024,
     "playerId": "00-0038976",
     "positionFinish": 57
@@ -4353,16 +4513,16 @@
   },
   {
     "fantasyPoints": 96.99999999999999,
-    "fantasyPpg": 7.461538461538461,
-    "games": 13,
+    "fantasyPpg": 6.928571428571428,
+    "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0038606",
     "positionFinish": 81
   },
   {
     "fantasyPoints": 93.5,
-    "fantasyPpg": 9.35,
-    "games": 10,
+    "fantasyPpg": 8.5,
+    "games": 11,
     "nflSeason": 2024,
     "playerId": "00-0039916",
     "positionFinish": 82
@@ -4401,8 +4561,8 @@
   },
   {
     "fantasyPoints": 64.9,
-    "fantasyPpg": 21.633333333333336,
-    "games": 3,
+    "fantasyPpg": 16.225,
+    "games": 4,
     "nflSeason": 2024,
     "playerId": "00-0039067",
     "positionFinish": 100
@@ -4433,8 +4593,8 @@
   },
   {
     "fantasyPoints": 56.8,
-    "fantasyPpg": 4.733333333333333,
-    "games": 12,
+    "fantasyPpg": 4.057142857142857,
+    "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0039880",
     "positionFinish": 108
@@ -4449,8 +4609,8 @@
   },
   {
     "fantasyPoints": 53.9,
-    "fantasyPpg": 5.988888888888889,
-    "games": 9,
+    "fantasyPpg": 5.39,
+    "games": 10,
     "nflSeason": 2024,
     "playerId": "00-0036196",
     "positionFinish": 111
@@ -4465,8 +4625,8 @@
   },
   {
     "fantasyPoints": 52.5,
-    "fantasyPpg": 8.75,
-    "games": 6,
+    "fantasyPpg": 3.75,
+    "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0039751",
     "positionFinish": 114
@@ -4481,16 +4641,16 @@
   },
   {
     "fantasyPoints": 40.1,
-    "fantasyPpg": 3.6454545454545455,
-    "games": 11,
+    "fantasyPpg": 2.6733333333333333,
+    "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0038573",
     "positionFinish": 119
   },
   {
     "fantasyPoints": 36.300000000000004,
-    "fantasyPpg": 4.5375000000000005,
-    "games": 8,
+    "fantasyPpg": 3.0250000000000004,
+    "games": 12,
     "nflSeason": 2024,
     "playerId": "00-0036630",
     "positionFinish": 123
@@ -4505,24 +4665,24 @@
   },
   {
     "fantasyPoints": 35.2,
-    "fantasyPpg": 3.5200000000000005,
-    "games": 10,
+    "fantasyPpg": 2.3466666666666667,
+    "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0039052",
     "positionFinish": 125
   },
   {
     "fantasyPoints": 34.8,
-    "fantasyPpg": 2.9,
-    "games": 12,
+    "fantasyPpg": 2.6769230769230767,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0039355",
     "positionFinish": 126
   },
   {
     "fantasyPoints": 32.699999999999996,
-    "fantasyPpg": 2.515384615384615,
-    "games": 13,
+    "fantasyPpg": 2.3357142857142854,
+    "games": 14,
     "nflSeason": 2024,
     "playerId": "00-0039907",
     "positionFinish": 128
@@ -4541,7 +4701,7 @@
     "games": 4,
     "nflSeason": 2024,
     "playerId": "00-0039386",
-    "positionFinish": 136
+    "positionFinish": 135
   },
   {
     "fantasyPoints": 23.700000000000003,
@@ -4553,32 +4713,32 @@
   },
   {
     "fantasyPoints": 22.5,
-    "fantasyPpg": 2.0454545454545454,
-    "games": 11,
+    "fantasyPpg": 1.7307692307692308,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0037091",
     "positionFinish": 139
   },
   {
     "fantasyPoints": 19.2,
-    "fantasyPpg": 1.92,
-    "games": 10,
+    "fantasyPpg": 1.4769230769230768,
+    "games": 13,
     "nflSeason": 2024,
     "playerId": "00-0036331",
     "positionFinish": 143
   },
   {
     "fantasyPoints": 18.7,
-    "fantasyPpg": 3.1166666666666667,
-    "games": 6,
+    "fantasyPpg": 2.6714285714285713,
+    "games": 7,
     "nflSeason": 2024,
     "playerId": "00-0036345",
     "positionFinish": 144
   },
   {
     "fantasyPoints": 18.2,
-    "fantasyPpg": 2.6,
-    "games": 7,
+    "fantasyPpg": 2.022222222222222,
+    "games": 9,
     "nflSeason": 2024,
     "playerId": "00-0039410",
     "positionFinish": 145
@@ -4593,19 +4753,27 @@
   },
   {
     "fantasyPoints": 16.6,
-    "fantasyPpg": 3.3200000000000003,
-    "games": 5,
+    "fantasyPpg": 2.766666666666667,
+    "games": 6,
     "nflSeason": 2024,
     "playerId": "00-0036646",
     "positionFinish": 148
   },
   {
     "fantasyPoints": 14.8,
-    "fantasyPpg": 1.6444444444444446,
-    "games": 9,
+    "fantasyPpg": 1.48,
+    "games": 10,
     "nflSeason": 2024,
     "playerId": "00-0039236",
     "positionFinish": 154
+  },
+  {
+    "fantasyPoints": 14.700000000000001,
+    "fantasyPpg": 1.8375000000000001,
+    "games": 8,
+    "nflSeason": 2024,
+    "playerId": "00-0039810",
+    "positionFinish": 155
   },
   {
     "fantasyPoints": 14.700000000000001,
@@ -4613,20 +4781,12 @@
     "games": 7,
     "nflSeason": 2024,
     "playerId": "00-0036387",
-    "positionFinish": 155
-  },
-  {
-    "fantasyPoints": 14.700000000000001,
-    "fantasyPpg": 3.6750000000000003,
-    "games": 4,
-    "nflSeason": 2024,
-    "playerId": "00-0039810",
     "positionFinish": 156
   },
   {
     "fantasyPoints": 14.7,
-    "fantasyPpg": 2.4499999999999997,
-    "games": 6,
+    "fantasyPpg": 1.47,
+    "games": 10,
     "nflSeason": 2024,
     "playerId": "00-0036268",
     "positionFinish": 157
@@ -4649,24 +4809,24 @@
   },
   {
     "fantasyPoints": 12.7,
-    "fantasyPpg": 4.233333333333333,
-    "games": 3,
+    "fantasyPpg": 0.8466666666666666,
+    "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0039365",
     "positionFinish": 166
   },
   {
     "fantasyPoints": 11.899999999999999,
-    "fantasyPpg": 2.9749999999999996,
-    "games": 4,
+    "fantasyPpg": 1.322222222222222,
+    "games": 9,
     "nflSeason": 2024,
     "playerId": "00-0036862",
     "positionFinish": 169
   },
   {
     "fantasyPoints": 9.1,
-    "fantasyPpg": 4.55,
-    "games": 2,
+    "fantasyPpg": 3.033333333333333,
+    "games": 3,
     "nflSeason": 2024,
     "playerId": "00-0039792",
     "positionFinish": 172
@@ -4689,27 +4849,19 @@
   },
   {
     "fantasyPoints": 7.5,
-    "fantasyPpg": 3.75,
-    "games": 2,
+    "fantasyPpg": 1.0714285714285714,
+    "games": 7,
     "nflSeason": 2024,
     "playerId": "00-0038576",
     "positionFinish": 175
   },
   {
     "fantasyPoints": 7.3999999999999995,
-    "fantasyPpg": 2.4666666666666663,
-    "games": 3,
+    "fantasyPpg": 1.48,
+    "games": 5,
     "nflSeason": 2024,
     "playerId": "00-0036620",
     "positionFinish": 176
-  },
-  {
-    "fantasyPoints": 7.2,
-    "fantasyPpg": 1.44,
-    "games": 5,
-    "nflSeason": 2024,
-    "playerId": "00-0039920",
-    "positionFinish": 177
   },
   {
     "fantasyPoints": 7.1,
@@ -4717,15 +4869,15 @@
     "games": 5,
     "nflSeason": 2024,
     "playerId": "00-0036955",
-    "positionFinish": 179
+    "positionFinish": 178
   },
   {
     "fantasyPoints": 6,
-    "fantasyPpg": 6,
-    "games": 1,
+    "fantasyPpg": 0.4,
+    "games": 15,
     "nflSeason": 2024,
     "playerId": "00-0036635",
-    "positionFinish": 187
+    "positionFinish": 185
   },
   {
     "fantasyPoints": 5.7,
@@ -4733,6 +4885,14 @@
     "games": 1,
     "nflSeason": 2024,
     "playerId": "00-0037257",
+    "positionFinish": 189
+  },
+  {
+    "fantasyPoints": 5.2,
+    "fantasyPpg": 1.04,
+    "games": 5,
+    "nflSeason": 2024,
+    "playerId": "00-0039920",
     "positionFinish": 190
   },
   {
@@ -4745,27 +4905,27 @@
   },
   {
     "fantasyPoints": 5.1,
-    "fantasyPpg": 2.55,
-    "games": 2,
+    "fantasyPpg": 0.5666666666666667,
+    "games": 9,
     "nflSeason": 2024,
     "playerId": "00-0036133",
     "positionFinish": 192
   },
   {
     "fantasyPoints": 4.2,
-    "fantasyPpg": 1.4000000000000001,
-    "games": 3,
+    "fantasyPpg": 1.05,
+    "games": 4,
     "nflSeason": 2024,
     "playerId": "00-0038647",
-    "positionFinish": 195
+    "positionFinish": 194
   },
   {
     "fantasyPoints": 3.3,
-    "fantasyPpg": 3.3,
-    "games": 1,
+    "fantasyPpg": 0.4125,
+    "games": 8,
     "nflSeason": 2024,
     "playerId": "00-0039816",
-    "positionFinish": 197
+    "positionFinish": 196
   },
   {
     "fantasyPoints": 3.2,
@@ -4773,7 +4933,7 @@
     "games": 2,
     "nflSeason": 2024,
     "playerId": "00-0036165",
-    "positionFinish": 198
+    "positionFinish": 197
   },
   {
     "fantasyPoints": 3.0999999999999996,
@@ -4781,6 +4941,14 @@
     "games": 2,
     "nflSeason": 2024,
     "playerId": "00-0038507",
+    "positionFinish": 198
+  },
+  {
+    "fantasyPoints": 2.9,
+    "fantasyPpg": 1.45,
+    "games": 2,
+    "nflSeason": 2024,
+    "playerId": "00-0037745",
     "positionFinish": 199
   },
   {
@@ -4793,40 +4961,40 @@
   },
   {
     "fantasyPoints": 2.2,
-    "fantasyPpg": 0.55,
-    "games": 4,
+    "fantasyPpg": 0.3666666666666667,
+    "games": 6,
     "nflSeason": 2024,
     "playerId": "00-0039853",
     "positionFinish": 204
   },
   {
     "fantasyPoints": 1.6,
-    "fantasyPpg": 0.8,
-    "games": 2,
+    "fantasyPpg": 0.14545454545454548,
+    "games": 11,
+    "nflSeason": 2024,
+    "playerId": "00-0036877",
+    "positionFinish": 209
+  },
+  {
+    "fantasyPoints": 1.6,
+    "fantasyPpg": 0.26666666666666666,
+    "games": 6,
     "nflSeason": 2024,
     "playerId": "00-0036254",
     "positionFinish": 210
   },
   {
-    "fantasyPoints": 1.6,
-    "fantasyPpg": 1.6,
-    "games": 1,
-    "nflSeason": 2024,
-    "playerId": "00-0036877",
-    "positionFinish": 211
-  },
-  {
     "fantasyPoints": 1.5,
-    "fantasyPpg": 1.5,
-    "games": 1,
+    "fantasyPpg": 0.375,
+    "games": 4,
     "nflSeason": 2024,
     "playerId": "00-0038941",
     "positionFinish": 213
   },
   {
     "fantasyPoints": 1.3,
-    "fantasyPpg": 0.65,
-    "games": 2,
+    "fantasyPpg": 0.10833333333333334,
+    "games": 12,
     "nflSeason": 2024,
     "playerId": "00-0039392",
     "positionFinish": 214
@@ -4834,18 +5002,10 @@
   {
     "fantasyPoints": 0,
     "fantasyPpg": 0,
-    "games": 1,
+    "games": 7,
     "nflSeason": 2024,
     "playerId": "00-0037093",
-    "positionFinish": 220
-  },
-  {
-    "fantasyPoints": 0,
-    "fantasyPpg": 0,
-    "games": 2,
-    "nflSeason": 2024,
-    "playerId": "00-0038090",
-    "positionFinish": 223
+    "positionFinish": 221
   },
   {
     "fantasyPoints": 0,
@@ -4856,11 +5016,1715 @@
     "positionFinish": 224
   },
   {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 3,
+    "nflSeason": 2024,
+    "playerId": "00-0038090",
+    "positionFinish": 226
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2024,
+    "playerId": "00-0037272",
+    "positionFinish": 229
+  },
+  {
     "fantasyPoints": -0.39999999999999997,
-    "fantasyPpg": -0.19999999999999998,
-    "games": 2,
+    "fantasyPpg": -0.13333333333333333,
+    "games": 3,
     "nflSeason": 2024,
     "playerId": "00-0036913",
-    "positionFinish": 227
+    "positionFinish": 236
+  },
+  {
+    "fantasyPoints": 370.8,
+    "fantasyPpg": 21.811764705882354,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038542",
+    "positionFinish": 2
+  },
+  {
+    "fantasyPoints": 366.90000000000003,
+    "fantasyPpg": 21.582352941176474,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039139",
+    "positionFinish": 3
+  },
+  {
+    "fantasyPoints": 362.29999999999995,
+    "fantasyPpg": 21.31176470588235,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036223",
+    "positionFinish": 4
+  },
+  {
+    "fantasyPoints": 322.79999999999995,
+    "fantasyPpg": 20.174999999999997,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0039040",
+    "positionFinish": 5
+  },
+  {
+    "fantasyPoints": 302.2,
+    "fantasyPpg": 17.776470588235295,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037248",
+    "positionFinish": 6
+  },
+  {
+    "fantasyPoints": 282.6,
+    "fantasyPpg": 16.623529411764707,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038597",
+    "positionFinish": 7
+  },
+  {
+    "fantasyPoints": 263.3,
+    "fantasyPpg": 15.488235294117647,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037840",
+    "positionFinish": 9
+  },
+  {
+    "fantasyPoints": 253.89999999999998,
+    "fantasyPpg": 14.935294117647057,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036973",
+    "positionFinish": 10
+  },
+  {
+    "fantasyPoints": 245.10000000000008,
+    "fantasyPpg": 14.417647058823533,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040122",
+    "positionFinish": 11
+  },
+  {
+    "fantasyPoints": 242.80000000000004,
+    "fantasyPpg": 15.175000000000002,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0036997",
+    "positionFinish": 12
+  },
+  {
+    "fantasyPoints": 228.6,
+    "fantasyPpg": 14.2875,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0036275",
+    "positionFinish": 15
+  },
+  {
+    "fantasyPoints": 221.3,
+    "fantasyPpg": 13.01764705882353,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036919",
+    "positionFinish": 16
+  },
+  {
+    "fantasyPoints": 207.66000000000003,
+    "fantasyPpg": 12.978750000000002,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0038120",
+    "positionFinish": 19
+  },
+  {
+    "fantasyPoints": 206.6,
+    "fantasyPpg": 12.152941176470588,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040730",
+    "positionFinish": 20
+  },
+  {
+    "fantasyPoints": 206.2,
+    "fantasyPpg": 12.129411764705882,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040734",
+    "positionFinish": 21
+  },
+  {
+    "fantasyPoints": 191.9,
+    "fantasyPpg": 11.288235294117648,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038134",
+    "positionFinish": 22
+  },
+  {
+    "fantasyPoints": 181.39999999999998,
+    "fantasyPpg": 11.337499999999999,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0039165",
+    "positionFinish": 24
+  },
+  {
+    "fantasyPoints": 178.8,
+    "fantasyPpg": 12.771428571428572,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0036875",
+    "positionFinish": 25
+  },
+  {
+    "fantasyPoints": 169.8,
+    "fantasyPpg": 12.12857142857143,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0040784",
+    "positionFinish": 26
+  },
+  {
+    "fantasyPoints": 160.8,
+    "fantasyPpg": 10.72,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0039384",
+    "positionFinish": 28
+  },
+  {
+    "fantasyPoints": 146.7,
+    "fantasyPpg": 8.629411764705882,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040236",
+    "positionFinish": 29
+  },
+  {
+    "fantasyPoints": 145.1,
+    "fantasyPpg": 9.06875,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0040583",
+    "positionFinish": 31
+  },
+  {
+    "fantasyPoints": 143,
+    "fantasyPpg": 8.411764705882353,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037256",
+    "positionFinish": 32
+  },
+  {
+    "fantasyPoints": 140.29999999999998,
+    "fantasyPpg": 8.252941176470587,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040242",
+    "positionFinish": 33
+  },
+  {
+    "fantasyPoints": 138.49999999999997,
+    "fantasyPpg": 13.849999999999998,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0039361",
+    "positionFinish": 34
+  },
+  {
+    "fantasyPoints": 135.7,
+    "fantasyPpg": 15.077777777777776,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0040666",
+    "positionFinish": 35
+  },
+  {
+    "fantasyPoints": 127.70000000000002,
+    "fantasyPpg": 15.962500000000002,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0040715",
+    "positionFinish": 37
+  },
+  {
+    "fantasyPoints": 125.39999999999999,
+    "fantasyPpg": 8.36,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0036555",
+    "positionFinish": 38
+  },
+  {
+    "fantasyPoints": 123,
+    "fantasyPpg": 7.235294117647059,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037263",
+    "positionFinish": 39
+  },
+  {
+    "fantasyPoints": 122.2,
+    "fantasyPpg": 7.188235294117647,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039738",
+    "positionFinish": 40
+  },
+  {
+    "fantasyPoints": 117.9,
+    "fantasyPpg": 9.069230769230769,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0039391",
+    "positionFinish": 42
+  },
+  {
+    "fantasyPoints": 115.9,
+    "fantasyPpg": 11.59,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0036158",
+    "positionFinish": 43
+  },
+  {
+    "fantasyPoints": 111.69999999999999,
+    "fantasyPpg": 8.592307692307692,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0039032",
+    "positionFinish": 44
+  },
+  {
+    "fantasyPoints": 99.00000000000001,
+    "fantasyPpg": 7.615384615384617,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0036924",
+    "positionFinish": 48
+  },
+  {
+    "fantasyPoints": 92,
+    "fantasyPpg": 7.666666666666667,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0038611",
+    "positionFinish": 51
+  },
+  {
+    "fantasyPoints": 88.60000000000001,
+    "fantasyPpg": 5.906666666666667,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0040719",
+    "positionFinish": 53
+  },
+  {
+    "fantasyPoints": 87.60000000000001,
+    "fantasyPpg": 5.840000000000001,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0040162",
+    "positionFinish": 55
+  },
+  {
+    "fantasyPoints": 87.3,
+    "fantasyPpg": 6.7153846153846155,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0037197",
+    "positionFinish": 56
+  },
+  {
+    "fantasyPoints": 71.20000000000002,
+    "fantasyPpg": 4.450000000000001,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0039798",
+    "positionFinish": 59
+  },
+  {
+    "fantasyPoints": 64.1,
+    "fantasyPpg": 3.770588235294117,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039875",
+    "positionFinish": 61
+  },
+  {
+    "fantasyPoints": 63.3,
+    "fantasyPpg": 3.7235294117647055,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040078",
+    "positionFinish": 62
+  },
+  {
+    "fantasyPoints": 62.49999999999999,
+    "fantasyPpg": 3.6764705882352935,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037746",
+    "positionFinish": 63
+  },
+  {
+    "fantasyPoints": 60,
+    "fantasyPpg": 6.666666666666667,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0040202",
+    "positionFinish": 64
+  },
+  {
+    "fantasyPoints": 54.1,
+    "fantasyPpg": 3.182352941176471,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040198",
+    "positionFinish": 67
+  },
+  {
+    "fantasyPoints": 53.8,
+    "fantasyPpg": 3.5866666666666664,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0038555",
+    "positionFinish": 68
+  },
+  {
+    "fantasyPoints": 48.2,
+    "fantasyPpg": 5.355555555555556,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0039874",
+    "positionFinish": 69
+  },
+  {
+    "fantasyPoints": 48.1,
+    "fantasyPpg": 9.620000000000001,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0039373",
+    "positionFinish": 70
+  },
+  {
+    "fantasyPoints": 43.60000000000001,
+    "fantasyPpg": 3.3538461538461544,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0037267",
+    "positionFinish": 71
+  },
+  {
+    "fantasyPoints": 35.400000000000006,
+    "fantasyPpg": 2.2125000000000004,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0037085",
+    "positionFinish": 76
+  },
+  {
+    "fantasyPoints": 35.4,
+    "fantasyPpg": 8.85,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0039921",
+    "positionFinish": 77
+  },
+  {
+    "fantasyPoints": 33.300000000000004,
+    "fantasyPpg": 4.757142857142858,
+    "games": 7,
+    "nflSeason": 2025,
+    "playerId": "00-0038551",
+    "positionFinish": 79
+  },
+  {
+    "fantasyPoints": 29.700000000000003,
+    "fantasyPpg": 7.425000000000001,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0039405",
+    "positionFinish": 82
+  },
+  {
+    "fantasyPoints": 24.800000000000004,
+    "fantasyPpg": 1.5500000000000003,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0040238",
+    "positionFinish": 86
+  },
+  {
+    "fantasyPoints": 24.2,
+    "fantasyPpg": 1.6133333333333333,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0039796",
+    "positionFinish": 87
+  },
+  {
+    "fantasyPoints": 23.200000000000003,
+    "fantasyPpg": 4.640000000000001,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0036328",
+    "positionFinish": 89
+  },
+  {
+    "fantasyPoints": 20.4,
+    "fantasyPpg": 4.08,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0040586",
+    "positionFinish": 91
+  },
+  {
+    "fantasyPoints": 19.5,
+    "fantasyPpg": 1.3928571428571428,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0039746",
+    "positionFinish": 93
+  },
+  {
+    "fantasyPoints": 15.299999999999999,
+    "fantasyPpg": 3.8249999999999997,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0039794",
+    "positionFinish": 95
+  },
+  {
+    "fantasyPoints": 13.7,
+    "fantasyPpg": 0.8058823529411764,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040644",
+    "positionFinish": 97
+  },
+  {
+    "fantasyPoints": 11.600000000000001,
+    "fantasyPpg": 3.866666666666667,
+    "games": 3,
+    "nflSeason": 2025,
+    "playerId": "00-0036893",
+    "positionFinish": 99
+  },
+  {
+    "fantasyPoints": 10.9,
+    "fantasyPpg": 1.09,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0036842",
+    "positionFinish": 100
+  },
+  {
+    "fantasyPoints": 10.9,
+    "fantasyPpg": 10.9,
+    "games": 1,
+    "nflSeason": 2025,
+    "playerId": "00-0040021",
+    "positionFinish": 101
+  },
+  {
+    "fantasyPoints": 10.000000000000002,
+    "fantasyPpg": 0.9090909090909093,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0037617",
+    "positionFinish": 102
+  },
+  {
+    "fantasyPoints": 9.7,
+    "fantasyPpg": 4.85,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0037329",
+    "positionFinish": 103
+  },
+  {
+    "fantasyPoints": 9.6,
+    "fantasyPpg": 1.92,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0038040",
+    "positionFinish": 104
+  },
+  {
+    "fantasyPoints": 9.6,
+    "fantasyPpg": 1.92,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0040179",
+    "positionFinish": 105
+  },
+  {
+    "fantasyPoints": 9.1,
+    "fantasyPpg": 1.5166666666666666,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0036265",
+    "positionFinish": 107
+  },
+  {
+    "fantasyPoints": 8.8,
+    "fantasyPpg": 2.9333333333333336,
+    "games": 3,
+    "nflSeason": 2025,
+    "playerId": "00-0037276",
+    "positionFinish": 108
+  },
+  {
+    "fantasyPoints": 8.8,
+    "fantasyPpg": 0.8800000000000001,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0040142",
+    "positionFinish": 109
+  },
+  {
+    "fantasyPoints": 7.18,
+    "fantasyPpg": 1.795,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0036414",
+    "positionFinish": 111
+  },
+  {
+    "fantasyPoints": 6.6,
+    "fantasyPpg": 1.3199999999999998,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0036906",
+    "positionFinish": 112
+  },
+  {
+    "fantasyPoints": 6.4,
+    "fantasyPpg": 0.5333333333333333,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0040208",
+    "positionFinish": 113
+  },
+  {
+    "fantasyPoints": 6.4,
+    "fantasyPpg": 1.0666666666666667,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0038397",
+    "positionFinish": 114
+  },
+  {
+    "fantasyPoints": 5.700000000000001,
+    "fantasyPpg": 0.3352941176470589,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039407",
+    "positionFinish": 115
+  },
+  {
+    "fantasyPoints": 4.2,
+    "fantasyPpg": 2.1,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0036360",
+    "positionFinish": 119
+  },
+  {
+    "fantasyPoints": 3.6,
+    "fantasyPpg": 0.72,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0037258",
+    "positionFinish": 122
+  },
+  {
+    "fantasyPoints": 2.1,
+    "fantasyPpg": 0.42000000000000004,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0036425",
+    "positionFinish": 124
+  },
+  {
+    "fantasyPoints": 1.7000000000000002,
+    "fantasyPpg": 0.2833333333333334,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0039021",
+    "positionFinish": 127
+  },
+  {
+    "fantasyPoints": 0.7,
+    "fantasyPpg": 0.175,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0040205",
+    "positionFinish": 131
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 7,
+    "nflSeason": 2025,
+    "playerId": "00-0039363",
+    "positionFinish": 138
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 3,
+    "nflSeason": 2025,
+    "playerId": "00-0036984",
+    "positionFinish": 143
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2025,
+    "playerId": "00-0038409",
+    "positionFinish": 145
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2025,
+    "playerId": "00-0036567",
+    "positionFinish": 147
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0036569",
+    "positionFinish": 148
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 1,
+    "nflSeason": 2025,
+    "playerId": "00-0038396",
+    "positionFinish": 149
+  },
+  {
+    "fantasyPoints": 58.099999999999994,
+    "fantasyPpg": 3.4176470588235293,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039041",
+    "positionFinish": 48
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 3,
+    "nflSeason": 2025,
+    "playerId": "00-0038590",
+    "positionFinish": 125
+  },
+  {
+    "fantasyPoints": 375,
+    "fantasyPpg": 23.4375,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0039075",
+    "positionFinish": 1
+  },
+  {
+    "fantasyPoints": 359.90000000000003,
+    "fantasyPpg": 21.17058823529412,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038543",
+    "positionFinish": 2
+  },
+  {
+    "fantasyPoints": 323.99999999999994,
+    "fantasyPpg": 19.05882352941176,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036963",
+    "positionFinish": 3
+  },
+  {
+    "fantasyPoints": 313.59999999999997,
+    "fantasyPpg": 19.599999999999998,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0036900",
+    "positionFinish": 4
+  },
+  {
+    "fantasyPoints": 291.90000000000003,
+    "fantasyPpg": 17.17058823529412,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037247",
+    "positionFinish": 5
+  },
+  {
+    "fantasyPoints": 267.99999999999994,
+    "fantasyPpg": 16.749999999999996,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0037239",
+    "positionFinish": 6
+  },
+  {
+    "fantasyPoints": 243.29999999999998,
+    "fantasyPpg": 14.311764705882352,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039064",
+    "positionFinish": 7
+  },
+  {
+    "fantasyPoints": 226.2,
+    "fantasyPpg": 15.08,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0036554",
+    "positionFinish": 8
+  },
+  {
+    "fantasyPoints": 220.6,
+    "fantasyPpg": 12.976470588235294,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038559",
+    "positionFinish": 10
+  },
+  {
+    "fantasyPoints": 219.9,
+    "fantasyPpg": 12.935294117647059,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037240",
+    "positionFinish": 12
+  },
+  {
+    "fantasyPoints": 217.9,
+    "fantasyPpg": 13.61875,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0038117",
+    "positionFinish": 14
+  },
+  {
+    "fantasyPoints": 213.4,
+    "fantasyPpg": 12.552941176470588,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040124",
+    "positionFinish": 15
+  },
+  {
+    "fantasyPoints": 211.6,
+    "fantasyPpg": 14.106666666666666,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0036410",
+    "positionFinish": 16
+  },
+  {
+    "fantasyPoints": 202.39999999999998,
+    "fantasyPpg": 11.905882352941175,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036252",
+    "positionFinish": 18
+  },
+  {
+    "fantasyPoints": 201.9,
+    "fantasyPpg": 16.825,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0037238",
+    "positionFinish": 19
+  },
+  {
+    "fantasyPoints": 201.79999999999998,
+    "fantasyPpg": 11.870588235294116,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036912",
+    "positionFinish": 20
+  },
+  {
+    "fantasyPoints": 201.5,
+    "fantasyPpg": 11.852941176470589,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036322",
+    "positionFinish": 21
+  },
+  {
+    "fantasyPoints": 200.89999999999998,
+    "fantasyPpg": 15.453846153846152,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0036358",
+    "positionFinish": 22
+  },
+  {
+    "fantasyPoints": 195.7,
+    "fantasyPpg": 11.511764705882353,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040129",
+    "positionFinish": 23
+  },
+  {
+    "fantasyPoints": 194.11999999999995,
+    "fantasyPpg": 12.132499999999997,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0036613",
+    "positionFinish": 24
+  },
+  {
+    "fantasyPoints": 184.7,
+    "fantasyPpg": 11.54375,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0038606",
+    "positionFinish": 27
+  },
+  {
+    "fantasyPoints": 183.29999999999998,
+    "fantasyPpg": 12.219999999999999,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0037664",
+    "positionFinish": 28
+  },
+  {
+    "fantasyPoints": 180.9,
+    "fantasyPpg": 11.30625,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0039915",
+    "positionFinish": 30
+  },
+  {
+    "fantasyPoints": 177.09999999999997,
+    "fantasyPpg": 10.417647058823528,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039868",
+    "positionFinish": 31
+  },
+  {
+    "fantasyPoints": 173.29999999999998,
+    "fantasyPpg": 11.553333333333333,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0036259",
+    "positionFinish": 33
+  },
+  {
+    "fantasyPoints": 171.20000000000005,
+    "fantasyPpg": 13.169230769230772,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0038544",
+    "positionFinish": 35
+  },
+  {
+    "fantasyPoints": 166.39999999999998,
+    "fantasyPpg": 10.399999999999999,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0037261",
+    "positionFinish": 36
+  },
+  {
+    "fantasyPoints": 165.4,
+    "fantasyPpg": 10.3375,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0037816",
+    "positionFinish": 37
+  },
+  {
+    "fantasyPoints": 161.70000000000002,
+    "fantasyPpg": 9.511764705882355,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038563",
+    "positionFinish": 38
+  },
+  {
+    "fantasyPoints": 150.10000000000002,
+    "fantasyPpg": 18.762500000000003,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0039067",
+    "positionFinish": 40
+  },
+  {
+    "fantasyPoints": 146.1,
+    "fantasyPpg": 12.174999999999999,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0039919",
+    "positionFinish": 41
+  },
+  {
+    "fantasyPoints": 138.79999999999998,
+    "fantasyPpg": 9.914285714285713,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0039893",
+    "positionFinish": 42
+  },
+  {
+    "fantasyPoints": 138.4,
+    "fantasyPpg": 8.65,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0038997",
+    "positionFinish": 43
+  },
+  {
+    "fantasyPoints": 135.1,
+    "fantasyPpg": 9.65,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0038994",
+    "positionFinish": 45
+  },
+  {
+    "fantasyPoints": 132.4,
+    "fantasyPpg": 13.24,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0038124",
+    "positionFinish": 46
+  },
+  {
+    "fantasyPoints": 129.5,
+    "fantasyPpg": 7.617647058823529,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040130",
+    "positionFinish": 47
+  },
+  {
+    "fantasyPoints": 128.1,
+    "fantasyPpg": 7.535294117647059,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040705",
+    "positionFinish": 48
+  },
+  {
+    "fantasyPoints": 127.9,
+    "fantasyPpg": 8.526666666666667,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0040735",
+    "positionFinish": 49
+  },
+  {
+    "fantasyPoints": 127.80000000000003,
+    "fantasyPpg": 10.650000000000002,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0039849",
+    "positionFinish": 50
+  },
+  {
+    "fantasyPoints": 124.1,
+    "fantasyPpg": 8.864285714285714,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0038608",
+    "positionFinish": 51
+  },
+  {
+    "fantasyPoints": 120.7,
+    "fantasyPpg": 7.1000000000000005,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036407",
+    "positionFinish": 52
+  },
+  {
+    "fantasyPoints": 116.7,
+    "fantasyPpg": 6.864705882352942,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0039880",
+    "positionFinish": 53
+  },
+  {
+    "fantasyPoints": 116.5,
+    "fantasyPpg": 7.28125,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0040170",
+    "positionFinish": 54
+  },
+  {
+    "fantasyPoints": 114,
+    "fantasyPpg": 7.6,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0039410",
+    "positionFinish": 57
+  },
+  {
+    "fantasyPoints": 109.9,
+    "fantasyPpg": 7.8500000000000005,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0039894",
+    "positionFinish": 59
+  },
+  {
+    "fantasyPoints": 102.39999999999999,
+    "fantasyPpg": 8.533333333333333,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0039901",
+    "positionFinish": 60
+  },
+  {
+    "fantasyPoints": 100.7,
+    "fantasyPpg": 5.923529411764706,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0037291",
+    "positionFinish": 61
+  },
+  {
+    "fantasyPoints": 99.49999999999999,
+    "fantasyPpg": 14.214285714285712,
+    "games": 7,
+    "nflSeason": 2025,
+    "playerId": "00-0037740",
+    "positionFinish": 62
+  },
+  {
+    "fantasyPoints": 98.00000000000001,
+    "fantasyPpg": 6.125000000000001,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0038618",
+    "positionFinish": 64
+  },
+  {
+    "fantasyPoints": 95.8,
+    "fantasyPpg": 5.9875,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0038621",
+    "positionFinish": 65
+  },
+  {
+    "fantasyPoints": 95.00000000000001,
+    "fantasyPpg": 6.333333333333334,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0038976",
+    "positionFinish": 66
+  },
+  {
+    "fantasyPoints": 92.4,
+    "fantasyPpg": 6.16,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0040237",
+    "positionFinish": 67
+  },
+  {
+    "fantasyPoints": 89.89999999999999,
+    "fantasyPpg": 5.993333333333333,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0038619",
+    "positionFinish": 70
+  },
+  {
+    "fantasyPoints": 89.30000000000001,
+    "fantasyPpg": 5.953333333333334,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0039342",
+    "positionFinish": 71
+  },
+  {
+    "fantasyPoints": 88.6,
+    "fantasyPpg": 9.844444444444443,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0039916",
+    "positionFinish": 72
+  },
+  {
+    "fantasyPoints": 87.89999999999999,
+    "fantasyPpg": 5.4937499999999995,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0039890",
+    "positionFinish": 73
+  },
+  {
+    "fantasyPoints": 86.19999999999999,
+    "fantasyPpg": 6.157142857142857,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0037837",
+    "positionFinish": 74
+  },
+  {
+    "fantasyPoints": 82.30000000000001,
+    "fantasyPpg": 5.486666666666667,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0036309",
+    "positionFinish": 79
+  },
+  {
+    "fantasyPoints": 80.80000000000001,
+    "fantasyPpg": 6.733333333333334,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0038104",
+    "positionFinish": 81
+  },
+  {
+    "fantasyPoints": 75.9,
+    "fantasyPpg": 5.421428571428572,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0040669",
+    "positionFinish": 82
+  },
+  {
+    "fantasyPoints": 75.8,
+    "fantasyPpg": 5.8307692307692305,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0038393",
+    "positionFinish": 83
+  },
+  {
+    "fantasyPoints": 74.8,
+    "fantasyPpg": 5.753846153846154,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0040134",
+    "positionFinish": 85
+  },
+  {
+    "fantasyPoints": 71.89999999999999,
+    "fantasyPpg": 5.53076923076923,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0037614",
+    "positionFinish": 87
+  },
+  {
+    "fantasyPoints": 70,
+    "fantasyPpg": 5,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0040667",
+    "positionFinish": 88
+  },
+  {
+    "fantasyPoints": 70,
+    "fantasyPpg": 5,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0036415",
+    "positionFinish": 89
+  },
+  {
+    "fantasyPoints": 69.39999999999999,
+    "fantasyPpg": 4.3374999999999995,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0040727",
+    "positionFinish": 90
+  },
+  {
+    "fantasyPoints": 68.4,
+    "fantasyPpg": 4.023529411764706,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0040138",
+    "positionFinish": 91
+  },
+  {
+    "fantasyPoints": 66.3,
+    "fantasyPpg": 7.366666666666666,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0039424",
+    "positionFinish": 95
+  },
+  {
+    "fantasyPoints": 65.1,
+    "fantasyPpg": 8.1375,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0040648",
+    "positionFinish": 96
+  },
+  {
+    "fantasyPoints": 60,
+    "fantasyPpg": 5,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0038979",
+    "positionFinish": 98
+  },
+  {
+    "fantasyPoints": 57.1,
+    "fantasyPpg": 14.275,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0039337",
+    "positionFinish": 101
+  },
+  {
+    "fantasyPoints": 55.400000000000006,
+    "fantasyPpg": 4.261538461538462,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0036550",
+    "positionFinish": 102
+  },
+  {
+    "fantasyPoints": 52.30000000000001,
+    "fantasyPpg": 4.358333333333334,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0036988",
+    "positionFinish": 105
+  },
+  {
+    "fantasyPoints": 51.300000000000004,
+    "fantasyPpg": 5.7,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0039355",
+    "positionFinish": 108
+  },
+  {
+    "fantasyPoints": 51.199999999999996,
+    "fantasyPpg": 3.413333333333333,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0040164",
+    "positionFinish": 109
+  },
+  {
+    "fantasyPoints": 50.199999999999996,
+    "fantasyPpg": 3.3466666666666662,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0037741",
+    "positionFinish": 110
+  },
+  {
+    "fantasyPoints": 49.699999999999996,
+    "fantasyPpg": 4.518181818181818,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0036626",
+    "positionFinish": 111
+  },
+  {
+    "fantasyPoints": 49.2,
+    "fantasyPpg": 3.5142857142857147,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0040131",
+    "positionFinish": 112
+  },
+  {
+    "fantasyPoints": 48.5,
+    "fantasyPpg": 9.7,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0039146",
+    "positionFinish": 114
+  },
+  {
+    "fantasyPoints": 46.300000000000004,
+    "fantasyPpg": 3.858333333333334,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0037666",
+    "positionFinish": 117
+  },
+  {
+    "fantasyPoints": 42.4,
+    "fantasyPpg": 3.0285714285714285,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0040729",
+    "positionFinish": 119
+  },
+  {
+    "fantasyPoints": 38.6,
+    "fantasyPpg": 4.288888888888889,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0039739",
+    "positionFinish": 121
+  },
+  {
+    "fantasyPoints": 37.7,
+    "fantasyPpg": 4.188888888888889,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0036427",
+    "positionFinish": 123
+  },
+  {
+    "fantasyPoints": 37.6,
+    "fantasyPpg": 4.7,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0039792",
+    "positionFinish": 124
+  },
+  {
+    "fantasyPoints": 36.29999999999999,
+    "fantasyPpg": 2.4199999999999995,
+    "games": 15,
+    "nflSeason": 2025,
+    "playerId": "00-0039751",
+    "positionFinish": 125
+  },
+  {
+    "fantasyPoints": 31.599999999999998,
+    "fantasyPpg": 2.6333333333333333,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0039920",
+    "positionFinish": 132
+  },
+  {
+    "fantasyPoints": 31.199999999999996,
+    "fantasyPpg": 3.8999999999999995,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0036849",
+    "positionFinish": 133
+  },
+  {
+    "fantasyPoints": 30.9,
+    "fantasyPpg": 5.1499999999999995,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0036196",
+    "positionFinish": 134
+  },
+  {
+    "fantasyPoints": 29.9,
+    "fantasyPpg": 7.475,
+    "games": 4,
+    "nflSeason": 2025,
+    "playerId": "00-0039855",
+    "positionFinish": 137
+  },
+  {
+    "fantasyPoints": 29.000000000000004,
+    "fantasyPpg": 3.6250000000000004,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0037742",
+    "positionFinish": 138
+  },
+  {
+    "fantasyPoints": 28.7,
+    "fantasyPpg": 2.87,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0040218",
+    "positionFinish": 139
+  },
+  {
+    "fantasyPoints": 28.599999999999998,
+    "fantasyPpg": 3.1777777777777776,
+    "games": 9,
+    "nflSeason": 2025,
+    "playerId": "00-0036980",
+    "positionFinish": 140
+  },
+  {
+    "fantasyPoints": 27.499999999999996,
+    "fantasyPpg": 4.583333333333333,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0036165",
+    "positionFinish": 141
+  },
+  {
+    "fantasyPoints": 25.499999999999996,
+    "fantasyPpg": 2.1249999999999996,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0040009",
+    "positionFinish": 144
+  },
+  {
+    "fantasyPoints": 25.2,
+    "fantasyPpg": 2.52,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0040590",
+    "positionFinish": 145
+  },
+  {
+    "fantasyPoints": 24.200000000000003,
+    "fantasyPpg": 1.8615384615384618,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0037091",
+    "positionFinish": 146
+  },
+  {
+    "fantasyPoints": 23.5,
+    "fantasyPpg": 2.1363636363636362,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0040581",
+    "positionFinish": 147
+  },
+  {
+    "fantasyPoints": 20.700000000000003,
+    "fantasyPpg": 2.5875000000000004,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0039379",
+    "positionFinish": 151
+  },
+  {
+    "fantasyPoints": 16.9,
+    "fantasyPpg": 1.05625,
+    "games": 16,
+    "nflSeason": 2025,
+    "playerId": "00-0036862",
+    "positionFinish": 159
+  },
+  {
+    "fantasyPoints": 16.1,
+    "fantasyPpg": 1.61,
+    "games": 10,
+    "nflSeason": 2025,
+    "playerId": "00-0040184",
+    "positionFinish": 161
+  },
+  {
+    "fantasyPoints": 15.399999999999999,
+    "fantasyPpg": 3.0799999999999996,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0039394",
+    "positionFinish": 163
+  },
+  {
+    "fantasyPoints": 14.8,
+    "fantasyPpg": 0.8705882352941177,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0038090",
+    "positionFinish": 166
+  },
+  {
+    "fantasyPoints": 14.5,
+    "fantasyPpg": 1.3181818181818181,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0036630",
+    "positionFinish": 168
+  },
+  {
+    "fantasyPoints": 13.5,
+    "fantasyPpg": 1.0384615384615385,
+    "games": 13,
+    "nflSeason": 2025,
+    "playerId": "00-0040582",
+    "positionFinish": 172
+  },
+  {
+    "fantasyPoints": 12.5,
+    "fantasyPpg": 2.0833333333333335,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0036133",
+    "positionFinish": 174
+  },
+  {
+    "fantasyPoints": 10.3,
+    "fantasyPpg": 5.15,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0038647",
+    "positionFinish": 178
+  },
+  {
+    "fantasyPoints": 10.2,
+    "fantasyPpg": 0.9272727272727272,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0036620",
+    "positionFinish": 179
+  },
+  {
+    "fantasyPoints": 8.5,
+    "fantasyPpg": 1.4166666666666667,
+    "games": 6,
+    "nflSeason": 2025,
+    "playerId": "00-0038938",
+    "positionFinish": 182
+  },
+  {
+    "fantasyPoints": 8.1,
+    "fantasyPpg": 1.6199999999999999,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0038640",
+    "positionFinish": 183
+  },
+  {
+    "fantasyPoints": 6.8,
+    "fantasyPpg": 0.85,
+    "games": 8,
+    "nflSeason": 2025,
+    "playerId": "00-0037093",
+    "positionFinish": 188
+  },
+  {
+    "fantasyPoints": 6,
+    "fantasyPpg": 0.42857142857142855,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0038576",
+    "positionFinish": 192
+  },
+  {
+    "fantasyPoints": 5.5,
+    "fantasyPpg": 0.4583333333333333,
+    "games": 12,
+    "nflSeason": 2025,
+    "playerId": "00-0040154",
+    "positionFinish": 193
+  },
+  {
+    "fantasyPoints": 4.699999999999999,
+    "fantasyPpg": 2.3499999999999996,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0039884",
+    "positionFinish": 195
+  },
+  {
+    "fantasyPoints": 4.6,
+    "fantasyPpg": 0.27058823529411763,
+    "games": 17,
+    "nflSeason": 2025,
+    "playerId": "00-0036331",
+    "positionFinish": 196
+  },
+  {
+    "fantasyPoints": 4.6,
+    "fantasyPpg": 2.3,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0040172",
+    "positionFinish": 197
+  },
+  {
+    "fantasyPoints": 3.5,
+    "fantasyPpg": 0.3181818181818182,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0038573",
+    "positionFinish": 205
+  },
+  {
+    "fantasyPoints": 3.5,
+    "fantasyPpg": 0.7,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0039062",
+    "positionFinish": 207
+  },
+  {
+    "fantasyPoints": 3.2,
+    "fantasyPpg": 0.64,
+    "games": 5,
+    "nflSeason": 2025,
+    "playerId": "00-0037745",
+    "positionFinish": 210
+  },
+  {
+    "fantasyPoints": 2.6,
+    "fantasyPpg": 0.23636363636363636,
+    "games": 11,
+    "nflSeason": 2025,
+    "playerId": "00-0039816",
+    "positionFinish": 214
+  },
+  {
+    "fantasyPoints": 2.4,
+    "fantasyPpg": 1.2,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0040646",
+    "positionFinish": 217
+  },
+  {
+    "fantasyPoints": 1.3,
+    "fantasyPpg": 1.3,
+    "games": 1,
+    "nflSeason": 2025,
+    "playerId": "00-0037098",
+    "positionFinish": 219
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 14,
+    "nflSeason": 2025,
+    "playerId": "00-0040075",
+    "positionFinish": 224
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 7,
+    "nflSeason": 2025,
+    "playerId": "00-0036646",
+    "positionFinish": 226
+  },
+  {
+    "fantasyPoints": 0,
+    "fantasyPpg": 0,
+    "games": 2,
+    "nflSeason": 2025,
+    "playerId": "00-0040241",
+    "positionFinish": 232
   }
 ]

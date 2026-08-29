@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { previewHistoricalRookieCsv, previewRookieCsv } from "../lib/dynasty/rookie-model/import.ts";
-import { buildRookieBacktestReport, spearmanCorrelation, wilsonInterval } from "../lib/dynasty/rookie-model/backtest.ts";
+import { aggregateThreeYearOutcomes, buildRookieBacktestReport, spearmanCorrelation, wilsonInterval } from "../lib/dynasty/rookie-model/backtest.ts";
 import { findRookieDuplicateCandidates, rookieNameSimilarity } from "../lib/dynasty/rookie-model/matching.ts";
 import { parseGoogleSheetRookieIdentities } from "../lib/dynasty/rookie-model/google-sheet-adapter.ts";
+import { qbModelConfiguration, rbModelConfiguration, rookieModelConfigurations, teModelConfiguration, wrModelConfiguration } from "../lib/dynasty/rookie-model/config.ts";
 import { calculateRookieScore, normalizeRookieMetric } from "../lib/dynasty/rookie-model/scoring.ts";
 import { aggregateCfbdPlayerSeasons, parseCfbdPlayerStats } from "../lib/dynasty/sources/cfbd.ts";
 
@@ -29,6 +30,25 @@ const configuration = {
   version: "test-1",
   winsorization: { lower: 0.02, upper: 0.98 },
 };
+
+test("published defaults use the reproducible position-weighted scoring profile", () => {
+  for (const model of rookieModelConfigurations) {
+    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-10" : "mvp-8");
+    assert.deepEqual(model.overallWeights, {
+      draftCapital: 0.4,
+      market: 0,
+      prospect: 0.6,
+      situation: 0,
+    });
+    assert.ok(Math.abs(model.prospectFamilies.reduce((sum, family) => sum + family.weight, 0) - 1) < 1e-9);
+    assert.equal(model.prospectFamilies.some((family) => family.key === "recruiting_context"), false);
+  }
+
+  assert.equal(wrModelConfiguration.prospectFamilies.find((family) => family.key === "production").weight, 0.625);
+  assert.equal(rbModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.104167);
+  assert.equal(qbModelConfiguration.prospectFamilies.find((family) => family.key === "passing_rushing_quality").weight, 0.666667);
+  assert.equal(teModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.1);
+});
 
 test("normalizes metrics in both directions and winsorizes outliers", () => {
   const metric = configuration.prospectFamilies[0].metrics[0];
@@ -69,14 +89,14 @@ test("suppresses a family below its required coverage", () => {
 
 test("previews valid and invalid MVP CSV rows without committing", () => {
   const preview = previewRookieCsv(
-    "name,position,class_year,school,career_yprr,pass_play_usage,receiving_ppa,early_declare\nAlpha Receiver,WR,2026,Example,2.75,0.24,0.51,yes\nBad Quarterback,QB,2026,Example,,,,no",
+    "name,position,class_year,school,career_yprr,pass_play_usage,receiving_ppa,early_declare\nAlpha Receiver,WR,2026,Example,2.75,0.24,0.51,yes\nBad Specialist,K,2026,Example,,,,no",
   );
   assert.equal(preview.validRows, 1);
   assert.equal(preview.invalidRows, 1);
   assert.equal(preview.rows[0].metrics.find((metric) => metric.key === "early_declare").value, 1);
   assert.equal(preview.rows[0].metrics.find((metric) => metric.key === "pass_play_usage").value, 0.24);
   assert.equal(preview.rows[0].metrics.find((metric) => metric.key === "receiving_ppa").value, 0.51);
-  assert.match(preview.rows[1].errors[0], /RB or WR/);
+  assert.match(preview.rows[1].errors[0], /QB, RB, WR, or TE/);
 });
 
 test("historical CSV requires one leakage-safe pre-draft scoring date", () => {
@@ -96,12 +116,13 @@ test("Google Sheet adapter imports identity and manual tier without model metric
     2026,
   );
   assert.deepEqual(identities.map(({ name, position, tier }) => ({ name, position, tier })), [
+    { name: "Quarterback", position: "QB", tier: "Tier 1" },
     { name: "Runner One", position: "RB", tier: "Tier 1" },
     { name: "Receiver One", position: "WR", tier: "Tier 1" },
     { name: "Runner Two", position: "RB", tier: "Tier 2" },
   ]);
-  assert.equal(identities[1].sheetScore, 94);
-  assert.equal("prospectScore" in identities[1], false);
+  assert.equal(identities[2].sheetScore, 94);
+  assert.equal("prospectScore" in identities[2], false);
 });
 
 test("CFBD adapter preserves raw season totals without inventing unavailable metrics", () => {
@@ -146,6 +167,71 @@ test("backtests exclude post-cutoff scores and report multiple outcomes", () => 
   assert.equal(report.classification.recall, 1);
   assert.equal(report.calibrationBuckets.find((bucket) => bucket.label === "75–84").count, 2);
   assert.ok(report.metrics.top24Interval[0] < report.metrics.top24Interval[1]);
+  assert.equal(report.rollingOrigin.evaluatedCount, 0);
+});
+
+test("rolling-origin validation trains only on earlier draft classes and compares draft capital", () => {
+  const training = Array.from({ length: 24 }, (_, index) => ({
+    classYear: 2020,
+    consensusRank: null,
+    draftCapitalScore: index * 3,
+    fantasyPoints: null,
+    fantasyPpg: index / 2,
+    games: 16,
+    familyScores: { production: index * 2 },
+    marketScore: null,
+    peakDynastyValue: null,
+    playerId: `train-${index}`,
+    positionFinish: index >= 12 ? 20 : 40,
+    prospectScore: index * 4,
+    scoringDate: "2020-04-20",
+  }));
+  const testing = Array.from({ length: 6 }, (_, index) => ({
+    ...training[index + 12],
+    classYear: 2023,
+    playerId: `test-${index}`,
+    scoringDate: "2023-04-20",
+  }));
+  const report = buildRookieBacktestReport([...training, ...testing]);
+  assert.equal(report.rollingOrigin.evaluatedCount, 6);
+  assert.deepEqual(report.rollingOrigin.testClasses, [2023]);
+  assert.ok(report.rollingOrigin.prospectPpgMae !== null);
+  assert.ok(report.rollingOrigin.draftCapitalTop24Brier !== null);
+  assert.ok(report.rollingOrigin.combinedPpgMae !== null);
+  assert.ok(report.rollingOrigin.combinedTop24Brier !== null);
+  assert.equal(report.familyAblations[0].familyKey, "production");
+  assert.equal(report.familyAblations[0].evaluatedCount, 6);
+  assert.ok(report.familyAblations[0].combinedPpgMae !== null);
+  const immature = training.map((row) => ({ ...row, classYear: 2021, scoringDate: "2021-04-20", playerId: `immature-${row.playerId}`, fantasyPpg: 1000 }));
+  assert.deepEqual(buildRookieBacktestReport([...training, ...testing, ...immature]).rollingOrigin, report.rollingOrigin);
+  const missingDraft = { ...testing[0], playerId: "missing-draft", draftCapitalScore: null, fantasyPpg: 1000 };
+  assert.deepEqual(buildRookieBacktestReport([...training, ...testing, missingDraft]).rollingOrigin, report.rollingOrigin);
+});
+
+test("missing player seasons remain unknown and cannot become silent failures", () => {
+  const row = { player_id: "partial", nfl_season: 2020, fantasy_points: 100, fantasy_ppg: 10, games: 10, position_finish: 20, peak_dynasty_value: null };
+  const result = aggregateThreeYearOutcomes([row], new Map([["partial", 2020], ["absent", 2020], ["future", 2024]]), [2020, 2021, 2022, 2023, 2024, 2025]);
+  assert.equal(result.length, 2);
+  assert.equal(result[0].fantasy_ppg, null);
+  assert.equal(result[0].position_finish, null);
+  assert.equal(result[1].games, null);
+  assert.equal(result[1].missing_seasons, 3);
+  assert.equal(result[0].outcome_available_date, "2023-04-01");
+  assert.throws(() => aggregateThreeYearOutcomes([row, row], new Map([["partial", 2020]]), [2020, 2021, 2022]), /Duplicate/);
+  assert.equal(aggregateThreeYearOutcomes([row], new Map([["partial", 2020]]), [2020, 2022]).length, 0);
+});
+
+test("three-year outcomes create one record per player and exclude incomplete windows", () => {
+  const row = (player_id, nfl_season, fantasy_ppg, position_finish) => ({ fantasy_points: fantasy_ppg * 10, fantasy_ppg, games: 10, nfl_season, peak_dynasty_value: null, player_id, position_finish });
+  const aggregated = aggregateThreeYearOutcomes([
+    row("complete", 2021, 8, 40), row("complete", 2022, 12, 20), row("complete", 2023, 10, 30),
+    row("incomplete", 2023, 15, 10), row("latest", 2025, 1, 100),
+  ], new Map([["complete", 2021], ["incomplete", 2024], ["latest", 2025]]));
+  assert.equal(aggregated.length, 1);
+  assert.equal(aggregated[0].player_id, "complete");
+  assert.equal(aggregated[0].fantasy_ppg, 12);
+  assert.equal(aggregated[0].position_finish, 20);
+  assert.equal(aggregated[0].games, 30);
 });
 
 test("Wilson intervals stay within probability bounds", () => {

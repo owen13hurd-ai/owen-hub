@@ -1,0 +1,17 @@
+[
+  { "classYear": 2025, "name": "Colston Loveland", "position": "TE", "ras": null, "eligible": false },
+  { "classYear": 2025, "name": "Tyler Warren", "position": "TE", "ras": null, "eligible": false },
+  { "classYear": 2025, "name": "Elijah Arroyo", "position": "TE", "ras": null, "eligible": false },
+  { "classYear": 2025, "name": "Mason Taylor", "position": "TE", "ras": 8.89, "eligible": true },
+  { "classYear": 2025, "name": "Harold Fannin Jr.", "position": "TE", "ras": 7.77 },
+  { "classYear": 2025, "name": "Terrance Ferguson", "position": "TE", "ras": 9.32 },
+  { "classYear": 2025, "name": "Oronde Gadsden II", "position": "TE", "ras": 7.95 },
+  { "classYear": 2025, "name": "Gavin Bartholomew", "position": "TE", "ras": 8.87 },
+  { "classYear": 2025, "name": "Mitchell Evans", "position": "TE", "ras": 7.25 },
+  { "classYear": 2025, "name": "Jackson Hawes", "position": "TE", "ras": 7.23 },
+  { "classYear": 2025, "name": "Gunnar Helm", "position": "TE", "ras": 4.33 },
+  { "classYear": 2025, "name": "Thomas Fidone II", "position": "TE", "ras": 9.49 },
+  { "classYear": 2025, "name": "Luke Lachey", "position": "TE", "ras": 7.42 },
+  { "classYear": 2025, "name": "Moliki Matavao", "position": "TE", "ras": 6.59 },
+  { "classYear": 2025, "name": "Robbie Ouzts", "position": "TE", "ras": 5.33, "eligible": true }
+]

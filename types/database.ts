@@ -2159,7 +2159,7 @@ export type Database = {
         | "inference"
         | "opinion"
       rookie_model_status: "draft" | "published" | "retired"
-      rookie_position: "RB" | "WR"
+      rookie_position: "QB" | "RB" | "WR" | "TE"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2294,7 +2294,7 @@ export const Constants = {
         "opinion",
       ],
       rookie_model_status: ["draft", "published", "retired"],
-      rookie_position: ["RB", "WR"],
+      rookie_position: ["QB", "RB", "WR", "TE"],
     },
   },
 } as const

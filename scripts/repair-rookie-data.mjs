@@ -52,7 +52,7 @@ for (const sheet of sheets) {
   identityCount += identities.length;
 }
 
-const playersResult = await supabase.from("rookie_players").select("id,name,class_year,position").eq("user_id", user.id).in("class_year", [2025, 2026]).in("position", ["RB", "WR"]);
+const playersResult = await supabase.from("rookie_players").select("id,name,class_year,position").eq("user_id", user.id).in("class_year", [2025, 2026]).in("position", ["QB", "RB", "WR", "TE"]);
 if (playersResult.error) throw playersResult.error;
 const normalize = (value) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 const playersByClassName = new Map(playersResult.data.map((player) => [`${player.class_year}:${normalize(player.name)}`, player]));

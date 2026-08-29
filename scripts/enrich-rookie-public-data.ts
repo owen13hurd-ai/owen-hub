@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { parse } from "csv-parse/sync";
 
-import { rbModelConfiguration, wrModelConfiguration } from "@/lib/dynasty/rookie-model/config";
+import { rookieModelConfigurations } from "@/lib/dynasty/rookie-model/config";
 import { calculateRookieScore } from "@/lib/dynasty/rookie-model/scoring";
 import type { RookieMetricReference, RookieModelConfiguration } from "@/types/rookie-engine";
 
@@ -41,7 +41,7 @@ async function source(label: string, values: Record<string, unknown>) {
   return made.data.id;
 }
 
-const playersResult = await supabase.from("rookie_players").select("id,name,class_year,position,overall_pick,nfl_team").eq("user_id", user.id).in("class_year", [2025, 2026]).in("position", ["RB", "WR"]);
+const playersResult = await supabase.from("rookie_players").select("id,name,class_year,position,overall_pick,nfl_team").eq("user_id", user.id).in("class_year", [2025, 2026]).in("position", ["QB", "RB", "WR", "TE"]);
 if (playersResult.error) throw playersResult.error;
 const players = playersResult.data;
 const byClassName = new Map(players.map((player) => [`${player.class_year}:${norm(player.name)}`, player]));
@@ -143,7 +143,7 @@ for (const { classYear, priorSeason } of [{ classYear: 2025, priorSeason: 2024 }
   const rows = parse(await response.text(), { columns: true, skip_empty_lines: true }) as Array<Record<string, string>>;
   const competition = new Map<string, number>();
   for (const row of rows) {
-    if (!['RB', 'WR'].includes(row.position)) continue;
+    if (!["QB", "RB", "WR", "TE"].includes(row.position)) continue;
     const key = `${row.recent_team}:${row.position}`;
     competition.set(key, Math.max(competition.get(key) ?? 0, Number(row.fantasy_points_ppr) || 0));
   }
@@ -205,9 +205,11 @@ for (const { classYear, season } of [{ classYear: 2025, season: 2024 }, { classY
     if (row.averagePPA?.pass !== null && row.averagePPA?.pass !== undefined) historyFor(player.id).pass.push(row.averagePPA.pass);
     if (row.averagePPA?.rush !== null && row.averagePPA?.rush !== undefined) historyFor(player.id).rush.push(row.averagePPA.rush);
     const success = successByName.get(norm(row.name));
-    const values = player.position === "WR"
-      ? [{ key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }]
-      : [{ key: "rushing_ppa", value: row.averagePPA?.rush }, { key: "rushing_success_rate", value: success?.rushing?.successRate }, { key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }];
+    const values = player.position === "QB"
+      ? [{ key: "passing_ppa", value: row.averagePPA?.pass }, { key: "passing_success_rate", value: success?.passing?.successRate }, { key: "rushing_ppa", value: row.averagePPA?.rush }, { key: "rushing_success_rate", value: success?.rushing?.successRate }]
+      : player.position === "WR" || player.position === "TE"
+        ? [{ key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }]
+        : [{ key: "rushing_ppa", value: row.averagePPA?.rush }, { key: "rushing_success_rate", value: success?.rushing?.successRate }, { key: "receiving_ppa", value: row.averagePPA?.pass }, { key: "receiving_success_rate", value: success?.passing?.successRate }];
     const available = values.filter((entry): entry is { key: string; value: number } => entry.value !== null && entry.value !== undefined && Number.isFinite(entry.value));
     if (available.length) efficiencyPlayerIds.add(player.id);
     return available.map((entry) => ({ as_of_date: `${classYear}-04-30`, confidence: "high", metric_key: entry.key, player_id: player.id, source_id: cfbdSource, user_id: user.id, value: entry.value }));
@@ -244,9 +246,11 @@ const average = (values: number[]) => values.length ? values.reduce((total, valu
 const best = (values: number[]) => values.length ? Math.max(...values) : null;
 const careerMetrics = players.flatMap((player) => {
   const history = careerHistory.get(player.id) ?? { pass: [], rush: [], usage: [] };
-  const values = player.position === "WR"
-    ? [{ key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }, { key: "best_pass_play_usage", value: best(history.usage) }]
-    : [{ key: "career_rushing_ppa", value: average(history.rush) }, { key: "best_rushing_ppa", value: best(history.rush) }, { key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }];
+  const values = player.position === "QB"
+    ? [{ key: "career_passing_ppa", value: average(history.pass) }, { key: "best_passing_ppa", value: best(history.pass) }, { key: "career_rushing_ppa", value: average(history.rush) }, { key: "best_rushing_ppa", value: best(history.rush) }]
+    : player.position === "WR" || player.position === "TE"
+      ? [{ key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }, { key: "best_pass_play_usage", value: best(history.usage) }]
+      : [{ key: "career_rushing_ppa", value: average(history.rush) }, { key: "best_rushing_ppa", value: best(history.rush) }, { key: "career_receiving_ppa", value: average(history.pass) }, { key: "best_receiving_ppa", value: best(history.pass) }];
   return values.filter((entry): entry is { key: string; value: number } => entry.value !== null).map((entry) => ({ as_of_date: `${player.class_year}-04-30`, confidence: "high", metric_key: entry.key, player_id: player.id, source_id: cfbdSource, user_id: user.id, value: entry.value }));
 });
 if (careerMetrics.length) {
@@ -271,7 +275,7 @@ if (marketPayload.length) {
   if (saved.error) throw saved.error;
 }
 
-const configurations = [rbModelConfiguration, wrModelConfiguration];
+const configurations = rookieModelConfigurations;
 const modelIds = new Map<string, string>();
 for (const configuration of configurations) {
   const existing = await supabase.from("rookie_model_versions").select("id").eq("user_id", user.id).eq("position", configuration.position).eq("semantic_version", configuration.version).maybeSingle();

@@ -89,27 +89,33 @@ export function calculateRookieScore(
   });
 
   const families = configuration.prospectFamilies.map((family) => {
+    const applicable = !family.applicabilityMetricKey || inputByKey.get(family.applicabilityMetricKey)?.value !== 0;
     const familyComponents = components.filter((component) => component.familyKey === family.key);
     const availableCount = familyComponents.filter((component) => component.normalizedValue !== null).length;
     const coverage = availableCount / family.metrics.length;
-    const suppressed = coverage < family.minimumCoverage;
+    const suppressed = !applicable || coverage < family.minimumCoverage;
     const score = suppressed
       ? null
       : familyComponents.reduce((total, component) => total + (component.contribution ?? 0), 0);
-    return { coverage, key: family.key, label: family.label, score, suppressed, weight: family.weight };
+    return { applicable, coverage, key: family.key, label: family.label, score, suppressed, weight: family.weight };
   });
 
   const scoredFamilies = families.filter((family) => family.score !== null);
+  const missingRequiredFamily = configuration.prospectFamilies.some((definition) =>
+    definition.required && families.find((family) => family.key === definition.key)?.score === null,
+  );
   const availableFamilyWeight = scoredFamilies.reduce((total, family) => total + family.weight, 0);
   const prospectScore =
-    availableFamilyWeight === 0
+    missingRequiredFamily || availableFamilyWeight === 0
       ? null
       : scoredFamilies.reduce(
           (total, family) => total + (family.score ?? 0) * (family.weight / availableFamilyWeight),
           0,
         );
-  const coverage = configuration.prospectFamilies.reduce(
-    (total, family) => total + families.find((result) => result.key === family.key)!.coverage * family.weight,
+  const applicableFamilies = families.filter((family) => family.applicable);
+  const applicableWeight = applicableFamilies.reduce((total, family) => total + family.weight, 0);
+  const coverage = applicableWeight === 0 ? 0 : applicableFamilies.reduce(
+    (total, family) => total + family.coverage * (family.weight / applicableWeight),
     0,
   );
 
