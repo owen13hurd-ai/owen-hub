@@ -146,7 +146,7 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
               <tbody>
                 {visibleRankings.map((ranking) => (
                   <tr key={ranking.id} className="border-t border-ink/8 hover:bg-skyglass/35">
-                    <td className="px-4 py-3 font-bold text-ink">{ranking.overallRank ?? ranking.positionRank ?? "-"}</td>
+                    <td className="px-4 py-3 font-bold text-ink">{ranking.overallScore === null ? "-" : (ranking.overallRank ?? ranking.positionRank ?? "-")}</td>
                     <td className="px-4 py-3"><Link href={`/dashboard/dynasty/rookies/${ranking.id}`} className="font-bold text-ink hover:text-moss hover:underline">{ranking.name}</Link><p className="mt-0.5 text-xs text-ink/50">{ranking.classYear} {ranking.position}{ranking.school ? `, ${ranking.school}` : ""}</p></td>
                     <td className="px-4 py-3"><input aria-label={`Manual rank for ${ranking.name}`} inputMode="numeric" value={manualEdits[ranking.id]?.rank ?? String(ranking.manualRank ?? "")} onChange={(event) => setManualEdits((current) => ({ ...current, [ranking.id]: { rank: event.target.value, tier: current[ranking.id]?.tier ?? ranking.manualTier ?? "" } }))} className="h-8 w-16 rounded border border-ink/15 px-2 text-sm" placeholder="-" /></td>
                     <td className="px-4 py-3">
