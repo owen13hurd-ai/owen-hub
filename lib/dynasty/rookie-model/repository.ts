@@ -14,6 +14,7 @@ export type RookieEngineRanking = {
     key: string;
     label: string;
     missingMetrics: string[];
+    optionalEvidence: boolean;
     score: number | null;
   }>;
   id: string;
@@ -241,6 +242,7 @@ export async function getRookieEngineRankings(): Promise<RookieEngineRanking[]> 
               component.normalized_value !== null
             ))
             .map((metric) => metric.label),
+          optionalEvidence: family.optionalEvidence ?? false,
           score: storedFamilyScores?.has(family.key)
             ? Number(storedFamilyScores.get(family.key)!.toFixed(2))
             : null,

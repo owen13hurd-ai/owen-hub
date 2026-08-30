@@ -5,6 +5,7 @@ export type RookieEnginePosition = (typeof rookieEnginePositions)[number];
 export type RookieMetricDirection = "higher" | "lower";
 
 export type RookieMetricDefinition = {
+  buckets?: Array<{ minimum: number; score: number }>;
   description: string;
   direction: RookieMetricDirection;
   family: string;
@@ -19,6 +20,7 @@ export type RookieFamilyDefinition = {
   label: string;
   minimumCoverage: number;
   metrics: RookieMetricDefinition[];
+  optionalEvidence?: boolean;
   required?: boolean;
   weight: number;
 };
@@ -71,6 +73,7 @@ export type RookieMetricContribution = {
 };
 
 export type RookieFamilyScore = {
+  applicable: boolean;
   coverage: number;
   key: string;
   label: string;

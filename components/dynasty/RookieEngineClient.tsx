@@ -15,6 +15,12 @@ function score(value: number | null) {
   return value === null ? "-" : value.toFixed(1);
 }
 
+function familyScore(key: string, value: number | null) {
+  if (key !== "athletic_size") return score(value);
+  if (value === null || value === 50) return "Neutral";
+  return value > 50 ? "Boost" : "Red flag";
+}
+
 export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking[] }) {
   const router = useRouter();
   const [classYear, setClassYear] = useState<"ALL" | "2025" | "2026">("ALL");
@@ -67,7 +73,7 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
 
     for (const ranking of visibleRankings) {
       for (const family of ranking.familyScores) {
-        for (const metric of family.missingMetrics) {
+        for (const metric of family.optionalEvidence && family.score === null ? [] : family.missingMetrics) {
           const gap = gaps.get(metric) ?? { families: new Set<string>(), players: 0 };
           gap.families.add(family.label);
           gap.players += 1;
@@ -205,15 +211,15 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
                     <td className="px-4 py-3">
                       <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
                         {ranking.familyScores.map((family) => (
-                          <div key={family.key} title={family.missingMetrics.length ? `Missing: ${family.missingMetrics.join(", ")}` : "All configured inputs available"}>
+                          <div key={family.key} title={family.optionalEvidence && family.score === null ? "No verified test; neutral" : family.missingMetrics.length ? `Missing: ${family.missingMetrics.join(", ")}` : "All configured inputs available"}>
                             <div className="flex items-baseline justify-between gap-2">
                               <dt className="truncate text-[11px] text-ink/50">{family.label}</dt>
-                              <dd className={`text-xs font-bold ${family.score === null ? "text-ink/30" : "text-ink"}`}>{score(family.score)}</dd>
+                              <dd className={`text-xs font-bold ${family.key === "athletic_size" && family.score === 0 ? "text-ember" : family.score === null ? "text-ink/40" : "text-ink"}`}>{familyScore(family.key, family.score)}</dd>
                             </div>
                             <div className="mt-1 h-1 overflow-hidden rounded-full bg-ink/8" aria-label={`${family.label} input coverage ${family.coverage}%`}>
                               <div className={`h-full rounded-full ${family.coverage === 100 ? "bg-moss" : "bg-amber-500"}`} style={{ width: `${family.coverage}%` }} />
                             </div>
-                            <p className="mt-0.5 text-[9px] font-medium text-ink/40">{family.coverage}% coverage</p>
+                            <p className="mt-0.5 text-[9px] font-medium text-ink/40">{family.optionalEvidence && family.score === null ? "No test · neutral" : `${family.coverage}% coverage`}</p>
                           </div>
                         ))}
                       </dl>

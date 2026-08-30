@@ -33,7 +33,7 @@ const configuration = {
 
 test("published defaults use the reproducible position-weighted scoring profile", () => {
   for (const model of rookieModelConfigurations) {
-    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-10" : "mvp-8");
+    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-11" : "mvp-9");
     assert.deepEqual(model.overallWeights, {
       draftCapital: 0.4,
       market: 0,
@@ -44,10 +44,27 @@ test("published defaults use the reproducible position-weighted scoring profile"
     assert.equal(model.prospectFamilies.some((family) => family.key === "recruiting_context"), false);
   }
 
-  assert.equal(wrModelConfiguration.prospectFamilies.find((family) => family.key === "production").weight, 0.625);
-  assert.equal(rbModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.104167);
+  assert.equal(wrModelConfiguration.prospectFamilies.find((family) => family.key === "production").weight, 0.67);
+  assert.equal(rbModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.04);
   assert.equal(qbModelConfiguration.prospectFamilies.find((family) => family.key === "passing_rushing_quality").weight, 0.666667);
-  assert.equal(teModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.1);
+  assert.equal(teModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.04);
+});
+
+test("uses optional athletic buckets as a small verified modifier", () => {
+  const references = [{ key: "ras", values: [1, 5, 8, 10] }];
+  const baseInputs = [
+    { key: "pass_play_usage", value: 0.2 }, { key: "best_pass_play_usage", value: 0.2 },
+    { key: "receiving_yard_share", value: 0.2 }, { key: "early_declare", value: 1 },
+  ];
+  const metricReferences = wrModelConfiguration.prospectFamilies.flatMap((family) => family.metrics.map((metric) => ({ key: metric.key, values: metric.key === "ras" ? references[0].values : [0, 0.2, 0.4, 1] })));
+  const missing = calculateRookieScore(wrModelConfiguration, baseInputs, metricReferences, { draftCapital: null, market: null, situation: null });
+  const elite = calculateRookieScore(wrModelConfiguration, [...baseInputs, { key: "ras", value: 8 }], metricReferences, { draftCapital: null, market: null, situation: null });
+  const poor = calculateRookieScore(wrModelConfiguration, [...baseInputs, { key: "ras", value: 4.99 }], metricReferences, { draftCapital: null, market: null, situation: null });
+  assert.equal(missing.families.find((family) => family.key === "athletic_size").applicable, false);
+  assert.equal(elite.families.find((family) => family.key === "athletic_size").score, 100);
+  assert.equal(poor.families.find((family) => family.key === "athletic_size").score, 0);
+  assert.ok(elite.prospectScore > missing.prospectScore);
+  assert.ok(poor.prospectScore < missing.prospectScore);
 });
 
 test("normalizes metrics in both directions and winsorizes outliers", () => {

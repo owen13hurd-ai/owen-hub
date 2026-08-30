@@ -27,6 +27,10 @@ export function normalizeRookieMetric(
   metric: RookieMetricDefinition,
   bounds: RookieModelConfiguration["winsorization"],
 ) {
+  if (metric.buckets?.length) {
+    const bucket = [...metric.buckets].sort((a, b) => b.minimum - a.minimum).find((entry) => value >= entry.minimum);
+    return bucket?.score ?? 0;
+  }
   const finiteValues = referenceValues.filter(Number.isFinite);
   if (finiteValues.length === 0) return null;
 
@@ -89,9 +93,9 @@ export function calculateRookieScore(
   });
 
   const families = configuration.prospectFamilies.map((family) => {
-    const applicable = !family.applicabilityMetricKey || inputByKey.get(family.applicabilityMetricKey)?.value !== 0;
     const familyComponents = components.filter((component) => component.familyKey === family.key);
     const availableCount = familyComponents.filter((component) => component.normalizedValue !== null).length;
+    const applicable = (!family.applicabilityMetricKey || inputByKey.get(family.applicabilityMetricKey)?.value !== 0) && (!family.optionalEvidence || availableCount > 0);
     const coverage = availableCount / family.metrics.length;
     const suppressed = !applicable || coverage < family.minimumCoverage;
     const score = suppressed
