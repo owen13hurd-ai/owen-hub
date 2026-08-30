@@ -7,6 +7,7 @@ import { findRookieDuplicateCandidates, rookieNameSimilarity } from "../lib/dyna
 import { parseGoogleSheetRookieIdentities } from "../lib/dynasty/rookie-model/google-sheet-adapter.ts";
 import { qbModelConfiguration, rbModelConfiguration, rookieModelConfigurations, teModelConfiguration, wrModelConfiguration } from "../lib/dynasty/rookie-model/config.ts";
 import { calculateRookieScore, normalizeRookieMetric } from "../lib/dynasty/rookie-model/scoring.ts";
+import { getRookieEvidenceFlags } from "../lib/dynasty/rookie-model/evidence-flags.ts";
 import { aggregateCfbdPlayerSeasons, parseCfbdPlayerStats } from "../lib/dynasty/sources/cfbd.ts";
 
 const configuration = {
@@ -33,7 +34,7 @@ const configuration = {
 
 test("published defaults use the reproducible position-weighted scoring profile", () => {
   for (const model of rookieModelConfigurations) {
-    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-11" : "mvp-9");
+    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-12" : "mvp-10");
     assert.deepEqual(model.overallWeights, {
       draftCapital: 0.4,
       market: 0,
@@ -44,27 +45,17 @@ test("published defaults use the reproducible position-weighted scoring profile"
     assert.equal(model.prospectFamilies.some((family) => family.key === "recruiting_context"), false);
   }
 
-  assert.equal(wrModelConfiguration.prospectFamilies.find((family) => family.key === "production").weight, 0.67);
-  assert.equal(rbModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.04);
+  assert.equal(wrModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size"), undefined);
+  assert.equal(rbModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size"), undefined);
   assert.equal(qbModelConfiguration.prospectFamilies.find((family) => family.key === "passing_rushing_quality").weight, 0.666667);
-  assert.equal(teModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size").weight, 0.04);
+  assert.equal(teModelConfiguration.prospectFamilies.find((family) => family.key === "athletic_size"), undefined);
 });
 
-test("uses optional athletic buckets as a small verified modifier", () => {
-  const references = [{ key: "ras", values: [1, 5, 8, 10] }];
-  const baseInputs = [
-    { key: "pass_play_usage", value: 0.2 }, { key: "best_pass_play_usage", value: 0.2 },
-    { key: "receiving_yard_share", value: 0.2 }, { key: "early_declare", value: 1 },
-  ];
-  const metricReferences = wrModelConfiguration.prospectFamilies.flatMap((family) => family.metrics.map((metric) => ({ key: metric.key, values: metric.key === "ras" ? references[0].values : [0, 0.2, 0.4, 1] })));
-  const missing = calculateRookieScore(wrModelConfiguration, baseInputs, metricReferences, { draftCapital: null, market: null, situation: null });
-  const elite = calculateRookieScore(wrModelConfiguration, [...baseInputs, { key: "ras", value: 8 }], metricReferences, { draftCapital: null, market: null, situation: null });
-  const poor = calculateRookieScore(wrModelConfiguration, [...baseInputs, { key: "ras", value: 4.99 }], metricReferences, { draftCapital: null, market: null, situation: null });
-  assert.equal(missing.families.find((family) => family.key === "athletic_size").applicable, false);
-  assert.equal(elite.families.find((family) => family.key === "athletic_size").score, 100);
-  assert.equal(poor.families.find((family) => family.key === "athletic_size").score, 0);
-  assert.ok(elite.prospectScore > missing.prospectScore);
-  assert.ok(poor.prospectScore < missing.prospectScore);
+test("creates evidence flags without changing the configured score families", () => {
+  const wrFlags = getRookieEvidenceFlags({ ageAtDraft: 23, careerYprr: 3.1, overallPick: 24, position: "WR", receptionsPerGame: null, scrimmageYardsPerGame: null });
+  assert.deepEqual(wrFlags.map((flag) => flag.key), ["wr-round-one", "wr-age-23", "wr-yprr-3"]);
+  const rbFlags = getRookieEvidenceFlags({ ageAtDraft: 21, careerYprr: null, overallPick: 80, position: "RB", receptionsPerGame: 3, scrimmageYardsPerGame: 125 });
+  assert.deepEqual(rbFlags.map((flag) => flag.key), ["rb-top-100", "rb-age-21", "rb-receptions-3", "rb-scrimmage-125"]);
 });
 
 test("normalizes metrics in both directions and winsorizes outliers", () => {

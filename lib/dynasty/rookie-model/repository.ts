@@ -1,6 +1,7 @@
 import { rookieModelConfigurations } from "@/lib/dynasty/rookie-model/config";
 import { aggregateThreeYearOutcomes, buildRookieBacktestReport, type RookieBacktestReport, type RookieSeasonOutcome } from "@/lib/dynasty/rookie-model/backtest";
 import { calculateRookieScore } from "@/lib/dynasty/rookie-model/scoring";
+import { getRookieEvidenceFlags, type RookieEvidenceFlag } from "@/lib/dynasty/rookie-model/evidence-flags";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { rookieEnginePositions, type RookieEnginePosition, type RookieMetricReference, type RookieModelConfiguration } from "@/types/rookie-engine";
@@ -9,6 +10,7 @@ export type RookieEngineRanking = {
   classYear: number;
   coverage: number | null;
   draftCapitalScore: number | null;
+  evidenceFlags: RookieEvidenceFlag[];
   familyScores: Array<{
     coverage: number;
     key: string;
@@ -165,7 +167,7 @@ export async function getRookieEngineRankings(): Promise<RookieEngineRanking[]> 
   const { supabase, userId } = context;
   const { data: players } = await supabase
     .from("rookie_players")
-    .select("id,name,position,class_year,school")
+    .select("id,name,position,class_year,school,age_at_draft,overall_pick")
     .eq("user_id", userId)
     .in("class_year", [2025, 2026])
     .in("position", rookieEnginePositions);
@@ -191,6 +193,24 @@ export async function getRookieEngineRankings(): Promise<RookieEngineRanking[]> 
     if (!latestScore.has(score.player_id)) latestScore.set(score.player_id, score as StoredRookieScore);
   });
   const latestScoreIds = [...latestScore.values()].map((score) => score.id);
+  const evidenceMetricRows: Array<{ as_of_date: string; created_at: string; metric_key: string; player_id: string; value: number | null }> = [];
+  for (let start = 0; start < playerIds.length; start += 40) {
+    const { data, error } = await supabase
+      .from("rookie_player_metrics")
+      .select("player_id,metric_key,value,as_of_date,created_at")
+      .in("player_id", playerIds.slice(start, start + 40))
+      .in("metric_key", ["career_yprr", "receptions_per_game", "scrimmage_yards_per_game"])
+      .order("as_of_date", { ascending: false })
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    evidenceMetricRows.push(...(data ?? []));
+  }
+  const evidenceMetrics = new Map<string, number>();
+  evidenceMetricRows.forEach((metric) => {
+    if (metric.value === null) return;
+    const key = `${metric.player_id}:${metric.metric_key}`;
+    if (!evidenceMetrics.has(key)) evidenceMetrics.set(key, metric.value);
+  });
   const componentRows: Array<{
     contribution: number | null;
     family_key: string;
@@ -225,6 +245,14 @@ export async function getRookieEngineRankings(): Promise<RookieEngineRanking[]> 
         classYear: player.class_year,
         coverage: score?.data_coverage ?? null,
         draftCapitalScore: score?.draft_capital_score ?? null,
+        evidenceFlags: getRookieEvidenceFlags({
+          ageAtDraft: player.age_at_draft,
+          careerYprr: evidenceMetrics.get(`${player.id}:career_yprr`) ?? null,
+          overallPick: player.overall_pick,
+          position: player.position,
+          receptionsPerGame: evidenceMetrics.get(`${player.id}:receptions_per_game`) ?? null,
+          scrimmageYardsPerGame: evidenceMetrics.get(`${player.id}:scrimmage_yards_per_game`) ?? null,
+        }),
         familyScores: configuration.prospectFamilies.map((family) => ({
           coverage: family.metrics.length === 0
             ? 0

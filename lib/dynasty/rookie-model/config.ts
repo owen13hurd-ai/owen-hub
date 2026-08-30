@@ -94,7 +94,7 @@ export const wrModelConfiguration: RookieModelConfiguration = {
   ...shared,
   label: "WR explainable model",
   position: "WR",
-  version: "mvp-9",
+  version: "mvp-10",
   prospectFamilies: [
     {
       key: "production",
@@ -103,7 +103,7 @@ export const wrModelConfiguration: RookieModelConfiguration = {
       required: true,
       // 20% production thresholds + 10% workload-weighted receiving quality.
       // The reproducible WR prospect inputs total 48 points, so 30 / 48.
-      weight: 0.67,
+      weight: 0.697917,
       metrics: [
         { key: "pass_play_usage", label: "Final-season pass-play usage", description: "CFBD share of team passing plays involving the player; retained separately from true target share.", direction: "higher", family: "production", weight: 0.2 },
         { key: "best_pass_play_usage", label: "Best pass-play usage", description: "Best documented CFBD pass-play usage season.", direction: "higher", family: "production", weight: 0.15 },
@@ -118,21 +118,10 @@ export const wrModelConfiguration: RookieModelConfiguration = {
       label: "Age and declaration",
       minimumCoverage: 0.4,
       // Transparent replacement for the source model's 13% experience score.
-      weight: 0.29,
+      weight: 0.302083,
       metrics: [
         { key: "age_at_draft", label: "Age at draft", description: "Player age on draft day.", direction: "lower", family: "age", weight: 0.65 },
         { key: "early_declare", label: "Early declare", description: "Entered the NFL draft before exhausting eligibility.", direction: "higher", family: "age", weight: 0.35 },
-      ],
-    },
-    {
-      key: "athletic_size",
-      label: "Athletic flag",
-      minimumCoverage: 1,
-      optionalEvidence: true,
-      // Verified testing is a small modifier, not a continuous core grade.
-      weight: 0.04,
-      metrics: [
-        { buckets: [{ minimum: 8, score: 100 }, { minimum: 5, score: 50 }, { minimum: 0, score: 0 }], key: "ras", label: "RAS flag", description: "Verified 8.0+ RAS earns a small boost; below 5.0 is a small red flag; missing testing is neutral.", direction: "higher", family: "athletic_size", weight: 1 },
       ],
     },
   ],
@@ -142,14 +131,14 @@ export const rbModelConfiguration: RookieModelConfiguration = {
   ...shared,
   label: "RB explainable model",
   position: "RB",
-  version: "mvp-9",
+  version: "mvp-10",
   prospectFamilies: [
     {
       key: "production",
       label: "Normalized production",
       minimumCoverage: 0.5,
       required: true,
-      weight: 0.45,
+      weight: 0.46875,
       metrics: [
         { key: "scrimmage_yards_per_game", label: "Scrimmage yards per game", description: "Rushing and receiving yards normalized by games played.", direction: "higher", family: "production", weight: 0.25 },
         { key: "rushing_yard_share", label: "Rushing-yard share", description: "Share of team rushing yards produced.", direction: "higher", family: "production", weight: 0.2 },
@@ -164,7 +153,7 @@ export const rbModelConfiguration: RookieModelConfiguration = {
       minimumCoverage: 0.5,
       // Production and receiving combine to 62.5% of the reproducible RB
       // prospect score (30 source-model points out of 48).
-      weight: 0.22,
+      weight: 0.229167,
       metrics: [
         { key: "receptions_per_game", label: "Receptions per game", description: "College receptions normalized by games played.", direction: "higher", family: "receiving", weight: 0.4 },
         { key: "receiving_ppa", label: "Final-season receiving PPA", description: "Average predicted points added on CFBD passing plays involving the back.", direction: "higher", family: "receiving", weight: 0.2 },
@@ -173,20 +162,10 @@ export const rbModelConfiguration: RookieModelConfiguration = {
       ],
     },
     {
-      key: "athletic_size",
-      label: "Athletic flag",
-      minimumCoverage: 1,
-      optionalEvidence: true,
-      weight: 0.04,
-      metrics: [
-        { buckets: [{ minimum: 8, score: 100 }, { minimum: 5, score: 50 }, { minimum: 0, score: 0 }], key: "ras", label: "RAS flag", description: "Verified 8.0+ RAS earns a small boost; below 5.0 is a small red flag; missing testing is neutral.", direction: "higher", family: "athletic_size", weight: 1 },
-      ],
-    },
-    {
       key: "age_recruiting",
       label: "Age and declaration",
       minimumCoverage: 0.34,
-      weight: 0.29,
+      weight: 0.302083,
       metrics: [
         { key: "age_at_draft", label: "Age at draft", description: "Player age on draft day.", direction: "lower", family: "age_recruiting", weight: 0.65 },
         { key: "early_declare", label: "Early declare", description: "Entered the NFL draft before exhausting eligibility.", direction: "higher", family: "age_recruiting", weight: 0.35 },
@@ -238,7 +217,7 @@ export const teModelConfiguration: RookieModelConfiguration = {
   ...shared,
   label: "TE explainable model",
   position: "TE",
-  version: "mvp-11",
+  version: "mvp-12",
   prospectFamilies: [
     {
       key: "production",
@@ -247,7 +226,7 @@ export const teModelConfiguration: RookieModelConfiguration = {
       required: true,
       // Common base path: production remains comparable for tested and
       // documented non-testing prospects.
-      weight: 0.48,
+      weight: 0.5,
       metrics: [
         { key: "career_yprr", label: "Career YPRR", description: "Career receiving yards per route run from an approved route source.", direction: "higher", family: "production", weight: 0.15 },
         { key: "best_yprr", label: "Best-season YPRR", description: "Best documented receiving yards per route run season.", direction: "higher", family: "production", weight: 0.12 },
@@ -267,20 +246,10 @@ export const teModelConfiguration: RookieModelConfiguration = {
       key: "age",
       label: "Age and declaration",
       minimumCoverage: 0.4,
-      weight: 0.48,
+      weight: 0.5,
       metrics: [
         { key: "age_at_draft", label: "Age at draft", description: "Player age on draft day.", direction: "lower", family: "age", weight: 0.65 },
         { key: "early_declare", label: "Early declare", description: "Entered the NFL draft before exhausting eligibility.", direction: "higher", family: "age", weight: 0.35 },
-      ],
-    },
-    {
-      key: "athletic_size",
-      label: "Athletic flag",
-      minimumCoverage: 1,
-      optionalEvidence: true,
-      weight: 0.04,
-      metrics: [
-        { buckets: [{ minimum: 8, score: 100 }, { minimum: 5, score: 50 }, { minimum: 0, score: 0 }], key: "ras", label: "RAS flag", description: "Verified 8.0+ RAS earns a small boost; below 5.0 is a small red flag; missing testing is neutral.", direction: "higher", family: "athletic_size", weight: 1 },
       ],
     },
   ],

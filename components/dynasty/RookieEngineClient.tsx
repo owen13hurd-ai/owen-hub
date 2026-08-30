@@ -15,12 +15,6 @@ function score(value: number | null) {
   return value === null ? "-" : value.toFixed(1);
 }
 
-function familyScore(key: string, value: number | null) {
-  if (key !== "athletic_size") return score(value);
-  if (value === null || value === 50) return "Neutral";
-  return value > 50 ? "Boost" : "Red flag";
-}
-
 export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking[] }) {
   const router = useRouter();
   const [classYear, setClassYear] = useState<"ALL" | "2025" | "2026">("ALL");
@@ -214,7 +208,7 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
                           <div key={family.key} title={family.optionalEvidence && family.score === null ? "No verified test; neutral" : family.missingMetrics.length ? `Missing: ${family.missingMetrics.join(", ")}` : "All configured inputs available"}>
                             <div className="flex items-baseline justify-between gap-2">
                               <dt className="truncate text-[11px] text-ink/50">{family.label}</dt>
-                              <dd className={`text-xs font-bold ${family.key === "athletic_size" && family.score === 0 ? "text-ember" : family.score === null ? "text-ink/40" : "text-ink"}`}>{familyScore(family.key, family.score)}</dd>
+                              <dd className={`text-xs font-bold ${family.score === null ? "text-ink/40" : "text-ink"}`}>{score(family.score)}</dd>
                             </div>
                             <div className="mt-1 h-1 overflow-hidden rounded-full bg-ink/8" aria-label={`${family.label} input coverage ${family.coverage}%`}>
                               <div className={`h-full rounded-full ${family.coverage === 100 ? "bg-moss" : "bg-amber-500"}`} style={{ width: `${family.coverage}%` }} />
@@ -223,6 +217,7 @@ export function RookieEngineClient({ rankings }: { rankings: RookieEngineRanking
                           </div>
                         ))}
                       </dl>
+                      {ranking.evidenceFlags.length ? <div className="mt-2 flex max-w-80 flex-wrap gap-1" aria-label={`Evidence flags for ${ranking.name}`}>{ranking.evidenceFlags.map((flag) => <span key={flag.key} title={flag.detail} className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${flag.tone === "green" ? "border-moss/25 bg-moss/8 text-moss" : "border-ember/25 bg-ember/8 text-ember"}`}>{flag.label}</span>)}</div> : null}
                       {ranking.coverage !== null && ranking.coverage < 100 ? <p className="mt-2 text-[10px] text-amber-700">{ranking.coverage.toFixed(0)}% weighted coverage overall</p> : null}
                     </td>
                     <td className="px-4 py-3 font-semibold text-ink">{score(ranking.prospectScore)}</td><td className="px-4 py-3 text-ink/65">{score(ranking.draftCapitalScore)}</td><td className="px-4 py-3 text-ink/65">{score(ranking.marketScore)}</td><td className="px-4 py-3 text-ink/65">{score(ranking.situationScore)}</td><td className="px-4 py-3 font-bold text-moss">{score(ranking.overallScore)}</td><td className="px-4 py-3"><input aria-label={`Manual tier for ${ranking.name}`} value={manualEdits[ranking.id]?.tier ?? ranking.manualTier ?? ""} onChange={(event) => setManualEdits((current) => ({ ...current, [ranking.id]: { rank: current[ranking.id]?.rank ?? String(ranking.manualRank ?? ""), tier: event.target.value } }))} className="h-8 w-24 rounded border border-ink/15 px-2 text-sm" placeholder={ranking.tier ?? "Tier"} /></td>
