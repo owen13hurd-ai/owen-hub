@@ -34,7 +34,7 @@ const configuration = {
 
 test("published defaults use the reproducible position-weighted scoring profile", () => {
   for (const model of rookieModelConfigurations) {
-    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-12" : "mvp-10");
+    assert.equal(model.version, model.position === "QB" ? "mvp-7" : model.position === "TE" ? "mvp-12" : "mvp-11");
     assert.deepEqual(model.overallWeights, {
       draftCapital: 0.4,
       market: 0,
@@ -56,6 +56,17 @@ test("creates evidence flags without changing the configured score families", ()
   assert.deepEqual(wrFlags.map((flag) => flag.key), ["wr-round-one", "wr-age-23", "wr-yprr-3"]);
   const rbFlags = getRookieEvidenceFlags({ ageAtDraft: 21, careerYprr: null, overallPick: 80, position: "RB", receptionsPerGame: 3, scrimmageYardsPerGame: 125 });
   assert.deepEqual(rbFlags.map((flag) => flag.key), ["rb-top-100", "rb-age-21", "rb-receptions-3", "rb-scrimmage-125"]);
+});
+
+test("applies bounded non-draft evidence adjustments to Prospect Score", () => {
+  const references = wrModelConfiguration.prospectFamilies.flatMap((family) => family.metrics.map((metric) => ({ key: metric.key, values: [0, 0.2, 0.4, 1, 21, 22, 23] })));
+  const inputs = [{ key: "pass_play_usage", value: 0.2 }, { key: "best_pass_play_usage", value: 0.2 }, { key: "receiving_yard_share", value: 0.2 }, { key: "early_declare", value: 1 }];
+  const adjustedInputs = [...inputs, { key: "age_at_draft", value: 23 }, { key: "career_yprr", value: 3.1 }];
+  const baseline = calculateRookieScore({ ...wrModelConfiguration, scoreAdjustments: [] }, adjustedInputs, references, { draftCapital: null, market: null, situation: null });
+  const adjusted = calculateRookieScore(wrModelConfiguration, adjustedInputs, references, { draftCapital: null, market: null, situation: null });
+  assert.equal(adjusted.prospectScore, baseline.prospectScore);
+  assert.equal(adjusted.components.find((component) => component.key === "wr-career-yprr").contribution, 2);
+  assert.equal(adjusted.components.find((component) => component.key === "wr-age-23").contribution, -2);
 });
 
 test("normalizes metrics in both directions and winsorizes outliers", () => {

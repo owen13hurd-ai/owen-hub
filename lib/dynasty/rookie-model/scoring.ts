@@ -109,13 +109,43 @@ export function calculateRookieScore(
     definition.required && families.find((family) => family.key === definition.key)?.score === null,
   );
   const availableFamilyWeight = scoredFamilies.reduce((total, family) => total + family.weight, 0);
-  const prospectScore =
+  const baseProspectScore =
     missingRequiredFamily || availableFamilyWeight === 0
       ? null
       : scoredFamilies.reduce(
           (total, family) => total + (family.score ?? 0) * (family.weight / availableFamilyWeight),
           0,
         );
+  const adjustmentComponents = (configuration.scoreAdjustments ?? []).map((definition) => {
+    const input = inputByKey.get(definition.metricKey);
+    const rawValue = input?.value ?? null;
+    const bucket = rawValue === null ? undefined : definition.buckets.find((candidate) =>
+      (candidate.minimum === undefined || rawValue >= candidate.minimum) &&
+      (candidate.maximum === undefined || rawValue <= candidate.maximum)
+    );
+    const contribution = bucket?.points ?? 0;
+    return {
+      contribution,
+      explanation: rawValue === null
+        ? `${definition.label} is unavailable and makes no adjustment.`
+        : bucket
+          ? `${definition.label} changes Prospect Score by ${contribution > 0 ? "+" : ""}${contribution.toFixed(1)} points. ${definition.description}`
+          : `${definition.label} is neutral at the documented threshold.`,
+      familyKey: "evidence_adjustments",
+      familyLabel: "Evidence adjustments",
+      key: definition.key,
+      label: definition.label,
+      missing: rawValue === null,
+      normalizedValue: null,
+      rawValue,
+      sourceId: input?.sourceId ?? null,
+      weight: 0,
+    };
+  });
+  const adjustmentCap = configuration.scoreAdjustmentCap ?? 0;
+  const rawAdjustment = adjustmentComponents.reduce((total, component) => total + (component.contribution ?? 0), 0);
+  const evidenceAdjustment = adjustmentCap > 0 ? Math.max(-adjustmentCap, Math.min(adjustmentCap, rawAdjustment)) : 0;
+  const prospectScore = baseProspectScore === null ? null : clamp(baseProspectScore + evidenceAdjustment);
   const applicableFamilies = families.filter((family) => family.applicable);
   const applicableWeight = applicableFamilies.reduce((total, family) => total + family.weight, 0);
   const coverage = applicableWeight === 0 ? 0 : applicableFamilies.reduce(
@@ -140,7 +170,7 @@ export function calculateRookieScore(
       : configuration.tierThresholds.find((threshold) => overallScore >= threshold.minimum)?.label ?? null;
 
   return {
-    components,
+    components: [...components, ...adjustmentComponents],
     coverage: Number((coverage * 100).toFixed(1)),
     draftCapitalScore: context.draftCapital,
     families,

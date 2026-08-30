@@ -25,6 +25,14 @@ export type RookieFamilyDefinition = {
   weight: number;
 };
 
+export type RookieScoreAdjustmentDefinition = {
+  buckets: Array<{ maximum?: number; minimum?: number; points: number }>;
+  description: string;
+  key: string;
+  label: string;
+  metricKey: string;
+};
+
 export type RookieModelConfiguration = {
   label: string;
   normalization: "class-relative" | "historical-percentile";
@@ -36,6 +44,8 @@ export type RookieModelConfiguration = {
   };
   position: RookieEnginePosition;
   prospectFamilies: RookieFamilyDefinition[];
+  scoreAdjustmentCap?: number;
+  scoreAdjustments?: RookieScoreAdjustmentDefinition[];
   tierThresholds: Array<{ label: string; minimum: number }>;
   version: string;
   winsorization: { lower: number; upper: number };

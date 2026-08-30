@@ -35,6 +35,14 @@ export const rookieModelConfigurationSchema = z
         weight: z.number().positive(),
       }),
     ),
+    scoreAdjustmentCap: z.number().positive().optional(),
+    scoreAdjustments: z.array(z.object({
+      buckets: z.array(z.object({ maximum: z.number().optional(), minimum: z.number().optional(), points: z.number() })).min(1),
+      description: z.string().min(1),
+      key: z.string().min(1),
+      label: z.string().min(1),
+      metricKey: z.string().min(1),
+    })).optional(),
     tierThresholds: z.array(
       z.object({ label: z.string().min(1), minimum: z.number().min(0).max(100) }),
     ),
@@ -94,7 +102,12 @@ export const wrModelConfiguration: RookieModelConfiguration = {
   ...shared,
   label: "WR explainable model",
   position: "WR",
-  version: "mvp-10",
+  version: "mvp-11",
+  scoreAdjustmentCap: 3,
+  scoreAdjustments: [
+    { buckets: [{ minimum: 3, points: 2 }, { minimum: 2.5, points: 1 }], description: "Exploratory career-YPRR green flag. The strongest matching bucket applies once.", key: "wr-career-yprr", label: "Career YPRR evidence", metricKey: "career_yprr" },
+    { buckets: [{ minimum: 23, points: -2 }], description: "Exploratory age-at-draft red flag.", key: "wr-age-23", label: "Age 23+ evidence", metricKey: "age_at_draft" },
+  ],
   prospectFamilies: [
     {
       key: "production",
@@ -131,7 +144,13 @@ export const rbModelConfiguration: RookieModelConfiguration = {
   ...shared,
   label: "RB explainable model",
   position: "RB",
-  version: "mvp-10",
+  version: "mvp-11",
+  scoreAdjustmentCap: 3,
+  scoreAdjustments: [
+    { buckets: [{ maximum: 21, points: 1 }], description: "Exploratory young-declaration green flag.", key: "rb-age-21", label: "Age 21 or less evidence", metricKey: "age_at_draft" },
+    { buckets: [{ minimum: 3, points: 2 }], description: "Exploratory receiving-volume green flag.", key: "rb-receptions-3", label: "3.0+ receptions/game evidence", metricKey: "receptions_per_game" },
+    { buckets: [{ minimum: 125, points: 1 }], description: "Exploratory scrimmage-production green flag.", key: "rb-scrimmage-125", label: "125+ scrimmage YPG evidence", metricKey: "scrimmage_yards_per_game" },
+  ],
   prospectFamilies: [
     {
       key: "production",

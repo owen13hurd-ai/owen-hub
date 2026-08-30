@@ -748,7 +748,10 @@ export async function scoreAndPersistRookieClass(
     const configuration = configurations.find((candidate) => candidate.position === position);
     if (!configuration) throw new Error(`No published ${position} model is available.`);
     const positionPlayers = players.filter((player) => player.position === position);
-    const metricKeys = configuration.prospectFamilies.flatMap((family) => family.metrics.map((metric) => metric.key));
+    const metricKeys = [...new Set([
+      ...configuration.prospectFamilies.flatMap((family) => family.metrics.map((metric) => metric.key)),
+      ...(configuration.scoreAdjustments ?? []).map((adjustment) => adjustment.metricKey),
+    ])];
     const references: RookieMetricReference[] = metricKeys.map((key) => ({
       key,
       values: positionPlayers.flatMap((player) => {
