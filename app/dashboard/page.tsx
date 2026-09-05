@@ -1,52 +1,60 @@
 import Link from "next/link";
-import { ArrowRight, BriefcaseBusiness, Shield, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  Newspaper,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
-import { HubCard } from "@/components/hubs/HubCard";
 import { UnifiedActionInbox } from "@/components/dashboard/UnifiedActionInbox";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { BlurFade } from "@/components/ui/blur-fade";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { hubs } from "@/lib/navigation";
 
-const primaryWorkspaces = [
+const focusActions = [
   {
-    href: "/dashboard/dynasty",
-    icon: Shield,
-    label: "Dynasty",
-    text: "Tune rankings, check offers, and review roster value.",
-  },
-  {
-    href: "/dashboard/pokemon",
-    icon: Sparkles,
-    label: "Pokémon",
-    text: "Build teams, prep matchups, and log battle notes.",
+    href: "/dashboard/dynasty/weekly",
+    icon: ShieldCheck,
+    label: "Set weekly lineups",
+    text: "Review submitted starters and any huge waiver value.",
+    meta: "Dynasty",
   },
   {
     href: "/dashboard/career",
     icon: BriefcaseBusiness,
-    label: "Career",
-    text: "Review new jobs, track applications, and plan outreach.",
+    label: "Review career inbox",
+    text: "Work the strongest new Atlanta opportunities first.",
+    meta: "Career",
   },
-];
-
-const roadmapItems = [
-  "Sharper dynasty rookie model",
-  "Saved Pokémon builds and battle trends",
-  "Morning career inbox from alerts",
-  "AI search over notes and history",
+  {
+    href: "/dashboard/briefing",
+    icon: Newspaper,
+    label: "Read daily briefing",
+    text: "Catch up on the developments worth your attention.",
+    meta: "Briefing",
+  },
+  {
+    href: "/dashboard/pokemon/intelligence",
+    icon: Sparkles,
+    label: "Open Pokémon intelligence",
+    text: "Continue collection analysis and buying decisions.",
+    meta: "Pokémon",
+  },
 ];
 
 export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Overview"
+        eyebrow="Command Center"
         title="Welcome back, Owen"
-        description="A cleaner launch point for the parts of the hub you use most."
+        description="Live decisions first, with every workspace one step away."
         actions={
           <Button asChild>
-            <Link href="/dashboard/dynasty">
-              Open Dynasty
+            <Link href="/dashboard/dynasty/weekly">
+              Weekly review
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
@@ -55,56 +63,75 @@ export default function DashboardPage() {
 
       <UnifiedActionInbox />
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-        <div className="rounded-md border border-ink/10 bg-ink p-5 text-white shadow-soft">
-          <div className="grid gap-4 md:grid-cols-3">
-            {primaryWorkspaces.map((item) => {
+      <section aria-labelledby="continue-heading">
+        <div className="mb-3">
+          <h2 id="continue-heading" className="text-lg font-bold text-ink">
+            Continue working
+          </h2>
+          <p className="mt-1 text-sm text-ink/50">
+            Direct paths into the decisions you return to most.
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-md border border-ink/10 bg-white">
+          <div className="grid md:grid-cols-2">
+            {focusActions.map((item) => {
               const Icon = item.icon;
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group rounded-md border border-white/10 bg-white/[0.06] p-4 transition hover:bg-white/[0.1]"
+                  className="group grid min-h-28 grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-ink/10 p-4 transition hover:bg-mist/60 active:bg-mist md:odd:border-r md:[&:nth-last-child(-n+2)]:border-b-0"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white text-ink">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-moss/10 text-moss">
                     <Icon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <h2 className="mt-5 text-lg font-bold">{item.label}</h2>
-                  <p className="mt-2 text-sm leading-5 text-white/65">{item.text}</p>
-                  <div className="mt-5 flex items-center gap-2 text-sm font-bold text-white/80">
-                    Continue
-                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
-                  </div>
+                  </span>
+                  <span className="min-w-0">
+                    <span className="text-xs font-bold text-moss">{item.meta}</span>
+                    <span className="mt-1 block font-bold text-ink">{item.label}</span>
+                    <span className="mt-1 block text-sm leading-5 text-ink/55">{item.text}</span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-ink/30 transition group-hover:translate-x-0.5 group-hover:text-moss" aria-hidden="true" />
                 </Link>
               );
             })}
           </div>
         </div>
-
-        <aside className="rounded-md border border-ink/10 bg-white/85 p-5 shadow-[0_12px_35px_rgba(23,33,31,0.04)]">
-          <p className="text-sm font-bold text-ink">Next useful builds</p>
-          <div className="mt-4 space-y-3">
-            {roadmapItems.map((item) => (
-              <div key={item} className="rounded-md border border-ink/10 bg-mist px-3 py-3 text-sm font-semibold text-ink/70">
-                {item}
-              </div>
-            ))}
-          </div>
-        </aside>
       </section>
 
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-ink">All workspaces</h2>
+      <section aria-labelledby="workspaces-heading">
+        <div className="mb-3 flex items-end justify-between gap-3">
+          <div>
+            <h2 id="workspaces-heading" className="text-lg font-bold text-ink">
+              All workspaces
+            </h2>
+            <p className="mt-1 text-sm text-ink/50">Everything else in the Hub.</p>
+          </div>
           <span className="text-xs font-semibold text-ink/45">{hubs.length} areas</span>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {hubs.map((hub, index) => (
-            <BlurFade key={hub.href} delay={index * 0.035} duration={0.25} blur="3px" className="h-full">
-              <HubCard hub={hub} />
-            </BlurFade>
-          ))}
+        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+          {hubs.map((hub) => {
+            const Icon = hub.icon;
+
+            return (
+              <Link
+                key={hub.href}
+                href={hub.href}
+                className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-md border border-ink/10 bg-white px-3 py-3 transition hover:border-moss/40 hover:bg-mist/45 active:bg-mist"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-md bg-mist text-ink/65">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-bold text-ink">{hub.label}</span>
+                  <span className="mt-0.5 block truncate text-xs text-ink/45">{hub.focus}</span>
+                </span>
+                <Badge variant="outline" className="text-[10px] text-ink/50">
+                  {hub.status}
+                </Badge>
+              </Link>
+            );
+          })}
         </div>
       </section>
     </div>

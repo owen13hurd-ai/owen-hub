@@ -54,6 +54,7 @@ type InboxState = {
 };
 
 const storageKey = "owens-hub:action-inbox:v1";
+const recentCareerWindowMs = 21 * 24 * 60 * 60 * 1000;
 
 const sourceMeta = {
   career: { label: "Career", icon: BriefcaseBusiness, className: "bg-emerald-50 text-emerald-800" },
@@ -96,16 +97,6 @@ function baseActions(): ActionItem[] {
   const now = new Date().toISOString();
   return [
     {
-      id: "workflow-review-trades",
-      source: "dynasty",
-      priority: "normal",
-      title: "Review your Sleeper trade inbox",
-      detail: "Check pending offers against your personal rankings and roster value.",
-      href: "/dashboard/dynasty/trade-inbox",
-      actionLabel: "Review trades",
-      createdAt: now,
-    },
-    {
       id: `briefing-${new Date().toISOString().slice(0, 10)}`,
       source: "briefing",
       priority: "normal",
@@ -127,7 +118,13 @@ async function fetchActionItems() {
   const restockPayload = restockResponse.ok ? await restockResponse.json() as RestockSnapshot : null;
 
   const careerItems = careerPayload.jobs
-    .filter((job) => !job.closedAt && !job.feedback && job.score >= 75)
+    .filter(
+      (job) =>
+        !job.closedAt &&
+        !job.feedback &&
+        job.score >= 75 &&
+        Date.now() - new Date(job.firstSeenAt).getTime() <= recentCareerWindowMs,
+    )
     .slice(0, 5)
     .map((job): ActionItem => ({
       id: `career-${job.jobKey}`,
