@@ -2,13 +2,15 @@ import type { DynastyRanking, MarketSourceSummary } from "@/types/dynasty";
 import { normalizePlayerName } from "@/lib/dynasty/sources/nameMatch";
 import { getFantasyCalcValues } from "@/lib/dynasty/sources/fantasyCalc";
 import { getKtcGoogleSheetValues } from "@/lib/dynasty/sources/googleSheet";
+import { getSleeperRookies } from "@/lib/dynasty/sources/sleeperRookies";
 
 export async function enrichRankingsWithMarketSources(
   rankings: DynastyRanking[],
 ) {
-  const [fantasyCalc, ktc] = await Promise.all([
+  const [fantasyCalc, ktc, sleeperRookies] = await Promise.all([
     getFantasyCalcValues(),
     getKtcGoogleSheetValues(),
+    getSleeperRookies(),
   ]);
 
   const importedByName = new Map(
@@ -61,6 +63,44 @@ export async function enrichRankingsWithMarketSources(
     } satisfies DynastyRanking;
   });
 
+  const marketNames = new Set(marketRankings.map((ranking) => normalizePlayerName(ranking.player)));
+  const missingRookies = Array.from(sleeperRookies.values.values())
+    .filter((rookie) => !marketNames.has(normalizePlayerName(rookie.name)))
+    .sort((first, second) => {
+      const firstKtcRank = ktc.values.get(normalizePlayerName(first.name))?.rank ?? Infinity;
+      const secondKtcRank = ktc.values.get(normalizePlayerName(second.name))?.rank ?? Infinity;
+      return firstKtcRank - secondKtcRank || (first.searchRank ?? Infinity) - (second.searchRank ?? Infinity) || first.name.localeCompare(second.name);
+    })
+    .map((rookie, index) => {
+      const normalizedName = normalizePlayerName(rookie.name);
+      const ktcValue = ktc.values.get(normalizedName);
+      const imported = importedByName.get(normalizedName);
+      const overallRank = marketRankings.length + index + 1;
+
+      return {
+        age: rookie.age ?? ktcValue?.age ?? imported?.age ?? null,
+        buySellHold: imported?.buySellHold ?? "Hold",
+        fantasyCalcRank: null,
+        fantasyCalcTrend30Day: null,
+        fantasyCalcValue: null,
+        id: imported?.id ?? `sleeper-${rookie.id}`,
+        importedTier: imported?.importedTier || "Unranked rookies",
+        isRookie: true,
+        ktcDelta: ktcValue ? ktcValue.rank - overallRank : null,
+        ktcRank: ktcValue?.rank ?? null,
+        marketPosition: ktcValue?.position ?? rookie.position,
+        marketPositionRank: ktcValue ? Number(ktcValue.positionRank.replace(/[^0-9]/g, "")) || null : null,
+        overallRank,
+        player: rookie.name,
+        position: rookie.position,
+        positionRank: ktcValue?.positionRank || `${rookie.position}-`,
+        relativeBaseValue: imported?.relativeBaseValue ?? null,
+        rookiePick: imported?.rookiePick ?? "",
+        team: rookie.team,
+        yearsExperience: 0,
+      } satisfies DynastyRanking;
+    });
+
   const fallbackRankings = rankings.map((ranking) => {
     const normalizedName = normalizePlayerName(ranking.player);
     const fantasyCalcValue = fantasyCalc.values.get(normalizedName);
@@ -82,8 +122,9 @@ export async function enrichRankingsWithMarketSources(
     };
   });
 
-  const enrichedRankings =
-    marketRankings.length > 0 ? marketRankings : fallbackRankings;
+  const enrichedRankings = marketRankings.length > 0
+    ? [...marketRankings, ...missingRookies]
+    : fallbackRankings;
   const rookieCount = enrichedRankings.filter((ranking) => ranking.isRookie).length;
 
   const sources: MarketSourceSummary = {
@@ -99,6 +140,12 @@ export async function enrichRankingsWithMarketSources(
             detail: `${marketRankings.length} current players loaded in market order · ${rookieCount} rookies`,
           }
         : fantasyCalc.status,
+    rookiePool: {
+      ...sleeperRookies.status,
+      detail: sleeperRookies.status.status === "live"
+        ? `${rookieCount} rookies on the board · ${missingRookies.length} added beyond FantasyCalc`
+        : sleeperRookies.status.detail,
+    },
   };
 
   return {

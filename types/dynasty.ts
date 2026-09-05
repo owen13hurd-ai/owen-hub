@@ -63,4 +63,5 @@ export type SourceStatus = {
 export type MarketSourceSummary = {
   ktc: SourceStatus;
   fantasyCalc: SourceStatus;
+  rookiePool: SourceStatus;
 };

@@ -613,6 +613,7 @@ export function DynastyRankingsClient({
       }),
   );
   const [position, setPosition] = useState<Position>("ALL");
+  const [rookiesOnly, setRookiesOnly] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [dragState, setDragState] = useState<DragState>(null);
@@ -920,7 +921,7 @@ export function DynastyRankingsClient({
     const normalizedQuery = query.trim().toLowerCase();
     const rows = rowsByScope[position];
 
-    if (!normalizedQuery) {
+    if (!normalizedQuery && !rookiesOnly) {
       return rows;
     }
 
@@ -931,12 +932,16 @@ export function DynastyRankingsClient({
 
       const ranking = rankingsById.get(row.playerId);
 
+      if (rookiesOnly && !ranking?.isRookie) return false;
+
+      if (!normalizedQuery) return true;
+
       return (
         ranking?.player.toLowerCase().includes(normalizedQuery) ||
         ranking?.team.toLowerCase().includes(normalizedQuery)
       );
     });
-  }, [position, query, rankingsById, rowsByScope]);
+  }, [position, query, rankingsById, rookiesOnly, rowsByScope]);
 
   function moveRow(targetId: string) {
     if (!dragState || dragState.scope !== position || dragState.rowId === targetId) {
@@ -1004,6 +1009,9 @@ export function DynastyRankingsClient({
           <p className="text-sm text-ink/55">Players</p>
           <p className="mt-1 text-2xl font-bold text-ink">
             {initialRankings.length}
+          </p>
+          <p className="mt-1 text-xs text-ink/45">
+            {initialRankings.filter((ranking) => ranking.isRookie).length} rookies
           </p>
         </div>
         <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
@@ -1089,9 +1097,10 @@ export function DynastyRankingsClient({
           <Database className="h-5 w-5 text-ink/45" aria-hidden="true" />
         </div>
 
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
           <SourceCard source={sources.ktc} />
           <SourceCard source={sources.fantasyCalc} />
+          <SourceCard source={sources.rookiePool} />
         </div>
       </section>
 
@@ -1127,6 +1136,19 @@ export function DynastyRankingsClient({
                   {item}
                 </button>
               ))}
+              <button
+                type="button"
+                aria-pressed={rookiesOnly}
+                onClick={() => setRookiesOnly((current) => !current)}
+                className={clsx(
+                  "h-9 rounded-md px-3 text-sm font-semibold transition active:translate-y-px",
+                  rookiesOnly
+                    ? "bg-moss text-white"
+                    : "bg-mist text-ink/70 hover:bg-skyglass hover:text-ink",
+                )}
+              >
+                Rookies
+              </button>
             </div>
 
             <button
