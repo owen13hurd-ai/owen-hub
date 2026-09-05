@@ -152,6 +152,42 @@ export type SleeperMyTeamsBoard = {
   username: string;
 };
 
+export type SleeperWeeklyPlayer = {
+  injuryStatus: string | null;
+  name: string;
+  personalRank: number | null;
+  playerId: string;
+  position: string;
+  slot: string | null;
+  team: string | null;
+};
+
+export type SleeperLineupReview = {
+  benchPlayer: SleeperWeeklyPlayer;
+  reason: string;
+  starter: SleeperWeeklyPlayer;
+};
+
+export type SleeperWeeklyLeague = {
+  league: SleeperLeagueSummary;
+  lineup: SleeperWeeklyPlayer[];
+  lineupReviews: SleeperLineupReview[];
+  rosterId: number;
+};
+
+export type SleeperHugeWaiver = SleeperWeeklyPlayer & {
+  availableIn: SleeperLeagueSummary[];
+};
+
+export type SleeperWeeklyBoard = {
+  hugeWaivers: SleeperHugeWaiver[];
+  leagues: SleeperWeeklyLeague[];
+  season: string;
+  threshold: number;
+  username: string;
+  week: number;
+};
+
 export type SleeperTradeInboxAsset = {
   id: string;
   label: string;
@@ -205,7 +241,10 @@ type SleeperRoster = {
   co_owners?: string[] | null;
   owner_id?: string | null;
   players?: string[] | null;
+  reserve?: string[] | null;
   roster_id?: number;
+  starters?: string[] | null;
+  taxi?: string[] | null;
 };
 
 type SleeperTradedPick = {
@@ -227,11 +266,14 @@ type SleeperLeagueUser = {
 };
 
 type SleeperPlayer = {
+  active?: boolean;
   age?: number;
   first_name?: string;
   full_name?: string;
   last_name?: string;
   position?: string;
+  injury_status?: string | null;
+  status?: string | null;
   team?: string | null;
 };
 
@@ -2008,5 +2050,227 @@ export async function getSleeperMyTeamsBoard({
       return firstTeam.league.name.localeCompare(secondTeam.league.name);
     }),
     username: trimmedUsername,
+  };
+}
+
+const HUGE_WAIVER_RANK_THRESHOLD = 50;
+
+function getWeeklyPlayer({
+  playerId,
+  player,
+  rankingsByName,
+  slot = null,
+}: {
+  playerId: string;
+  player?: SleeperPlayer;
+  rankingsByName: Map<string, DynastyRanking>;
+  slot?: string | null;
+}): SleeperWeeklyPlayer {
+  const name = getPlayerName(playerId, player);
+  const ranking =
+    rankingsByName.get(normalizeSearchText(name)) ??
+    rankingsByName.get(normalizePlayerMatchText(name));
+
+  return {
+    injuryStatus: player?.injury_status ?? null,
+    name,
+    personalRank: ranking?.overallRank ?? null,
+    playerId,
+    position: player?.position ?? "UNK",
+    slot,
+    team: player?.team ?? null,
+  };
+}
+
+function isWeeklySkillPlayer(player?: SleeperPlayer) {
+  return Boolean(
+    player?.active !== false &&
+      player?.team &&
+      ["QB", "RB", "WR", "TE"].includes(player.position ?? ""),
+  );
+}
+
+function buildLineupReviews({
+  bench,
+  lineup,
+}: {
+  bench: SleeperWeeklyPlayer[];
+  lineup: SleeperWeeklyPlayer[];
+}) {
+  const reviews: SleeperLineupReview[] = [];
+  const usedBenchIds = new Set<string>();
+
+  lineup.forEach((starter) => {
+    const eligiblePositions = getEligiblePositions(starter.slot ?? starter.position);
+    const candidates = bench
+      .filter(
+        (player) =>
+          !usedBenchIds.has(player.playerId) &&
+          eligiblePositions.includes(player.position) &&
+          player.personalRank !== null,
+      )
+      .sort(
+        (first, second) =>
+          (first.personalRank ?? Infinity) - (second.personalRank ?? Infinity),
+      );
+    const bestBench = candidates[0];
+    const starterRank = starter.personalRank ?? Infinity;
+    const benchRank = bestBench?.personalRank ?? Infinity;
+    const injuryConcern = ["Out", "Doubtful", "IR", "PUP"].includes(
+      starter.injuryStatus ?? "",
+    );
+    const materialRankGap =
+      starter.personalRank !== null && benchRank + 20 < starterRank;
+
+    if (!bestBench || (!injuryConcern && !materialRankGap)) {
+      return;
+    }
+
+    usedBenchIds.add(bestBench.playerId);
+    reviews.push({
+      benchPlayer: bestBench,
+      reason: injuryConcern
+        ? `${starter.name} is listed ${starter.injuryStatus}.`
+        : `${bestBench.name} is ${Math.round(starterRank - benchRank)} spots higher on your dynasty board.`,
+      starter,
+    });
+  });
+
+  return reviews;
+}
+
+export async function getSleeperWeeklyBoard({
+  rankings,
+  season,
+  username,
+  week,
+}: {
+  rankings: DynastyRanking[];
+  season: string;
+  username: string;
+  week: number;
+}): Promise<SleeperWeeklyBoard> {
+  const trimmedUsername = username.trim();
+
+  if (!trimmedUsername) {
+    throw new Error("Enter a Sleeper username.");
+  }
+
+  const user = await fetchSleeperJson<SleeperUser | null>(
+    `/user/${encodeURIComponent(trimmedUsername)}`,
+    60 * 60,
+  );
+
+  if (!user?.user_id) {
+    throw new Error("Sleeper user was not found.");
+  }
+
+  const [userLeagues, players] = await Promise.all([
+    fetchSleeperJson<SleeperLeague[]>(
+      `/user/${user.user_id}/leagues/nfl/${season}`,
+      60 * 5,
+    ),
+    fetchSleeperJson<Record<string, SleeperPlayer>>(
+      "/players/nfl?active=true",
+      60 * 60 * 24,
+    ),
+  ]);
+  const rankingsByName = getRankingByPlayerName(rankings);
+  const playerEntryByName = new Map(
+    Object.entries(players).flatMap(([playerId, player]) => {
+      const normalizedName = normalizePlayerMatchText(getPlayerName(playerId, player));
+      return normalizedName ? [[normalizedName, [playerId, player] as const] as const] : [];
+    }),
+  );
+  const waiverLeaguesByPlayer = new Map<string, SleeperLeagueSummary[]>();
+
+  const leagues = (
+    await Promise.all(
+      userLeagues.filter((league) => Boolean(league.league_id)).map(async (rawLeague) => {
+        const league = getLeagueSummary(rawLeague);
+        const rosters = await fetchSleeperJson<SleeperRoster[]>(
+          `/league/${league.id}/rosters`,
+          60 * 5,
+        );
+        const myRoster = rosters.find(
+          (roster) =>
+            roster.owner_id === user.user_id ||
+            roster.co_owners?.includes(user.user_id ?? ""),
+        );
+
+        if (!myRoster || typeof myRoster.roster_id !== "number") {
+          return null;
+        }
+
+        const rosteredIds = new Set(
+          rosters.flatMap((roster) => [
+            ...(roster.players ?? []),
+            ...(roster.reserve ?? []),
+            ...(roster.taxi ?? []),
+          ]),
+        );
+        rankings.slice(0, HUGE_WAIVER_RANK_THRESHOLD).forEach((ranking) => {
+          const playerEntry = playerEntryByName.get(
+            normalizePlayerMatchText(ranking.player),
+          );
+
+          if (!playerEntry || rosteredIds.has(playerEntry[0]) || !isWeeklySkillPlayer(playerEntry[1])) {
+            return;
+          }
+
+          const current = waiverLeaguesByPlayer.get(playerEntry[0]) ?? [];
+          current.push(league);
+          waiverLeaguesByPlayer.set(playerEntry[0], current);
+        });
+
+        const starterSlots = (rawLeague.roster_positions ?? []).filter(isStarterSlot);
+        const rosterPlayerIds = myRoster.players ?? [];
+        const starterIds = (myRoster.starters ?? []).filter((id) => id && id !== "0");
+        const lineup = starterIds
+          .map((playerId, index) =>
+            getWeeklyPlayer({
+              player: players[playerId],
+              playerId,
+              rankingsByName,
+              slot: starterSlots[index] ?? null,
+            }),
+          )
+          .filter((player) => ["QB", "RB", "WR", "TE"].includes(player.position));
+        const starterIdSet = new Set(starterIds);
+        const bench = rosterPlayerIds
+          .filter((playerId) => !starterIdSet.has(playerId) && isWeeklySkillPlayer(players[playerId]))
+          .map((playerId) =>
+            getWeeklyPlayer({ player: players[playerId], playerId, rankingsByName }),
+          );
+
+        return {
+          league,
+          lineup,
+          lineupReviews: buildLineupReviews({ bench, lineup }),
+          rosterId: myRoster.roster_id,
+        } satisfies SleeperWeeklyLeague;
+      }),
+    )
+  ).filter((league): league is SleeperWeeklyLeague => Boolean(league));
+
+  const hugeWaivers = Array.from(waiverLeaguesByPlayer.entries())
+    .map(([playerId, availableIn]) => ({
+      ...getWeeklyPlayer({ player: players[playerId], playerId, rankingsByName }),
+      availableIn,
+    }))
+    .sort(
+      (first, second) =>
+        (first.personalRank ?? Infinity) - (second.personalRank ?? Infinity),
+    );
+
+  return {
+    hugeWaivers,
+    leagues: leagues.sort((first, second) =>
+      first.league.name.localeCompare(second.league.name),
+    ),
+    season,
+    threshold: HUGE_WAIVER_RANK_THRESHOLD,
+    username: trimmedUsername,
+    week,
   };
 }

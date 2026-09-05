@@ -4,6 +4,7 @@ import {
   BarChart3,
   Bell,
   ClipboardList,
+  CalendarCheck2,
   Lightbulb,
   ListOrdered,
   ShieldCheck,
@@ -18,6 +19,7 @@ const items = [
   { href: "/dashboard/dynasty", icon: ListOrdered, label: "Rankings" },
   { href: "/dashboard/dynasty/portfolio", icon: BarChart3, label: "Portfolio" },
   { href: "/dashboard/dynasty/my-teams", icon: ShieldCheck, label: "My Teams" },
+  { href: "/dashboard/dynasty/weekly", icon: CalendarCheck2, label: "Weekly" },
   { href: "/dashboard/dynasty/leagues", icon: TableProperties, label: "Power Rankings" },
   { href: "/dashboard/dynasty/trade-inbox", icon: Bell, label: "Trade Inbox" },
   { href: "/dashboard/dynasty/trade-lab", icon: Lightbulb, label: "Trade Notebook" },
@@ -53,4 +55,3 @@ export function DynastyNav() {
     </nav>
   );
 }
-
