@@ -680,6 +680,13 @@ export function DynastyRankingsClient({
     [saveRowsNow],
   );
 
+  const syncToMarketOrder = useCallback(() => {
+    if (!window.confirm("Replace your saved player order with the current FantasyCalc market order?")) return;
+    setRowsByScope(defaultRowsByScope);
+    rowsByScopeRef.current = defaultRowsByScope;
+    void saveRowsNow(defaultRowsByScope);
+  }, [defaultRowsByScope, saveRowsNow]);
+
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) {
@@ -1150,6 +1157,14 @@ export function DynastyRankingsClient({
                 Rookies
               </button>
             </div>
+
+            <button
+              type="button"
+              onClick={syncToMarketOrder}
+              className="h-9 rounded-md border border-ink/10 bg-white px-3 text-sm font-semibold text-ink transition hover:bg-skyglass active:translate-y-px"
+            >
+              Sync to market
+            </button>
 
             <button
               type="button"

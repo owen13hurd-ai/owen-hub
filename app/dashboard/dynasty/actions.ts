@@ -4,8 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
 import type { DynastyRowsByScope, Position } from "@/types/dynasty";
 
-// Version 2 starts from the refreshed FantasyCalc player pool and market order.
-const boardKey = "owen-main-v2";
+// Keep the established key covered by the table's row-level security policy.
+const boardKey = "owen-main";
 const positions: Position[] = ["ALL", "QB", "RB", "WR", "TE"];
 
 function isSavedRowsByScope(value: unknown): value is DynastyRowsByScope {
