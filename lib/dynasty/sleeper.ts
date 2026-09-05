@@ -1,4 +1,8 @@
 import { getDynastyRankings } from "@/lib/dynasty/rankings";
+import {
+  getFantasyProsWeeklyProjections,
+  type FantasyProsWeeklyProjection,
+} from "@/lib/dynasty/sources/fantasyPros";
 import type { DynastyRanking } from "@/types/dynasty";
 
 export type SleeperLeagueSummary = {
@@ -158,6 +162,7 @@ export type SleeperWeeklyPlayer = {
   personalRank: number | null;
   playerId: string;
   position: string;
+  projectedPoints: number | null;
   slot: string | null;
   team: string | null;
 };
@@ -172,6 +177,7 @@ export type SleeperWeeklyLeague = {
   league: SleeperLeagueSummary;
   lineup: SleeperWeeklyPlayer[];
   lineupReviews: SleeperLineupReview[];
+  projectionScoring: "Half PPR" | "PPR" | "Standard";
   rosterId: number;
 };
 
@@ -182,6 +188,11 @@ export type SleeperHugeWaiver = SleeperWeeklyPlayer & {
 export type SleeperWeeklyBoard = {
   hugeWaivers: SleeperHugeWaiver[];
   leagues: SleeperWeeklyLeague[];
+  projectionSource: {
+    detail: string;
+    label: string;
+    status: "error" | "live" | "missing";
+  };
   season: string;
   threshold: number;
   username: string;
@@ -234,6 +245,7 @@ type SleeperLeague = {
   league_id?: string;
   name?: string;
   roster_positions?: string[] | null;
+  scoring_settings?: Record<string, number> | null;
   total_rosters?: number;
 };
 
@@ -2058,11 +2070,15 @@ const HUGE_WAIVER_RANK_THRESHOLD = 50;
 function getWeeklyPlayer({
   playerId,
   player,
+  projectionsByName,
+  projectionScoring,
   rankingsByName,
   slot = null,
 }: {
   playerId: string;
   player?: SleeperPlayer;
+  projectionsByName: Map<string, FantasyProsWeeklyProjection>;
+  projectionScoring: SleeperWeeklyLeague["projectionScoring"];
   rankingsByName: Map<string, DynastyRanking>;
   slot?: string | null;
 }): SleeperWeeklyPlayer {
@@ -2070,6 +2086,15 @@ function getWeeklyPlayer({
   const ranking =
     rankingsByName.get(normalizeSearchText(name)) ??
     rankingsByName.get(normalizePlayerMatchText(name));
+  const projection =
+    projectionsByName.get(normalizeSearchText(name)) ??
+    projectionsByName.get(normalizePlayerMatchText(name));
+  const projectedPoints =
+    projectionScoring === "PPR"
+      ? projection?.ppr
+      : projectionScoring === "Half PPR"
+        ? projection?.halfPpr
+        : projection?.standard;
 
   return {
     injuryStatus: player?.injury_status ?? null,
@@ -2077,9 +2102,17 @@ function getWeeklyPlayer({
     personalRank: ranking?.overallRank ?? null,
     playerId,
     position: player?.position ?? "UNK",
+    projectedPoints: projectedPoints ?? null,
     slot,
     team: player?.team ?? null,
   };
+}
+
+function getProjectionScoring(league: SleeperLeague): SleeperWeeklyLeague["projectionScoring"] {
+  const pointsPerReception = league.scoring_settings?.rec ?? 0;
+  if (pointsPerReception >= 0.75) return "PPR";
+  if (pointsPerReception >= 0.25) return "Half PPR";
+  return "Standard";
 }
 
 function isWeeklySkillPlayer(player?: SleeperPlayer) {
@@ -2109,20 +2142,29 @@ function buildLineupReviews({
           eligiblePositions.includes(player.position) &&
           player.personalRank !== null,
       )
-      .sort(
-        (first, second) =>
-          (first.personalRank ?? Infinity) - (second.personalRank ?? Infinity),
-      );
+      .sort((first, second) => {
+        if (first.projectedPoints !== null || second.projectedPoints !== null) {
+          return (second.projectedPoints ?? -Infinity) - (first.projectedPoints ?? -Infinity);
+        }
+        return (first.personalRank ?? Infinity) - (second.personalRank ?? Infinity);
+      });
     const bestBench = candidates[0];
     const starterRank = starter.personalRank ?? Infinity;
     const benchRank = bestBench?.personalRank ?? Infinity;
+    const projectionGap =
+      starter.projectedPoints !== null && bestBench?.projectedPoints !== null
+        ? bestBench.projectedPoints - starter.projectedPoints
+        : null;
     const injuryConcern = ["Out", "Doubtful", "IR", "PUP"].includes(
       starter.injuryStatus ?? "",
     );
     const materialRankGap =
-      starter.personalRank !== null && benchRank + 20 < starterRank;
+      projectionGap === null &&
+      starter.personalRank !== null &&
+      benchRank + 20 < starterRank;
+    const projectionUpgrade = projectionGap !== null && projectionGap >= 1.5;
 
-    if (!bestBench || (!injuryConcern && !materialRankGap)) {
+    if (!bestBench || (!injuryConcern && !projectionUpgrade && !materialRankGap)) {
       return;
     }
 
@@ -2131,6 +2173,8 @@ function buildLineupReviews({
       benchPlayer: bestBench,
       reason: injuryConcern
         ? `${starter.name} is listed ${starter.injuryStatus}.`
+        : projectionUpgrade
+          ? `${bestBench.name} projects ${projectionGap.toFixed(1)} points higher this week.`
         : `${bestBench.name} is ${Math.round(starterRank - benchRank)} spots higher on your dynasty board.`,
       starter,
     });
@@ -2165,7 +2209,7 @@ export async function getSleeperWeeklyBoard({
     throw new Error("Sleeper user was not found.");
   }
 
-  const [userLeagues, players] = await Promise.all([
+  const [userLeagues, players, projectionResult] = await Promise.all([
     fetchSleeperJson<SleeperLeague[]>(
       `/user/${user.user_id}/leagues/nfl/${season}`,
       60 * 5,
@@ -2174,6 +2218,7 @@ export async function getSleeperWeeklyBoard({
       "/players/nfl?active=true",
       60 * 60 * 24,
     ),
+    getFantasyProsWeeklyProjections({ season, week }),
   ]);
   const rankingsByName = getRankingByPlayerName(rankings);
   const playerEntryByName = new Map(
@@ -2188,6 +2233,7 @@ export async function getSleeperWeeklyBoard({
     await Promise.all(
       userLeagues.filter((league) => Boolean(league.league_id)).map(async (rawLeague) => {
         const league = getLeagueSummary(rawLeague);
+        const projectionScoring = getProjectionScoring(rawLeague);
         const rosters = await fetchSleeperJson<SleeperRoster[]>(
           `/league/${league.id}/rosters`,
           60 * 5,
@@ -2231,6 +2277,8 @@ export async function getSleeperWeeklyBoard({
             getWeeklyPlayer({
               player: players[playerId],
               playerId,
+              projectionsByName: projectionResult.values,
+              projectionScoring,
               rankingsByName,
               slot: starterSlots[index] ?? null,
             }),
@@ -2240,13 +2288,20 @@ export async function getSleeperWeeklyBoard({
         const bench = rosterPlayerIds
           .filter((playerId) => !starterIdSet.has(playerId) && isWeeklySkillPlayer(players[playerId]))
           .map((playerId) =>
-            getWeeklyPlayer({ player: players[playerId], playerId, rankingsByName }),
+            getWeeklyPlayer({
+              player: players[playerId],
+              playerId,
+              projectionsByName: projectionResult.values,
+              projectionScoring,
+              rankingsByName,
+            }),
           );
 
         return {
           league,
           lineup,
           lineupReviews: buildLineupReviews({ bench, lineup }),
+          projectionScoring,
           rosterId: myRoster.roster_id,
         } satisfies SleeperWeeklyLeague;
       }),
@@ -2255,7 +2310,13 @@ export async function getSleeperWeeklyBoard({
 
   const hugeWaivers = Array.from(waiverLeaguesByPlayer.entries())
     .map(([playerId, availableIn]) => ({
-      ...getWeeklyPlayer({ player: players[playerId], playerId, rankingsByName }),
+      ...getWeeklyPlayer({
+        player: players[playerId],
+        playerId,
+        projectionsByName: projectionResult.values,
+        projectionScoring: "Half PPR",
+        rankingsByName,
+      }),
       availableIn,
     }))
     .sort(
@@ -2268,6 +2329,7 @@ export async function getSleeperWeeklyBoard({
     leagues: leagues.sort((first, second) =>
       first.league.name.localeCompare(second.league.name),
     ),
+    projectionSource: projectionResult.status,
     season,
     threshold: HUGE_WAIVER_RANK_THRESHOLD,
     username: trimmedUsername,

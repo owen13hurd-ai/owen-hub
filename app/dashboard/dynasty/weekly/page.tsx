@@ -26,10 +26,11 @@ function applySavedOrder(rankings: DynastyRanking[], savedIds: string[]) {
   return ordered.map((ranking, index) => ({ ...ranking, overallRank: index + 1 }));
 }
 
-function playerMeta(player: { injuryStatus: string | null; personalRank: number | null; position: string; team: string | null }) {
+function playerMeta(player: { injuryStatus: string | null; personalRank: number | null; position: string; projectedPoints: number | null; team: string | null }) {
   return [
     player.position,
     player.team,
+    player.projectedPoints !== null ? `${player.projectedPoints.toFixed(1)} proj` : null,
     player.personalRank ? `#${player.personalRank}` : null,
     player.injuryStatus,
   ].filter(Boolean).join(" · ");
@@ -85,6 +86,14 @@ export default async function DynastyWeeklyPage({
           <Button type="submit"><RefreshCcw className="h-4 w-4" aria-hidden="true" />Refresh week</Button>
         </form>
         {hasError ? <p className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{result.message}</p> : null}
+        {data ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-ink/10 pt-3 text-sm">
+            <Badge variant={data.projectionSource.status === "live" ? "default" : "outline"}>
+              {data.projectionSource.status === "live" ? "Weekly projections live" : "Projection fallback"}
+            </Badge>
+            <span className="text-ink/55">{data.projectionSource.detail}</span>
+          </div>
+        ) : null}
       </section>
 
       {data ? (
@@ -124,12 +133,19 @@ export default async function DynastyWeeklyPage({
           <section>
             <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
               <div><h2 className="text-lg font-bold text-ink">Start / sit review</h2><p className="mt-1 text-sm text-ink/55">{reviewCount} lineup check{reviewCount === 1 ? "" : "s"} across {data.leagues.length} leagues.</p></div>
-              <p className="text-xs text-ink/45">Baseline uses your dynasty board, not weekly projections.</p>
+              <p className="text-xs text-ink/45">
+                {data.projectionSource.status === "live"
+                  ? "FantasyPros projections scored to each league's reception format."
+                  : "Fallback uses your dynasty board until FantasyPros is connected."}
+              </p>
             </div>
             <div className="space-y-3">
               {data.leagues.map((league) => (
                 <article key={league.league.id} className="rounded-md border border-ink/10 bg-white p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-bold text-ink">{league.league.name}</h3><Badge variant={league.lineupReviews.length ? "destructive" : "outline"}>{league.lineupReviews.length ? `${league.lineupReviews.length} review` : "Lineup clear"}</Badge></div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div><h3 className="font-bold text-ink">{league.league.name}</h3><p className="mt-0.5 text-xs text-ink/45">{league.projectionScoring}</p></div>
+                    <Badge variant={league.lineupReviews.length ? "destructive" : "outline"}>{league.lineupReviews.length ? `${league.lineupReviews.length} review` : "Lineup clear"}</Badge>
+                  </div>
                   {league.lineupReviews.length > 0 ? (
                     <div className="mt-3 space-y-2">{league.lineupReviews.map((review) => (
                       <div key={`${review.starter.playerId}-${review.benchPlayer.playerId}`} className="grid gap-2 rounded-md bg-amber-50 px-3 py-2 md:grid-cols-[1fr_auto_1fr] md:items-center">
