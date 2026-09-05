@@ -11,7 +11,6 @@ import {
 import {
   ArrowDown,
   ArrowUp,
-  Database,
   GripVertical,
   Search,
   X,
@@ -27,7 +26,6 @@ import type {
   DynastyTier,
   MarketSourceSummary,
   Position,
-  SourceStatus,
 } from "@/types/dynasty";
 
 const positions: Position[] = ["ALL", "QB", "RB", "WR", "TE"];
@@ -281,38 +279,6 @@ function getDeltaIcon(delta: number | null) {
     <ArrowUp className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
   ) : (
     <ArrowDown className="h-3.5 w-3.5 text-rose-600" aria-hidden="true" />
-  );
-}
-
-function getSourceClass(status: SourceStatus["status"]) {
-  if (status === "live") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-900";
-  }
-
-  if (status === "error") {
-    return "border-rose-200 bg-rose-50 text-rose-900";
-  }
-
-  if (status === "fallback") {
-    return "border-amber-200 bg-amber-50 text-amber-900";
-  }
-
-  return "border-dashed border-ink/20 bg-white text-ink";
-}
-
-function SourceCard({ source }: { source: SourceStatus }) {
-  return (
-    <div className={clsx("rounded-md border p-3", getSourceClass(source.status))}>
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-bold uppercase tracking-[0.1em]">
-          {source.label}
-        </p>
-        <span className="rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-bold uppercase">
-          {source.status}
-        </span>
-      </div>
-      <p className="mt-2 text-xs leading-5 opacity-75">{source.detail}</p>
-    </div>
   );
 }
 
@@ -1011,109 +977,17 @@ export function DynastyRankingsClient({
         />
       ) : null}
 
-      <section className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-          <p className="text-sm text-ink/55">Players</p>
-          <p className="mt-1 text-2xl font-bold text-ink">
-            {initialRankings.length}
-          </p>
-          <p className="mt-1 text-xs text-ink/45">
-            {initialRankings.filter((ranking) => ranking.isRookie).length} rookies
-          </p>
-        </div>
-        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-          <p className="text-sm text-ink/55">Hard buys</p>
-          <p className="mt-1 text-2xl font-bold text-emerald-700">
-            {signalCounts.hardBuys}
-          </p>
-        </div>
-        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-          <p className="text-sm text-ink/55">Hard sells</p>
-          <p className="mt-1 text-2xl font-bold text-rose-700">
-            {signalCounts.hardSells}
-          </p>
-        </div>
-        <div className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-          <p className="text-sm text-ink/55">Market sources</p>
-          <p className="mt-1 text-2xl font-bold text-ink">2</p>
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
-              Portfolio heat map
-            </p>
-            <h2 className="mt-1 text-lg font-bold text-ink">
-              Exposure actions
-            </h2>
-          </div>
-          <p className="max-w-2xl text-sm leading-6 text-ink/55">
-            Combines Sleeper ownership with your buy/sell/hold logic to flag
-            players you may want to target, trim, or monitor.
-          </p>
+      <section className="rounded-md border border-ink/10 bg-white shadow-soft">
+        <div className="grid gap-3 border-b border-ink/10 px-4 py-3 sm:grid-cols-4">
+          <div><p className="text-xs font-semibold text-ink/45">Board</p><p className="mt-0.5 text-sm font-bold text-ink">{initialRankings.length} players · {initialRankings.filter((ranking) => ranking.isRookie).length} rookies</p></div>
+          <div><p className="text-xs font-semibold text-ink/45">Market edges</p><p className="mt-0.5 text-sm font-bold text-ink"><span className="text-emerald-700">{signalCounts.hardBuys} buys</span> · <span className="text-rose-700">{signalCounts.hardSells} sells</span></p></div>
+          <div><p className="text-xs font-semibold text-ink/45">Portfolio</p><p className="mt-0.5 text-sm font-bold text-ink">{heatMapCounts.priorityBuys + heatMapCounts.targets} targets · {heatMapCounts.riskWatches} risks</p></div>
+          <div><p className="text-xs font-semibold text-ink/45">Sources</p><p className="mt-0.5 text-sm font-bold text-ink">KTC {sources.ktc.status} · FC {sources.fantasyCalc.status} · Rookies {sources.rookiePool.status}</p></div>
         </div>
 
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
-            <p className="text-xs font-bold uppercase tracking-[0.1em] text-emerald-800">
-              Priority buys
-            </p>
-            <p className="mt-1 text-2xl font-bold text-emerald-900">
-              {heatMapCounts.priorityBuys}
-            </p>
-          </div>
-          <div className="rounded-md border border-emerald-200 bg-white p-3">
-            <p className="text-xs font-bold uppercase tracking-[0.1em] text-emerald-800">
-              Targets
-            </p>
-            <p className="mt-1 text-2xl font-bold text-ink">
-              {heatMapCounts.targets}
-            </p>
-          </div>
-          <div className="rounded-md border border-rose-200 bg-rose-50 p-3">
-            <p className="text-xs font-bold uppercase tracking-[0.1em] text-rose-800">
-              Risk watch
-            </p>
-            <p className="mt-1 text-2xl font-bold text-rose-900">
-              {heatMapCounts.riskWatches}
-            </p>
-          </div>
-          <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
-            <p className="text-xs font-bold uppercase tracking-[0.1em] text-amber-900">
-              Overexposed
-            </p>
-            <p className="mt-1 text-2xl font-bold text-amber-950">
-              {heatMapCounts.overexposed}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-moss">
-              Market comparison
-            </p>
-            <h2 className="mt-1 text-lg font-bold text-ink">
-              KTC and FantasyCalc
-            </h2>
-          </div>
-          <Database className="h-5 w-5 text-ink/45" aria-hidden="true" />
-        </div>
-
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <SourceCard source={sources.ktc} />
-          <SourceCard source={sources.fantasyCalc} />
-          <SourceCard source={sources.rookiePool} />
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative w-full lg:max-w-sm">
+        <div className="p-4">
+        <div className="grid gap-3">
+          <div className="relative w-full">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40"
               aria-hidden="true"
@@ -1202,25 +1076,19 @@ export function DynastyRankingsClient({
           </span>
         </div>
 
-        <div className="mt-5 overflow-hidden rounded-lg border border-ink/10">
+        <div className="mt-4 overflow-hidden rounded-md border border-ink/10">
           <div className="overflow-x-auto">
-            <table className="min-w-[1140px] w-full border-collapse text-left text-sm">
-              <thead className="bg-mist text-xs uppercase tracking-[0.08em] text-ink/55">
+            <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+              <thead className="bg-mist text-xs font-semibold text-ink/55">
                 <tr>
-                  <th className="w-10 px-3 py-3" aria-label="Drag handle" />
-                  <th className="px-3 py-3">Rank</th>
-                  <th className="px-3 py-3">Player</th>
-                  <th className="px-3 py-3">Pos</th>
-                  <th className="px-3 py-3">Age</th>
-                  <th className="px-3 py-3">Team</th>
-                  <th className="px-3 py-3">Own%</th>
-                  <th className="px-3 py-3">Heat</th>
-                  <th className="px-3 py-3">KTC</th>
-                  <th className="px-3 py-3">FantasyCalc</th>
-                  <th className="px-3 py-3">Delta</th>
-                  <th className="px-3 py-3">Signal</th>
-                  <th className="px-3 py-3">Value tier</th>
-                  <th className="px-3 py-3">RBV</th>
+                  <th className="w-9 px-2 py-2.5" aria-label="Drag handle" />
+                  <th className="w-16 px-2 py-2.5">Rank</th>
+                  <th className="px-2 py-2.5">Player</th>
+                  <th className="px-2 py-2.5">Market</th>
+                  <th className="px-2 py-2.5">Gap</th>
+                  <th className="px-2 py-2.5">Your read</th>
+                  <th className="px-2 py-2.5">Owned</th>
+                  <th className="px-2 py-2.5">Tier</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-ink/10">
@@ -1246,10 +1114,10 @@ export function DynastyRankingsClient({
                           dragState?.rowId === row.id && "opacity-40",
                         )}
                       >
-                        <td colSpan={14} className="px-3 py-2">
+                        <td colSpan={8} className="px-2 py-1.5">
                           <div
                             className={clsx(
-                              "flex items-center gap-3 rounded-md border px-3 py-2",
+                              "flex items-center gap-3 rounded-md border px-3 py-1.5",
                               colorClass,
                             )}
                           >
@@ -1297,13 +1165,13 @@ export function DynastyRankingsClient({
                         dragState?.rowId === row.id && "opacity-40",
                       )}
                     >
-                      <td className="px-3 py-3 text-ink/35">
+                      <td className="px-2 py-2.5 text-ink/30">
                         <GripVertical className="h-4 w-4" aria-hidden="true" />
                       </td>
-                      <td className="px-3 py-3 font-semibold text-ink">
+                      <td className="px-2 py-2.5 text-base font-bold tabular-nums text-ink">
                         {overallRankByPlayerId.get(ranking.id) ?? "-"}
                       </td>
-                      <td className="px-3 py-3">
+                      <td className="px-2 py-2.5">
                         <div>
                           <button
                             type="button"
@@ -1312,70 +1180,23 @@ export function DynastyRankingsClient({
                           >
                             {ranking.player}
                           </button>
-                          <p className="text-xs text-ink/45">
+                          <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink/45">
+                            <span className="font-bold text-ink/60">{ranking.position}{positionRankByPlayerId.get(ranking.id) ?? "-"}</span>
+                            <span>{ranking.team || "FA"}</span>
+                            <span>Age {ranking.age ?? "-"}</span>
+                            {ranking.isRookie ? <span className="font-semibold text-moss">Rookie</span> : null}
+                          </p>
+                          <p className="mt-0.5 text-[11px] text-ink/35">
                             {rookiePickByPlayerId.get(ranking.id) ??
                               ranking.rookiePick}
-                            {ranking.isRookie ? " · Rookie" : ""}
                           </p>
                         </div>
                       </td>
-                      <td className="px-3 py-3">
-                        <span className="rounded-md bg-skyglass px-2 py-1 text-xs font-bold text-ink">
-                          {ranking.position}
-                          {positionRankByPlayerId.get(ranking.id) ?? "-"}
-                        </span>
+                      <td className="px-2 py-2.5 tabular-nums">
+                        <p className="font-semibold text-ink">FC #{ranking.fantasyCalcRank ?? "-"}</p>
+                        <p className="text-xs text-ink/45">KTC #{ranking.ktcRank ?? "-"}</p>
                       </td>
-                      <td className="px-3 py-3 text-ink/70">
-                        {ranking.age ?? "-"}
-                      </td>
-                      <td className="px-3 py-3 text-ink/70">{ranking.team}</td>
-                      <td className="px-3 py-3">
-                        {ownership ? (
-                          <div>
-                            <p className="font-semibold text-ink">
-                              {ownership.percent}%
-                            </p>
-                            <p className="text-xs text-ink/45">
-                              {ownership.exposure}/{ownership.leagueCount}
-                            </p>
-                          </div>
-                        ) : (
-                          <span className="text-ink/35">-</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-3">
-                        <div className="space-y-1">
-                          <span
-                            className={clsx(
-                              "inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
-                              getHeatMapClass(
-                                heatMapSignal?.label ?? "No Data",
-                              ),
-                            )}
-                          >
-                            {heatMapSignal?.label ?? "No Data"}
-                          </span>
-                          <p className="max-w-32 text-xs leading-4 text-ink/45">
-                            {heatMapSignal?.detail ?? "No exposure signal"}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="px-3 py-3 text-ink/70">
-                        {ranking.ktcRank ?? "-"}
-                      </td>
-                      <td className="px-3 py-3">
-                        <div>
-                          <p className="font-semibold text-ink">
-                            {ranking.fantasyCalcRank ?? "-"}
-                          </p>
-                          {ranking.fantasyCalcValue ? (
-                            <p className="text-xs text-ink/45">
-                              {ranking.fantasyCalcValue}
-                            </p>
-                          ) : null}
-                        </div>
-                      </td>
-                      <td className="px-3 py-3">
+                      <td className="px-2 py-2.5">
                         <span className="inline-flex items-center gap-1 font-semibold text-ink">
                           {getDeltaIcon(
                             ktcDeltaByPlayerId.get(ranking.id) ?? null,
@@ -1385,28 +1206,17 @@ export function DynastyRankingsClient({
                           )}
                         </span>
                       </td>
-                      <td className="px-3 py-3">
-                        <div className="space-y-1">
-                          <span
-                            className={clsx(
-                              "inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1",
-                              getSignalClass(marketSignal?.label ?? "Hold"),
-                            )}
-                          >
-                            {marketSignal?.label ?? "Hold"}
-                          </span>
-                          <p className="max-w-32 text-xs leading-4 text-ink/45">
-                            {marketSignal?.detail ?? "No market signal"}
-                          </p>
-                        </div>
+                      <td className="px-2 py-2.5">
+                        <span className={clsx("inline-flex rounded-md px-2 py-1 text-xs font-bold ring-1", getSignalClass(marketSignal?.label ?? "Hold"))}>
+                          {marketSignal?.label ?? "Hold"}
+                        </span>
                       </td>
-                      <td className="px-3 py-3 font-semibold text-ink">
-                        {assignedTier?.pickValueLabel ?? ranking.importedTier}
+                      <td className="px-2 py-2.5">
+                        {ownership ? <><p className="font-semibold text-ink">{ownership.percent}%</p><p className="text-xs text-ink/45">{heatMapSignal?.label ?? `${ownership.exposure}/${ownership.leagueCount}`}</p></> : <span className="text-ink/35">Load</span>}
                       </td>
-                      <td className="px-3 py-3 text-ink/70">
-                        {assignedTier?.pickValue ??
-                          ranking.relativeBaseValue ??
-                          "-"}
+                      <td className="px-2 py-2.5">
+                        <p className="font-semibold text-ink">{assignedTier?.pickValueLabel ?? ranking.importedTier}</p>
+                        <p className="text-xs text-ink/45">RBV {assignedTier?.pickValue ?? ranking.relativeBaseValue ?? "-"}</p>
                       </td>
                     </tr>
                   );
@@ -1416,11 +1226,12 @@ export function DynastyRankingsClient({
           </div>
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-ink/55">
+        <p className="mt-3 text-xs leading-5 text-ink/45">
           On ALL, tier bars control the pick value assigned to every player
           between that tier and the next tier. On position pages, tier bars are
           separate visual separators and do not change pick value.
         </p>
+        </div>
       </section>
     </div>
   );

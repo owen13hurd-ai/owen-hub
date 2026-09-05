@@ -62,31 +62,31 @@ export default async function DynastyHubPage({
     };
   });
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         eyebrow="Dynasty Hub"
         title="Player Rankings"
         description="Your personal dynasty board, market comparison, tiers, and roster exposure."
       />
 
-      <section className="rounded-md border border-ink/10 bg-white p-4">
-        <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+      <section className="rounded-md border border-ink/10 bg-white p-3">
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
           <div>
             <p className="text-sm font-semibold text-ink">
               Sleeper ownership
             </p>
-            <p className="mt-1 text-sm text-ink/60">
+            <p className="mt-0.5 text-xs text-ink/55">
               Load teams on demand for{" "}
               <span className="font-semibold text-ink">{username}</span>.
             </p>
           </div>
-          <form className="grid gap-3 sm:grid-cols-[140px_auto]">
+          <form className="grid grid-cols-[100px_auto] items-end gap-2">
             <label className="block">
-              <span className="text-sm font-semibold text-ink">Season</span>
+              <span className="text-xs font-semibold text-ink/55">Season</span>
               <input
                 name="season"
                 defaultValue={season}
-                className="mt-2 h-10 w-full rounded-md border border-ink/10 bg-mist px-3 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
+                className="mt-1 h-9 w-full rounded-md border border-ink/10 bg-mist px-2 text-sm text-ink outline-none transition focus:border-moss focus:bg-white"
               />
             </label>
             <div className="flex items-end">
@@ -99,7 +99,7 @@ export default async function DynastyHubPage({
         </div>
 
         {sleeperData ? (
-          <p className="mt-3 text-sm text-ink/60">
+          <p className="mt-2 text-xs text-ink/55">
             Showing ownership across {leagueCount} Sleeper leagues for{" "}
             <span className="font-semibold text-ink">
               {sleeperData.displayName}
