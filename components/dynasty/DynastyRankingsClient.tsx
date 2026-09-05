@@ -517,7 +517,11 @@ function getInitialRowsByScope({
 
     nextRowsByScope[scope] = [
       ...savedRows.filter((row) => defaultRowIds.has(row.id)),
-      ...defaultRows.filter((row) => !savedRowIds.has(row.id)),
+      // New market players should join an established personal board, but
+      // omitted tier markers are intentional—the saved board owns its breaks.
+      ...defaultRows.filter(
+        (row) => row.type === "player" && !savedRowIds.has(row.id),
+      ),
     ];
   });
 
